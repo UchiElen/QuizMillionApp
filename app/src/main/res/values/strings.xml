@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">QuizMillionApp</string>
+    <string name="app_name">QuizMillion</string>
+    <string name="title_activity_splash">SplashActivity</string>
+
 </resources>
