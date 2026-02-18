@@ -2,6 +2,8 @@ package com.dam.quizmillionapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.window.SplashScreen;
+
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -11,6 +13,9 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        androidx.core.splashscreen.SplashScreen splashScreen = androidx.core.splashscreen.SplashScreen.installSplashScreen(this);
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         Intent musicIntent = new Intent(MainActivity.this, MusicService.class);

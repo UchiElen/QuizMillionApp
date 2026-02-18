@@ -1,12 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.QuizMillionApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/colorPrimaryDark</item>
 
-         <item name="android:windowSplashScreenBackground"> @color/colorPrimaryDark</item>
-         <item name="android:windowSplashScreenAnimatedIcon">@drawable/padded_logo_quizmillion</item>
-     </style>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/padded_logo_quizmillion</item>
+
+        <item name="postSplashScreenTheme">@style/Theme.QuizMillionApp</item>
+    </style>
 
      <style name="Theme.QuizMillionApp" parent="Base.Theme.QuizMillionApp" />
  </resources>
