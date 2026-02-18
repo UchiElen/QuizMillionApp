@@ -10,4 +10,5 @@
     <color name="colorSurface">#29008e</color>
     <color name="colorBackground">#8f0081</color>
     <color name="colorGradient">#2600ba</color>
+    <color name="transparent"> #00000000</color>
 </resources>

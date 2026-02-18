@@ -27,15 +27,24 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run(){
                 try {
-                    sleep(3000);
+                    sleep(2500);
+                    Intent musicIntent = new Intent(SplashActivity.this, MusicService.class);
+                    startService(musicIntent);
+
+                    sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
 
+
+
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
+                SplashActivity.this.finish();
             }
         }.start();
+
+
 
     }
 }
