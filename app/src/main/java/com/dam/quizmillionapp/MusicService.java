@@ -8,7 +8,6 @@ import android.os.IBinder;
 
 public class MusicService extends Service {
     private MediaPlayer mediaPlayer;
-    private static boolean isMuted = false;
 
     @Override
     public IBinder onBind(Intent intent) { return null; }
