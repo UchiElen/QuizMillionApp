@@ -29,10 +29,7 @@ public class MusicService extends Service {
         return START_STICKY;
     }
 
-    public static void toggleMute(Context context) {
-        isMuted = !isMuted;
 
-    }
 
     @Override
     public void onDestroy() {
