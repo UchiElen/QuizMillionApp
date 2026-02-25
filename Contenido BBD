@@ -1,0 +1,32 @@
+| ID | 50% (Eliminar) | Llamada | Público | Correcta | Nivel | Opciones | Pregunta |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---|
+| 1 | `[0, 1]` | 0 | 1 | 0 | 11 | `["Hong Kong", "Japón", "Corea del Sur", "Noruega"]` | "¿Qué país tiene la mayor esperanza de vida?" |
+| 10 | `[2, 3]` | 2 | 2 | 2 | 1 | `["Venus", "Marte", "Mercurio", "Urano"]` | "¿Qué planeta está más cerca del Sol?" |
+| 11 | `[1, 2]` | 1 | 1 | 1 | 2 | `["Mersey", "Támesis", "Avon", "Dee"]` | "¿Qué río atraviesa Londres?" |
+| 12 | `[0, 2]` | 0 | 0 | 0 | 7 | `["Mortimer", "Gus-Gus", "Jerry", "Stuart"]` | "¿Cuál era el nombre original de Mickey Mouse?" |
+| 13 | `[1, 3]` | 1 | 1 | 1 | 3 | `["Fútbol", "Sumo", "Bádminton", "Ping-Pong"]` | "¿Cuál es el deporte nacional de Japón?" |
+| 14 | `[1, 2]` | 2 | 0 | 2 | 9 | `["Colombia", "EEUU", "Finlandia", "España"]` | "¿En qué país se bebe más café?" |
+| 15 | `[2, 3]` | 2 | 2 | 2 | 4 | `["Argentina", "Alemania", "Brasil", "Francia"]` | "¿Qué país ha ganado más Copas del Mundo de Fútbol?" |
+| 16 | `[0, 2]` | 0 | 0 | 0 | 5 | `["A las alturas", "A las arañas", "A los circos", "Al cobre"]` | "¿A qué tienes miedo si sufres acrofobia?" |
+| 17 | `[1, 2]` | 2 | 2 | 2 | 8 | `["Roble", "Abeto", "Secuoya", "Conífera"]` | "¿Cuál es el tipo de árbol más alto?" |
+| 18 | `[0, 2]` | 2 | 2 | 2 | 10 | `["Trinidad y Tobago", "Haiti", "Bermudas", "Tanzania"]` | "¿Qué país tiene un naufragio en su bandera nacional?" |
+| 19 | `[0, 2]` | 2 | 2 | 2 | 6 | `["1", "2", "3", "4"]` | "¿Cuántos corazones tiene un pulpo?" |
+| 2 | `[1, 3]` | 1 | 0 | 1 | 6 | `["Inglés", "Español", "Chino", "Francés"]` | "¿Qué lengua tiene más hablantes nativos?" |
+| 20 | `[2, 3]` | 2 | 3 | 2 | 12 | `["Canadá", "Japón", "Suecia", "Tailandia"]` | "¿Qué país tiene más islas?" |
+| 21 | `[1, 2]` | 1 | 3 | 1 | 11 | `["1962", "1950", "1943", "1966"]` | "¿En qué año se estrenó la película 'La Cenicienta'?" |
+| 22 | `[0, 3]` | 3 | 0 | 3 | 13 | `["2,98 m", "3,10 m", "3,18 m", "3,02 m"]` | "¿Qué altura tiene una canasta de la NBA?" |
+| 23 | `[2, 3]` | 3 | 0 | 3 | 8 | `["100", "110", "105", "116"]` | "¿Cuánto duró la Guerra de los Cien Años?" |
+| 24 | `[1, 2]` | 1 | 1 | 1 | 10 | `["Green Day", "Nirvana", "Pearl Jam", "Smashing Pumpkins"]` | "¿De qué grupo es 'Smells like teen spirit'?" |
+| 25 | `[2, 3]` | 3 | 1 | 3 | 14 | `["Washington", "Lincoln", "Hoover", "Jefferson"]` | "¿Quién fue el tercer presidente de EEUU?" |
+| 26 | `[0, 2]` | 0 | 3 | 0 | 15 | `["C. Cooper", "E. Bleibtrey", "N. Ponomaryova", "D. Zatopkova"]` | "¿Quién fue la primera mujer con medalla olímpica?" |
+| 27 | `[0, 1]` | 1 | 0 | 1 | 12 | `["Neuronas", "Glías", "Epiteliales", "Condrocitos"]` | "¿Cuál es la célula nerviosa más abundante?" |
+| 28 | `[0, 3]` | 3 | 1 | 3 | 14 | `["Alnitak", "Mintaka", "Alnilam", "Polaris"]` | "¿Qué estrella NO es del cinturón de Orion?" |
+| 29 | `[2, 3]` | 3 | 1 | 3 | 13 | `["Van Steenwyck", "Rembrandt", "Hals", "Vermeer"]` | "¿Quién pintó 'La joven de la perla'?" |
+| 3 | `[0, 2]` | 2 | 2 | 2 | 4 | `["22", "14", "12", "16"]` | "¿Cuántas caras tiene un dodecaedro?" |
+| 30 | `[1, 2]` | 1 | 0 | 1 | 15 | `["Amenenhat III", "Amenhotep IV", "Amenofis III", "Tutmosis II"]` | "¿Qué faraón intentó imponer el monoteísmo?" |
+| 4 | `[0, 3]` | 3 | 3 | 3 | 5 | `["Konami", "EA", "Naughty Dog", "Rockstar"]` | "¿Qué estudio creó Red Dead Redemption?" |
+| 5 | `[0, 2]` | 2 | 2 | 2 | 3 | `["Alpha", "Gamma", "Delta", "Epsilon"]` | "¿Cuál es la cuarta letra del alfabeto griego?" |
+| 6 | `[0, 2]` | 0 | 1 | 0 | 7 | `["Squid Game", "Narcos", "La Casa de Papel", "Blacklist"]` | "Serie Netflix más vista en 2021 mundialmente" |
+| 7 | `[2, 3]` | 2 | 2 | 2 | 2 | `["Badajoz", "Cáceres", "Mérida", "Plasencia"]` | "¿Cuál es la capital de Extremadura?" |
+| 8 | `[2, 3]` | 3 | 3 | 3 | 1 | `["Magenta", "Cyan", "Amarillo", "Verde"]` | "¿Cuál NO es un color primario?" |
+| 9 | `[0, 3]` | 0 | 1 | 0 | 9 | `["118", "114", "116", "120"]` | "¿Cuántos elementos tiene la tabla periódica?" |
