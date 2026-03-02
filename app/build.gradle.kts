@@ -61,6 +61,8 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx")       // Conexion de base de datos preguntas
+    implementation("com.google.firebase:firebase-auth-ktx") // conexion para la futura bbdd login
     // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     // https://firebase.google.com/docs/android/setup#available-libraries
