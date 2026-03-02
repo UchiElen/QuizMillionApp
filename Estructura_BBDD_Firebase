@@ -1,0 +1,12 @@
+Colección:Preguntas
+          idDocumentos:1-30
+                Campos:
+                       comodin_50 (array)
+                                  (number)(number)
+                       comodin_llamada(number)
+                       comodin_publico(number)
+                       correcta(number)
+                       nivel(number)
+                       opciones(array)
+                               (string)(string)(string)(string)
+                       pregunta(string)                                 
