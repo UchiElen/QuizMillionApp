@@ -18,7 +18,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Esto permite que el diseño se extienda bajo la barra de estado y el toolbar
+        // El diseño se extiende bajo la barra de estado y el toolbar
         EdgeToEdge.enable(this);
     }
 
@@ -26,11 +26,11 @@ public class BaseActivity extends AppCompatActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        // Buscamos el Toolbar en el diseño de la actividad que esté abierta
+        // Buscar el Toolbar en el diseño de la actividad que esté abierta
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
-            // Esto quita el título de la app si no lo quieres
+            // Quitar el título de la app
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
     }
@@ -62,9 +62,9 @@ public class BaseActivity extends AppCompatActivity {
 
     private void updateMenuIcon(MenuItem item) {
         if (isMuted) {
-            item.setIcon(R.drawable.ic_music_off); // Tu icono con la raya
+            item.setIcon(R.drawable.ic_music_off); // Icono con la raya
         } else {
-            item.setIcon(R.drawable.ic_music_on);  // Tu icono normal
+            item.setIcon(R.drawable.ic_music_on);  // Icono normal
         }
     }
 

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/emailTI"
+        android:layout_width="276dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/input_background"
+        android:hint="@string/email_hint"
+        android:inputType="textEmailAddress"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/white"
+        android:textColorHint="#99FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/EmailTV" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/contraTI"
+        android:layout_width="276dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/input_background"
+        android:hint="@string/contrasena_hint"
+        android:inputType="textPassword"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/white"
+        android:textColorHint="#99FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ContraTV" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="411dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#00000000"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="405dp"
+        android:layout_height="180dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+        app:srcCompat="@drawable/lettering_quizmillion" />
+
+
+    <TextView
+        android:id="@+id/IniciarText"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_marginHorizontal="40dp"
+        android:fontFamily="@font/poppinsbold"
+        android:gravity="center"
+        android:lineSpacingExtra="-10sp"
+        android:text="@string/iniciar_sesion"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+    <TextView
+        android:id="@+id/EmailTV"
+        android:layout_width="266dp"
+        android:layout_height="25dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="64dp"
+        android:fontFamily="@font/poppinsregular"
+        android:gravity="left"
+        android:lineSpacingExtra="-10sp"
+        android:text="@string/email"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/IniciarText" />
+
+    <TextView
+        android:id="@+id/ContraTV"
+        android:layout_width="261dp"
+        android:layout_height="26dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/poppinsregular"
+        android:gravity="left"
+        android:lineSpacingExtra="-10sp"
+        android:text="@string/contrasena"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailTI" />
+
+    <Button
+        android:id="@+id/AuthBtn"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="274dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="100dp"
+        android:text="@string/iniciar_sesion"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        app:cornerRadius="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contraTI"
+        app:strokeColor="@color/white" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

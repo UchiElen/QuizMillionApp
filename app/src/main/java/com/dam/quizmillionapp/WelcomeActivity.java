@@ -10,7 +10,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class MainActivity extends BaseActivity {
+public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,23 +19,34 @@ public class MainActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        Intent musicIntent = new Intent(MainActivity.this, MusicService.class);
+        Intent musicIntent = new Intent(WelcomeActivity.this, MusicService.class);
         startService(musicIntent);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_welcome);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        Button button = findViewById(R.id.AuthBtn);
+        Button button = findViewById(R.id.RegisBtn);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,WelcomeActivity.class);
+                Intent intent = new Intent(WelcomeActivity.this,RegisActivity.class);
                 startActivity(intent);
             }
         });
+
+        Button button2 = findViewById(R.id.AuthBtn);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WelcomeActivity.this,AuthActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
     }

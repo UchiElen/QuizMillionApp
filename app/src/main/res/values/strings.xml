@@ -1,5 +1,20 @@
 <resources>
     <string name="app_name">QuizMillion</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="convertirse">¿Tienes lo necesario para convertirte en millonario?</string>
+    <string name="averiguarlo">¡Quiero averiguarlo!</string>
+    <string name="quien_millonario">¿Quién es nuestro próximo millonario?</string>
+    <string name="resgistrarse">Registrarse</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="crear_cuenta">Crear cuenta</string>
+    <string name="nombre_usuario">NOMBRE DE USUARIO</string>
+    <string name="nombre_usuario_hint">Nombre Usuario</string>
+    <string name="email">EMAIL</string>
+    <string name="email_hint">email@email.com</string>
+    <string name="contrasena">CONTRASEÑA</string>
+    <string name="contrasena_hint">*********</string>
+    <string name="foto_perfil">FOTO DE PERFIL</string>
+    <string name="foto_perfil_description">foto de perfil</string>
 
 </resources>

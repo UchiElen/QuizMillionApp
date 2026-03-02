@@ -24,6 +24,18 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".WelcomeActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".RegisActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AuthActivity"
+            android:exported="false" />
+
         <service android:name=".MusicService" />
     </application>
 

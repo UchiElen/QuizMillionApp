@@ -11,4 +11,5 @@
     <color name="colorBackground">#8f0081</color>
     <color name="colorGradient">#2600ba</color>
     <color name="transparent"> #00000000</color>
+    <color name="input_bg">#33FFFFFF</color>
 </resources>

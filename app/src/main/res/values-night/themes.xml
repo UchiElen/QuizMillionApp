@@ -15,4 +15,11 @@
     </style>
 
     <style name="Theme.QuizMillionApp" parent="Base.Theme.QuizMillionApp" />
+
+    <style name="Theme.TextHeader" parent="Base.Theme.QuizMillionApp">
+        <item name="android:fontFamily">@font/poppinsbold</item>
+    </style>
+    <style name="Theme.TextMain" parent="Base.Theme.QuizMillionApp">
+        <item name="android:fontFamily">@font/poppinsregular</item>
+    </style>
 </resources>
