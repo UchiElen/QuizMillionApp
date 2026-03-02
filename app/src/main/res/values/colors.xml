@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#753192</color>
+    <color name="colorPrimaryDark">#00244f</color>
+    <color name="colorOnPrimary">#ffffff</color>
+    <color name="colorAccent">#00bf63</color>
+    <color name="colorError">#ff5757</color>
+    <color name="colorSurface">#29008e</color>
+    <color name="colorBackground">#8f0081</color>
+    <color name="colorGradient">#2600ba</color>
+    <color name="transparent"> #00000000</color>
+    <color name="input_bg">#33FFFFFF</color>
 </resources>
