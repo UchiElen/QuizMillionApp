@@ -1,4 +1,4 @@
-Colección:Preguntas
+Colección:preguntas
           idDocumentos:1-30
                 Campos:
                        comodin_50 (array)
@@ -9,4 +9,5 @@ Colección:Preguntas
                        nivel(number)
                        opciones(array)
                                (string)(string)(string)(string)
-                       pregunta(string)                                 
+                       enunciado(string)
+                       imagen(string)
