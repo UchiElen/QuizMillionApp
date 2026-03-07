@@ -12,6 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting">
         <activity
+            android:name=".RoomActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.WaitingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.LobbyActivity"
+            android:exported="false" />
+        <activity
             android:name=".BaseActivity"
             android:exported="false" />
         <activity
@@ -23,15 +32,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".WelcomeActivity"
             android:exported="false" />
-
         <activity
             android:name=".RegisActivity"
             android:exported="false" />
-
         <activity
             android:name=".AuthActivity"
             android:exported="false" />
