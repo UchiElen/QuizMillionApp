@@ -46,12 +46,14 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -61,8 +63,11 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
-    implementation("com.google.firebase:firebase-firestore-ktx")       // Conexion de base de datos preguntas
-    implementation("com.google.firebase:firebase-auth-ktx") // conexion para la futura bbdd login
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.google.firebase:firebase-firestore:24.10.0")
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
     // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     // https://firebase.google.com/docs/android/setup#available-libraries

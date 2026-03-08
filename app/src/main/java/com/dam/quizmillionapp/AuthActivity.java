@@ -2,6 +2,8 @@ package com.dam.quizmillionapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
@@ -26,7 +28,17 @@ public class AuthActivity extends BaseActivity {
             return insets;
         });
 
+        Button authBtn = findViewById(R.id.AuthBtn);
 
-
+        if (authBtn != null) {
+            authBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Te lleva a la pantalla temporal "TransicionTemporal"
+                    Intent intent = new Intent(AuthActivity.this, TransicionTemporal.class);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 }

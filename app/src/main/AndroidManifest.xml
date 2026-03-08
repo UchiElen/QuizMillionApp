@@ -12,6 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting">
         <activity
+            android:name=".TransicionTemporal"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".PreguntasActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+        <activity
             android:name=".BaseActivity"
             android:exported="false" />
         <activity
@@ -23,15 +31,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".WelcomeActivity"
             android:exported="false" />
-
         <activity
             android:name=".RegisActivity"
             android:exported="false" />
-
         <activity
             android:name=".AuthActivity"
             android:exported="false" />
