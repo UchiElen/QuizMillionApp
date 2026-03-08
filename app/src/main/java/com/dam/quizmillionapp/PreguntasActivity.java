@@ -79,7 +79,7 @@ public class PreguntasActivity extends AppCompatActivity {
 
         pbProgreso = findViewById(R.id.pb_progreso_juego);
         tvPremioActual = findViewById(R.id.tv_premio_actual);
-// Configuramos el máximo de la barra según tus niveles totales (ejemplo: 10 niveles)
+        // Configuramos el máximo de la barra según tus niveles totales (ejemplo: 10 niveles)
         pbProgreso.setMax(15);
 
         for (int i = 0; i < btnOpciones.length; i++) {
@@ -127,6 +127,7 @@ public class PreguntasActivity extends AppCompatActivity {
             btn.setAlpha(1.0f);
             btn.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
             btn.setStrokeColor(ColorStateList.valueOf(Color.WHITE));
+            btn.setTextColor(Color.WHITE); // Volvemos el texto a blanco para la nueva pregunta
         }
 
         tvEnunciado.setText(preguntaActual.enunciado);
@@ -150,7 +151,9 @@ public class PreguntasActivity extends AppCompatActivity {
         if (seleccionado == preguntaActual.correcta) {
             if (reloj != null) reloj.cancel();
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
-            if (nivelActual < escalaPremios.length) {
+            btnOpciones[seleccionado].setTextColor(Color.WHITE); // Aseguramos texto blanco sobre verde
+
+            if (nivelActual <= 15) {
                 pbProgreso.setProgress(nivelActual);
                 tvPremioActual.setText("NIVEL " + nivelActual + " > Premio acumulado: " + escalaPremios[nivelActual] + " €");
 
@@ -164,6 +167,7 @@ public class PreguntasActivity extends AppCompatActivity {
             new Handler().postDelayed(this::cargarNivelCompleto, 1500);
         } else {
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
+            btnOpciones[seleccionado].setTextColor(Color.WHITE); // Aseguramos texto blanco sobre rojo
             btnOpciones[seleccionado].setEnabled(false);
             actualizarFallos();
         }
@@ -190,6 +194,7 @@ public class PreguntasActivity extends AppCompatActivity {
             public void onFinish() {
                 tvCronometro.setText("0");
                 btnOpciones[preguntaActual.correcta].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+                btnOpciones[preguntaActual.correcta].setTextColor(Color.WHITE);
                 actualizarFallos();
                 if (contadorFallos < 3) {
                     indicePregunta++;
@@ -227,6 +232,7 @@ public class PreguntasActivity extends AppCompatActivity {
         for (int i = 0; i < 4; i++) {
             if (preguntaActual.comodin_50.contains(i)) {
                 btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
+                btnOpciones[i].setTextColor(Color.BLACK); // Texto en negro para mejor contraste
             } else {
                 btnOpciones[i].setEnabled(false);
                 btnOpciones[i].setAlpha(0.3f);
@@ -240,6 +246,7 @@ public class PreguntasActivity extends AppCompatActivity {
         desactivaBotonComodin(btnPublico);
         int sugerencia = preguntaActual.comodin_publico;
         btnOpciones[sugerencia].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
+        btnOpciones[sugerencia].setTextColor(Color.BLACK); // Texto en negro para mejor contraste
         Toast.makeText(this, "El público vota la opción " + (sugerencia + 1), Toast.LENGTH_SHORT).show();
     }
 
@@ -249,6 +256,7 @@ public class PreguntasActivity extends AppCompatActivity {
         desactivaBotonComodin(btnLlamada);
         int sugerencia = preguntaActual.comodin_llamada;
         btnOpciones[sugerencia].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
+        btnOpciones[sugerencia].setTextColor(Color.BLACK); // Texto en negro para mejor contraste
         Toast.makeText(this, "Tu amigo sugiere la opción " + (sugerencia + 1), Toast.LENGTH_SHORT).show();
     }
 
