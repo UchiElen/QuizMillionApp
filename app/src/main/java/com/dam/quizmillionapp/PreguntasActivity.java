@@ -105,7 +105,7 @@ public class PreguntasActivity extends AppCompatActivity {
         pbProgreso.setMax(15);
 
         // Listeners
-        btnAbandonar.setOnClickListener(v -> mostrarDialogoAbandono());
+        btnAbandonar.setOnClickListener(v -> mensajeAbandonar());
         btnMusica.setOnClickListener(v -> toggleMusica());
         btn50.setOnClickListener(v -> comodin50());
         btnPublico.setOnClickListener(v -> comodinPublico());
@@ -198,14 +198,17 @@ public class PreguntasActivity extends AppCompatActivity {
     }
 
     private void validarRespuesta(int seleccionado) {
-        if (seleccionado == preguntaActual.correcta) {
-            if (reloj != null) reloj.cancel();
+        if (seleccionado == preguntaActual.correcta) {            if (reloj != null) reloj.cancel();
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
             btnOpciones[seleccionado].setTextColor(Color.WHITE);
 
-            if (nivelActual <= 15) {
+            if (nivelActual > 15) {
+                // ¡HA GANADO EL MILLÓN!
+                irAResultados(escalaPremios[15]);
+            } else if (nivelActual <= 15) {
                 pbProgreso.setProgress(nivelActual);
                 tvPremioActual.setText("NIVEL " + nivelActual + " > Premio acumulado: " + escalaPremios[nivelActual] + " €");
+
                 if (nivelActual == 5) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.GREEN));
                 if (nivelActual == 10) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.RED));
             }
@@ -269,15 +272,15 @@ public class PreguntasActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void mostrarDialogoAbandono() {
+    private void mensajeAbandonar() {
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("¿Abandonar partida?")
-                .setMessage("Si sales ahora perderás tu progreso actual.")
-                .setPositiveButton("Sí, salir", (dialog, which) -> {
+                .setTitle("¿Deseas plantarte?")
+                .setMessage("Si te plantas ahora te llevarás: " + escalaPremios[nivelActual - 1] + "€")
+                .setPositiveButton("Sí, me planto", (dialog, which) -> {
                     if (reloj != null) reloj.cancel();
-                    finish();
+                    irAResultados(escalaPremios[nivelActual - 1]); // Se lleva lo acumulado
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton("Seguir jugando", null)
                 .show();
     }
 
@@ -290,10 +293,16 @@ public class PreguntasActivity extends AppCompatActivity {
     private void actualizarFallos() {
         contadorFallos++;
         tvFallos.setText("Fallos: " + contadorFallos + "/3");
+
         if (contadorFallos >= 3) {
             if (reloj != null) reloj.cancel();
-            Toast.makeText(this, "¡GAME OVER!", Toast.LENGTH_LONG).show();
-            new Handler().postDelayed(this::finish, 1000);
+
+            // Lógica de premio de consolación (ejemplo: si cae en el nivel 7, se lleva el del 5)
+            int premioConsolacion = 0;
+            if (nivelActual >= 10) premioConsolacion = escalaPremios[10];
+            else if (nivelActual >= 5) premioConsolacion = escalaPremios[5];
+
+            irAResultados(premioConsolacion);
         }
     }
 

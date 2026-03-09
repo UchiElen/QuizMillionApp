@@ -21,23 +21,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:background="#00C853"
         android:gravity="center"
         android:paddingVertical="12dp"
-        android:text="¡Enhorabuena!"
+        android:text="Cargando..."
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/img_logo_resultado" />
 
     <ImageView
-        android:id="@+id/img_cromo_premio"
+        android:id="@+id/img_premio"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="30dp"
         android:layout_marginVertical="20dp"
         android:scaleType="fitCenter"
-        android:src="@drawable/cromo_1500"
         app:layout_constraintBottom_toTopOf="@id/layout_botones_final"
         app:layout_constraintTop_toBottomOf="@id/tv_banner_mensaje" />
 
