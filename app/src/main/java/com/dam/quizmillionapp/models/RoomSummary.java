@@ -1,23 +1,23 @@
 package com.dam.quizmillionapp.models;
 
 public class RoomSummary {
-    public String roomId;
-    private String roomName;
-    private String roomCode;
-    private String roomStatus;
-    private long playersCount;
-    private long playersMax;
+    private String roomId;
+    private String code;
+    private String status;
+    private long playerCount;
+    private long maxPlayers;
+    private String hostUid;
 
     public RoomSummary() {
     }
 
-    public RoomSummary(String roomId, String roomName, String roomCode, String roomStatus, long playersCount, long playersMax) {
+    public RoomSummary(String roomId, String code, String status, long playerCount, long maxPlayers, String hostUid) {
         this.roomId = roomId;
-        this.roomName = roomName;
-        this.roomCode = roomCode;
-        this.roomStatus = roomStatus;
-        this.playersCount = playersCount;
-        this.playersMax = playersMax;
+        this.code = code;
+        this.status = status;
+        this.playerCount = playerCount;
+        this.maxPlayers = maxPlayers;
+        this.hostUid = hostUid;
     }
 
     public String getRoomId() {
@@ -28,43 +28,43 @@ public class RoomSummary {
         this.roomId = roomId;
     }
 
-    public String getRoomName() {
-        return roomName;
+    public String getCode() {
+        return code;
     }
 
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getRoomCode() {
-        return roomCode;
+    public String getStatus() {
+        return status;
     }
 
-    public void setRoomCode(String roomCode) {
-        this.roomCode = roomCode;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getRoomStatus() {
-        return roomStatus;
+    public long getPlayerCount() {
+        return playerCount;
     }
 
-    public void setRoomStatus(String roomStatus) {
-        this.roomStatus = roomStatus;
+    public void setPlayerCount(long playerCount) {
+        this.playerCount = playerCount;
     }
 
-    public long getPlayersCount() {
-        return playersCount;
+    public long getMaxPlayers() {
+        return maxPlayers;
     }
 
-    public void setPlayersCount(long playersCount) {
-        this.playersCount = playersCount;
+    public void setMaxPlayers(long maxPlayers) {
+        this.maxPlayers = maxPlayers;
     }
 
-    public long getPlayersMax() {
-        return playersMax;
+    public String getHostUid() {
+        return hostUid;
     }
 
-    public void setPlayersMax(long playersMax) {
-        this.playersMax = playersMax;
+    public void setHostUid(String hostUid) {
+        this.hostUid = hostUid;
     }
 }

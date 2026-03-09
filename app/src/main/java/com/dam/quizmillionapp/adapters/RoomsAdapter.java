@@ -16,15 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHolder> {
+
     public interface OnRoomClickListener {
         void onRoomClicked(RoomSummary room);
     }
+
     private final List<RoomSummary> roomList = new ArrayList<>();
     private final OnRoomClickListener clickListener;
-    public RoomsAdapter(OnRoomClickListener clickListener){
+
+    public RoomsAdapter(OnRoomClickListener clickListener) {
         this.clickListener = clickListener;
     }
-    public void updateRooms(List<RoomSummary> newRooms){
+
+    public void updateRooms(List<RoomSummary> newRooms) {
         roomList.clear();
         roomList.addAll(newRooms);
         notifyDataSetChanged();
@@ -32,7 +36,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
     @NonNull
     @Override
-    public RoomsAdapter.RoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RoomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_room_row, parent, false);
 
@@ -40,20 +44,20 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RoomsAdapter.RoomViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
         RoomSummary room = roomList.get(position);
-        // 1. Mostramos la información principal de la sala
-        holder.txtRoomName.setText(room.getRoomName());
+
+        holder.txtRoomName.setText("Room " + room.getCode());
+
         holder.txtRoomCode.setText(
-                holder.itemView.getContext().getString(R.string.room_code_prefix) + " "
-                        + room.getRoomCode()
+                holder.itemView.getContext().getString(R.string.room_code_prefix) + " " + room.getCode()
         );
 
         holder.txtPlayers.setText(
                 holder.itemView.getContext().getString(R.string.players_prefix) + " "
-                        + room.getPlayersCount() + " / " + room.getPlayersMax()
+                        + room.getPlayerCount() + " / " + room.getMaxPlayers()
         );
-        // 2. Se permite la entrada toando la fila completa
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,14 +65,12 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             }
         });
 
-        // 3. Se permite la entrada pulsando el notón 'Unirse'
-        holder.btnJoinRoom.setOnClickListener(new View.OnClickListener(){
+        holder.btnJoinRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 clickListener.onRoomClicked(room);
             }
         });
-
     }
 
     @Override
@@ -76,9 +78,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         return roomList.size();
     }
 
-    // Esta clase representa una fila del RecyclerView.
-    // Guarda las referencias a los elementos de la interfaz donde se muestran los datos de la sala.
-    public static class RoomViewHolder extends RecyclerView.ViewHolder{
+    public static class RoomViewHolder extends RecyclerView.ViewHolder {
         TextView txtRoomName;
         TextView txtRoomCode;
         TextView txtPlayers;
