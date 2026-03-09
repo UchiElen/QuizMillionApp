@@ -15,12 +15,10 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        androidx.core.splashscreen.SplashScreen splashScreen = androidx.core.splashscreen.SplashScreen.installSplashScreen(this);
+
 
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        Intent musicIntent = new Intent(WelcomeActivity.this, MusicService.class);
-        startService(musicIntent);
         setContentView(R.layout.activity_welcome);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -45,9 +43,5 @@ public class WelcomeActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-
-
-
     }
 }

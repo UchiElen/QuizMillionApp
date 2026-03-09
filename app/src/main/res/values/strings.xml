@@ -16,5 +16,9 @@
     <string name="contrasena_hint">*********</string>
     <string name="foto_perfil">FOTO DE PERFIL</string>
     <string name="foto_perfil_description">foto de perfil</string>
+    <string name="bienvenida">Te damos la bienvenida</string>
+    <string name="jugar">Jugar</string>
+    <string name="perfil">Perfil</string>
+    <string name="records">Top de records</string>
 
 </resources>

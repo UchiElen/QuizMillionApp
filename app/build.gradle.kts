@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     // Add the Google services Gradle plugin
+    //id("com.android.application")
     id("com.google.gms.google-services")
 }
 
@@ -60,8 +61,10 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.9.0"))
-    // TODO: Add the dependencies for Firebase products you want to use
+    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-analytics")
+
     // When using the BoM, don't specify versions in Firebase dependencies
     // https://firebase.google.com/docs/android/setup#available-libraries
 }
