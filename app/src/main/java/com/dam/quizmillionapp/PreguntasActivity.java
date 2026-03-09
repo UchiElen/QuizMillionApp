@@ -1,5 +1,6 @@
 package com.dam.quizmillionapp;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -40,7 +41,7 @@ public class PreguntasActivity extends AppCompatActivity {
 
     // Nuevos controles superiores
     private ImageButton btnMusica, btnAbandonar;
-
+    private MaterialButton btnPlantarse;
     private int contadorFallos = 0;
     private int nivelActual = 1;
     private int indicePregunta = 0;
@@ -79,6 +80,8 @@ public class PreguntasActivity extends AppCompatActivity {
         // Enlace de controles superiores
         btnAbandonar = findViewById(R.id.btn_abandonar);
         btnMusica = findViewById(R.id.btn_musica);
+        btnPlantarse = findViewById(R.id.btn_plantarse);
+        btnPlantarse.setOnClickListener(v -> mensajePlantarse());
 
         // Enlace de capa de transición
         layoutTransicion = findViewById(R.id.layout_transicion_nivel);
@@ -347,5 +350,30 @@ public class PreguntasActivity extends AppCompatActivity {
         btnOpciones[sugerencia].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
         btnOpciones[sugerencia].setTextColor(Color.BLACK);
         Toast.makeText(this, "Tu amigo sugiere la opción " + (sugerencia + 1), Toast.LENGTH_SHORT).show();
+    }
+
+    private void mensajePlantarse() {
+        // Si nivelActual es 1, el premio es 0. Si es 5, se lleva el premio del nivel 4.
+        int premioActual = (nivelActual > 1) ? escalaPremios[nivelActual - 1] : 0;
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("¿Deseas plantarte?")
+                .setMessage("Si te plantas ahora, el juego termina y te llevas:\n\n" + premioActual + " €")
+                .setCancelable(false)
+                .setPositiveButton("SÍ, ME PLANTO", (dialog, which) -> {
+                    if (reloj != null) reloj.cancel();
+                    irAResultados(premioActual); // Enviamos el dinero a la pantalla del PDF
+                })
+                .setNegativeButton("SEGUIR JUGANDO", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private void irAResultados(int money) {
+        Intent intent = new Intent(PreguntasActivity.this, ResultadoActivity.class);
+        intent.putExtra("PREMIO", money); // Aquí mandamos el dato que leerá el switch de la otra pantalla
+        startActivity(intent);
+        finish(); // Importante: cerramos la partida para que no pueda volver atrás
     }
 }
