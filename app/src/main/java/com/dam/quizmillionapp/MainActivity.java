@@ -15,12 +15,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        //androidx.core.splashscreen.SplashScreen splashScreen = androidx.core.splashscreen.SplashScreen.installSplashScreen(this);
-
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        /*Intent musicIntent = new Intent(MainActivity.this, MusicService.class);
-        startService(musicIntent);*/
+
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -28,26 +25,23 @@ public class MainActivity extends BaseActivity {
             return insets;
         });
 
-        /*Button button = findViewById(R.id.RegisBtn);
+        Button button = findViewById(R.id.jugarBtn);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,RegisActivity.class);
+                Intent intent = new Intent(MainActivity.this,WelcomeActivity.class);
                 startActivity(intent);
             }
         });
 
-        Button button2 = findViewById(R.id.AuthBtn);
+        Button button2 = findViewById(R.id.perfilBtn);
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,AuthActivity.class);
+                Intent intent = new Intent(MainActivity.this,PerfilActivity.class);
                 startActivity(intent);
             }
-        });*/
-
-
-
+        });
 
     }
 }
