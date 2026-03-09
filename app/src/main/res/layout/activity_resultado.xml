@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient">
+
+    <ImageView
+        android:id="@+id/img_logo_resultado"
+        android:layout_width="180dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/lettering_quizmillion"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_banner_mensaje"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="#00C853"
+        android:gravity="center"
+        android:paddingVertical="12dp"
+        android:text="¡Enhorabuena!"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/img_logo_resultado" />
+
+    <ImageView
+        android:id="@+id/img_cromo_premio"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginVertical="20dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/cromo_1500"
+        app:layout_constraintBottom_toTopOf="@id/layout_botones_final"
+        app:layout_constraintTop_toBottomOf="@id/tv_banner_mensaje" />
+
+    <LinearLayout
+        android:id="@+id/layout_botones_final"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="50dp"
+        android:paddingBottom="40dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ver_puntuaciones"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:text="Ver puntuaciones"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="@color/white"
+            app:strokeColor="@color/white"
+            app:cornerRadius="25dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_menu_principal"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="12dp"
+            android:text="Menú principal"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="@color/white"
+            app:strokeColor="@color/white"
+            app:cornerRadius="25dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -274,7 +274,21 @@
             android:id="@+id/tv_texto_transicion_titulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NIVEL 5"
+            android:text="NIVEL"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_texto_transicion_premio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/tv_texto_transicion_mensaje"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Juegas por"
             android:textColor="@color/white"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -290,13 +304,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/poppinsbold"
-            android:text="5.000€"
+            android:text="0€"
             android:textColor="#FFD700"
             android:textSize="48sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_texto_transicion_titulo" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_texto_transicion_mensaje" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

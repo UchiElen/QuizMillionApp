@@ -57,7 +57,7 @@ public class PreguntasActivity extends AppCompatActivity {
 
     // Capa de transición
     private androidx.constraintlayout.widget.ConstraintLayout layoutTransicion;
-    private TextView tvTransicionTitulo, tvTransicionPremio;
+    private TextView tvTransicionTitulo,tvTransicionMensaje, tvTransicionPremio;
 
     private ProgressBar pbProgreso;
     private TextView tvPremioActual;
@@ -83,6 +83,7 @@ public class PreguntasActivity extends AppCompatActivity {
         // Enlace de capa de transición
         layoutTransicion = findViewById(R.id.layout_transicion_nivel);
         tvTransicionTitulo = findViewById(R.id.tv_texto_transicion_titulo);
+        tvTransicionMensaje = findViewById(R.id.tv_texto_transicion_mensaje);
         tvTransicionPremio = findViewById(R.id.tv_texto_transicion_premio);
 
         // Enlace de botones de respuesta
@@ -224,6 +225,7 @@ public class PreguntasActivity extends AppCompatActivity {
         }
 
         tvTransicionTitulo.setText("NIVEL " + nivelActual);
+        tvTransicionMensaje.setText("Juegas por");
         tvTransicionPremio.setText(escalaPremios[nivelActual] + "€");
 
         layoutTransicion.setVisibility(View.VISIBLE);
