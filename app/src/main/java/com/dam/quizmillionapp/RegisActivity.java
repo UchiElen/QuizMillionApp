@@ -60,6 +60,12 @@ public class RegisActivity extends BaseActivity {
             public void onClick(View v) {
                 String email = emailTI.getText().toString().trim();
                 String contrasena = contraTI.getText().toString().trim();
+                String nombre = nombreTI.getText().toString().trim();
+
+                if (TextUtils.isEmpty(nombre)) {
+                    nombreTI.setError("Se requiere un email.");
+                    return;
+                }
 
                 if (TextUtils.isEmpty(email)) {
                     emailTI.setError("Se requiere un email.");

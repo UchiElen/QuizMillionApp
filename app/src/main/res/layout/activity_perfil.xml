@@ -180,17 +180,18 @@
         app:strokeColor="@color/white" />
 
     <Button
-        android:id="@+id/authBtn"
+        android:id="@+id/logoutBtn"
         android:layout_width="274dp"
         android:layout_height="53dp"
         android:layout_marginStart="68dp"
         android:layout_marginTop="17dp"
         android:layout_marginEnd="69dp"
+        android:onClick="logout"
         android:text="@string/cerrar_sesion"
         android:textColor="@color/white"
         android:textSize="17sp"
-        app:cornerRadius="15dp"
         app:backgroundTint="@color/colorError"
+        app:cornerRadius="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

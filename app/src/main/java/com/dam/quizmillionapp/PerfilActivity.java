@@ -1,13 +1,19 @@
 package com.dam.quizmillionapp;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class PerfilActivity extends BaseActivity {
@@ -33,8 +39,13 @@ public class PerfilActivity extends BaseActivity {
 
         String emailLogueado = fAuth.getCurrentUser().getEmail();
         emailTI.setText(emailLogueado);
-
-
-
     }
+    public void logout (View view) {
+        FirebaseAuth.getInstance().signOut();
+        Toast.makeText(PerfilActivity.this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(PerfilActivity.this, AuthActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 }
