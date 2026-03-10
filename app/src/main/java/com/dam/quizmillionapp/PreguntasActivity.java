@@ -47,7 +47,6 @@ public class PreguntasActivity extends AppCompatActivity {
     private boolean usado50 = false;
     private boolean usadoPublico = false;
     private boolean usadoLlamada = false;
-    private boolean musicaEncendida = true;
 
     private List<Pregunta> listaPreguntasNivel = new ArrayList<>();
     private Pregunta preguntaActual;
@@ -67,7 +66,7 @@ public class PreguntasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preguntas);
 
-        // Enlace de vistas
+        // Enlace de vistas (IMPORTANTE: Primero enlazamos, luego usamos)
         progressLoader = findViewById(R.id.progress_loader);
         tvCronometro = findViewById(R.id.tv_cronometro);
         tvEnunciado = findViewById(R.id.tv_enunciado);
@@ -76,6 +75,10 @@ public class PreguntasActivity extends AppCompatActivity {
         btnAbandonar = findViewById(R.id.btn_abandonar);
         btnMusica = findViewById(R.id.btn_musica);
         btnPlantarse = findViewById(R.id.btn_plantarse);
+
+        // Configurar icono inicial según el estado global de la música
+        btnMusica.setImageResource(VaribablesGlobales.musicaActivada ?
+                R.drawable.ic_music_on : R.drawable.ic_music_off);
 
         layoutTransicion = findViewById(R.id.layout_transicion_nivel);
         tvTransicionTitulo = findViewById(R.id.tv_texto_transicion_titulo);
@@ -138,7 +141,6 @@ public class PreguntasActivity extends AppCompatActivity {
         }
         preguntaActual = listaPreguntasNivel.get(indicePregunta);
 
-        // RESET UI: Mostramos el botón de plantarse para la nueva pregunta
         btnPlantarse.setVisibility(View.VISIBLE);
 
         for (MaterialButton btn : btnOpciones) {
@@ -185,7 +187,6 @@ public class PreguntasActivity extends AppCompatActivity {
     }
 
     private void validarRespuesta(int seleccionado) {
-        // ACCIÓN: Ocultamos el botón plantarse al responder (INVISIBLE para no mover el layout)
         btnPlantarse.setVisibility(View.INVISIBLE);
 
         if (seleccionado == preguntaActual.correcta) {
@@ -240,7 +241,7 @@ public class PreguntasActivity extends AppCompatActivity {
                 else tvCronometro.setTextColor(Color.WHITE);
             }
             public void onFinish() {
-                btnPlantarse.setVisibility(View.INVISIBLE); // También al acabar el tiempo
+                btnPlantarse.setVisibility(View.INVISIBLE);
                 tvCronometro.setText("0");
                 btnOpciones[preguntaActual.correcta].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
                 actualizarFallos();
@@ -266,9 +267,8 @@ public class PreguntasActivity extends AppCompatActivity {
     }
 
     private void mensajePlantarse() {
-        // Ponemos el botón en amarillo al pulsar
-        btnPlantarse.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFC107"))); // Amarillo Ámbar
-        btnPlantarse.setTextColor(Color.BLACK); // Cambiamos el texto a negro para que contraste bien
+        btnPlantarse.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFC107")));
+        btnPlantarse.setTextColor(Color.BLACK);
 
         int nivelParaEnviar = nivelActual - 1;
         int dinero = (nivelActual > 1) ? escalaPremios[nivelActual - 1] : 0;
@@ -276,13 +276,12 @@ public class PreguntasActivity extends AppCompatActivity {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("¿Te plantas?")
                 .setMessage("Tu premio acumulado es de " + dinero + " €")
-                .setCancelable(false) // Evita que se cierre si tocan fuera
+                .setCancelable(false)
                 .setPositiveButton("Si, estoy seguro", (dialog, which) -> {
                     if (reloj != null) reloj.cancel();
                     irAResultados(nivelParaEnviar);
                 })
                 .setNegativeButton("Me lo he pensado mejor, continuo", (dialog, which) -> {
-                    // Restauramos el color original (Transparente con borde blanco)
                     btnPlantarse.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
                     btnPlantarse.setTextColor(Color.WHITE);
                     dialog.dismiss();
@@ -313,8 +312,19 @@ public class PreguntasActivity extends AppCompatActivity {
     }
 
     private void toggleMusica() {
-        musicaEncendida = !musicaEncendida;
-        btnMusica.setImageResource(musicaEncendida ? R.drawable.ic_music_on : R.drawable.ic_music_off);
+        VaribablesGlobales.musicaActivada = !VaribablesGlobales.musicaActivada;
+
+        Intent intent = new Intent(this, MusicService.class);
+
+        if (VaribablesGlobales.musicaActivada) {
+            intent.setAction(MusicService.ACTION_PLAY);
+            btnMusica.setImageResource(R.drawable.ic_music_on);
+        } else {
+            intent.setAction(MusicService.ACTION_PAUSE);
+            btnMusica.setImageResource(R.drawable.ic_music_off);
+        }
+
+        startService(intent);
     }
 
     private String convertirUrlDrive(String url) {
