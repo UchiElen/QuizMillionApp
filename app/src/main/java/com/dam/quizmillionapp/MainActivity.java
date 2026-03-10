@@ -20,6 +20,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         Intent musicIntent = new Intent(MainActivity.this, MusicService.class);
+        musicIntent.setAction("ACTION_PLAY");
         startService(musicIntent);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

@@ -15,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.dam.quizmillionapp.BaseActivity;
+import com.dam.quizmillionapp.MusicService;
+import com.dam.quizmillionapp.MainActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -73,12 +75,12 @@ public class PreguntasActivity extends AppCompatActivity {
         tvFallos = findViewById(R.id.tv_fallos);
         imgPregunta = findViewById(R.id.img_pregunta);
         btnAbandonar = findViewById(R.id.btn_abandonar);
-        btnMusica = findViewById(R.id.btn_musica);
         btnPlantarse = findViewById(R.id.btn_plantarse);
 
         // Configurar icono inicial según el estado global de la música
-        btnMusica.setImageResource(VaribablesGlobales.musicaActivada ?
-                R.drawable.ic_music_on : R.drawable.ic_music_off);
+        // 1. PRIMERO: Enlazar la vista
+        btnMusica = findViewById(R.id.btn_musica);
+        // 2. SEGUNDO: Aplicar el icono heredado del estado global
 
         layoutTransicion = findViewById(R.id.layout_transicion_nivel);
         tvTransicionTitulo = findViewById(R.id.tv_texto_transicion_titulo);
@@ -311,20 +313,8 @@ public class PreguntasActivity extends AppCompatActivity {
         for (MaterialButton btn : btnOpciones) btn.setVisibility(View.INVISIBLE);
     }
 
-    private void toggleMusica() {
-        VaribablesGlobales.musicaActivada = !VaribablesGlobales.musicaActivada;
+    public void toggleMusica() {
 
-        Intent intent = new Intent(this, MusicService.class);
-
-        if (VaribablesGlobales.musicaActivada) {
-            intent.setAction(MusicService.ACTION_PLAY);
-            btnMusica.setImageResource(R.drawable.ic_music_on);
-        } else {
-            intent.setAction(MusicService.ACTION_PAUSE);
-            btnMusica.setImageResource(R.drawable.ic_music_off);
-        }
-
-        startService(intent);
     }
 
     private String convertirUrlDrive(String url) {
