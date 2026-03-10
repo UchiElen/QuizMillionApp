@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting">
+
         <activity
             android:name=".ResultadoActivity"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
             android:exported="false" />
         <activity
             android:name=".TransicionTemporal"

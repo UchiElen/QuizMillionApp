@@ -36,12 +36,10 @@ public class PreguntasActivity extends AppCompatActivity {
     private ImageView imgPregunta;
     private MaterialButton[] btnOpciones = new MaterialButton[4];
 
-    // Botones de comodines
     private ImageButton btn50, btnPublico, btnLlamada;
-
-    // Nuevos controles superiores
     private ImageButton btnMusica, btnAbandonar;
     private MaterialButton btnPlantarse;
+
     private int contadorFallos = 0;
     private int nivelActual = 1;
     private int indicePregunta = 0;
@@ -56,9 +54,8 @@ public class PreguntasActivity extends AppCompatActivity {
     private CountDownTimer reloj;
     private FirebaseFirestore db;
 
-    // Capa de transición
     private androidx.constraintlayout.widget.ConstraintLayout layoutTransicion;
-    private TextView tvTransicionTitulo,tvTransicionMensaje, tvTransicionPremio;
+    private TextView tvTransicionTitulo, tvTransicionMensaje, tvTransicionPremio;
 
     private ProgressBar pbProgreso;
     private TextView tvPremioActual;
@@ -70,32 +67,26 @@ public class PreguntasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preguntas);
 
-        // Enlace de vistas principales
+        // Enlace de vistas
         progressLoader = findViewById(R.id.progress_loader);
         tvCronometro = findViewById(R.id.tv_cronometro);
         tvEnunciado = findViewById(R.id.tv_enunciado);
         tvFallos = findViewById(R.id.tv_fallos);
         imgPregunta = findViewById(R.id.img_pregunta);
-
-        // Enlace de controles superiores
         btnAbandonar = findViewById(R.id.btn_abandonar);
         btnMusica = findViewById(R.id.btn_musica);
         btnPlantarse = findViewById(R.id.btn_plantarse);
-        btnPlantarse.setOnClickListener(v -> mensajePlantarse());
 
-        // Enlace de capa de transición
         layoutTransicion = findViewById(R.id.layout_transicion_nivel);
         tvTransicionTitulo = findViewById(R.id.tv_texto_transicion_titulo);
         tvTransicionMensaje = findViewById(R.id.tv_texto_transicion_mensaje);
         tvTransicionPremio = findViewById(R.id.tv_texto_transicion_premio);
 
-        // Enlace de botones de respuesta
         btnOpciones[0] = findViewById(R.id.btn_opcion_1);
         btnOpciones[1] = findViewById(R.id.btn_opcion_2);
         btnOpciones[2] = findViewById(R.id.btn_opcion_3);
         btnOpciones[3] = findViewById(R.id.btn_opcion_4);
 
-        // Enlace de botones de comodines
         btn50 = findViewById(R.id.btn_50);
         btnPublico = findViewById(R.id.btn_publico);
         btnLlamada = findViewById(R.id.btn_llamada);
@@ -105,6 +96,7 @@ public class PreguntasActivity extends AppCompatActivity {
         pbProgreso.setMax(15);
 
         // Listeners
+        btnPlantarse.setOnClickListener(v -> mensajePlantarse());
         btnAbandonar.setOnClickListener(v -> mensajeAbandonar());
         btnMusica.setOnClickListener(v -> toggleMusica());
         btn50.setOnClickListener(v -> comodin50());
@@ -117,13 +109,10 @@ public class PreguntasActivity extends AppCompatActivity {
         }
 
         db = FirebaseFirestore.getInstance();
-
-        // Iniciamos con la transición del Nivel 1
         mostrarTransicionYNivel();
     }
 
     private void cargarNivelCompleto() {
-        // No mostramos el loader aquí porque ya tenemos la capa de transición tapando
         db.collection("preguntas")
                 .whereEqualTo("nivel", nivelActual)
                 .get()
@@ -135,10 +124,9 @@ public class PreguntasActivity extends AppCompatActivity {
                         }
                         Collections.shuffle(listaPreguntasNivel);
                         indicePregunta = 0;
-                        // Preparamos los datos, pero no iniciamos reloj hasta que la transición acabe
                         prepararDatosPregunta();
                     } else {
-                        Toast.makeText(this, "Error: No hay preguntas en nivel " + nivelActual, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error cargando preguntas", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -150,7 +138,9 @@ public class PreguntasActivity extends AppCompatActivity {
         }
         preguntaActual = listaPreguntasNivel.get(indicePregunta);
 
-        // Reset de la UI de los botones (Se mantiene texto blanco por defecto)
+        // RESET UI: Mostramos el botón de plantarse para la nueva pregunta
+        btnPlantarse.setVisibility(View.VISIBLE);
+
         for (MaterialButton btn : btnOpciones) {
             btn.setVisibility(View.VISIBLE);
             btn.setEnabled(true);
@@ -168,11 +158,9 @@ public class PreguntasActivity extends AppCompatActivity {
 
     private void mostrarSiguientePregunta() {
         tvEnunciado.setVisibility(View.VISIBLE);
-
         if (preguntaActual.imagen != null && !preguntaActual.imagen.isEmpty()) {
             imgPregunta.setVisibility(View.VISIBLE);
-            progressLoader.setVisibility(View.VISIBLE); // Loader pequeño interno mientras Glide descarga
-
+            progressLoader.setVisibility(View.VISIBLE);
             Glide.with(this)
                     .load(convertirUrlDrive(preguntaActual.imagen))
                     .listener(new RequestListener<Drawable>() {
@@ -182,11 +170,10 @@ public class PreguntasActivity extends AppCompatActivity {
                             iniciarReloj();
                             return false;
                         }
-
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             progressLoader.setVisibility(View.GONE);
-                            iniciarReloj(); // EL TIEMPO EMPIEZA CUANDO LA IMAGEN ESTÁ LISTA
+                            iniciarReloj();
                             return false;
                         }
                     })
@@ -198,23 +185,26 @@ public class PreguntasActivity extends AppCompatActivity {
     }
 
     private void validarRespuesta(int seleccionado) {
-        if (seleccionado == preguntaActual.correcta) {            if (reloj != null) reloj.cancel();
+        // ACCIÓN: Ocultamos el botón plantarse al responder (INVISIBLE para no mover el layout)
+        btnPlantarse.setVisibility(View.INVISIBLE);
+
+        if (seleccionado == preguntaActual.correcta) {
+            if (reloj != null) reloj.cancel();
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
             btnOpciones[seleccionado].setTextColor(Color.WHITE);
 
-            if (nivelActual > 15) {
-                // ¡HA GANADO EL MILLÓN!
-                irAResultados(escalaPremios[15]);
-            } else if (nivelActual <= 15) {
-                pbProgreso.setProgress(nivelActual);
-                tvPremioActual.setText("NIVEL " + nivelActual + " > Premio acumulado: " + escalaPremios[nivelActual] + " €");
-
-                if (nivelActual == 5) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.GREEN));
-                if (nivelActual == 10) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.RED));
+            if (nivelActual == 15) {
+                new Handler().postDelayed(() -> irAResultados(15), 1500);
+                return;
             }
 
+            pbProgreso.setProgress(nivelActual);
+            tvPremioActual.setText("NIVEL " + nivelActual + " > Premio: " + escalaPremios[nivelActual] + " €");
+
+            if (nivelActual == 5) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.GREEN));
+            if (nivelActual == 10) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.RED));
+
             nivelActual++;
-            // Lanzamos transición del siguiente nivel tras el color verde de acierto
             new Handler().postDelayed(this::mostrarTransicionYNivel, 1500);
         } else {
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
@@ -225,25 +215,18 @@ public class PreguntasActivity extends AppCompatActivity {
     }
 
     private void mostrarTransicionYNivel() {
-        if (nivelActual > 15) {
-            Toast.makeText(this, "¡ERES MILLONARIO!", Toast.LENGTH_LONG).show();
-            return;
-        }
-
         tvTransicionTitulo.setText("NIVEL " + nivelActual);
         tvTransicionMensaje.setText("Juegas por");
         tvTransicionPremio.setText(escalaPremios[nivelActual] + "€");
-
         layoutTransicion.setVisibility(View.VISIBLE);
         layoutTransicion.setAlpha(1.0f);
 
-        // Cargamos nivel de Firebase mientras el usuario ve el premio
         cargarNivelCompleto();
 
         new Handler().postDelayed(() -> {
             layoutTransicion.animate().alpha(0.0f).setDuration(500).withEndAction(() -> {
                 layoutTransicion.setVisibility(View.GONE);
-                mostrarSiguientePregunta(); // Ahora sí, mostramos la pregunta cargada
+                mostrarSiguientePregunta();
             });
         }, 2000);
     }
@@ -257,9 +240,9 @@ public class PreguntasActivity extends AppCompatActivity {
                 else tvCronometro.setTextColor(Color.WHITE);
             }
             public void onFinish() {
+                btnPlantarse.setVisibility(View.INVISIBLE); // También al acabar el tiempo
                 tvCronometro.setText("0");
                 btnOpciones[preguntaActual.correcta].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
-                btnOpciones[preguntaActual.correcta].setTextColor(Color.WHITE);
                 actualizarFallos();
                 if (contadorFallos < 3) {
                     indicePregunta++;
@@ -272,44 +255,66 @@ public class PreguntasActivity extends AppCompatActivity {
         }.start();
     }
 
-    private void mensajeAbandonar() {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("¿Deseas plantarte?")
-                .setMessage("Si te plantas ahora te llevarás: " + escalaPremios[nivelActual - 1] + "€")
-                .setPositiveButton("Sí, me planto", (dialog, which) -> {
-                    if (reloj != null) reloj.cancel();
-                    irAResultados(escalaPremios[nivelActual - 1]); // Se lleva lo acumulado
-                })
-                .setNegativeButton("Seguir jugando", null)
-                .show();
-    }
-
-    private void toggleMusica() {
-        musicaEncendida = !musicaEncendida;
-        btnMusica.setImageResource(musicaEncendida ? R.drawable.ic_music_on : R.drawable.ic_music_off);
-        // Aquí es donde conectarás con tu MediaPlayer cuando lo tengas listo
-    }
-
     private void actualizarFallos() {
         contadorFallos++;
         tvFallos.setText("Fallos: " + contadorFallos + "/3");
-
         if (contadorFallos >= 3) {
             if (reloj != null) reloj.cancel();
-
-            // Lógica de premio de consolación (ejemplo: si cae en el nivel 7, se lleva el del 5)
-            int premioConsolacion = 0;
-            if (nivelActual >= 10) premioConsolacion = escalaPremios[10];
-            else if (nivelActual >= 5) premioConsolacion = escalaPremios[5];
-
+            int premioConsolacion = (nivelActual >= 10) ? 10 : (nivelActual >= 5 ? 5 : 0);
             irAResultados(premioConsolacion);
         }
+    }
+
+    private void mensajePlantarse() {
+        // Ponemos el botón en amarillo al pulsar
+        btnPlantarse.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFC107"))); // Amarillo Ámbar
+        btnPlantarse.setTextColor(Color.BLACK); // Cambiamos el texto a negro para que contraste bien
+
+        int nivelParaEnviar = nivelActual - 1;
+        int dinero = (nivelActual > 1) ? escalaPremios[nivelActual - 1] : 0;
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("¿Te plantas?")
+                .setMessage("Tu premio acumulado es de " + dinero + " €")
+                .setCancelable(false) // Evita que se cierre si tocan fuera
+                .setPositiveButton("Si, estoy seguro", (dialog, which) -> {
+                    if (reloj != null) reloj.cancel();
+                    irAResultados(nivelParaEnviar);
+                })
+                .setNegativeButton("Me lo he pensado mejor, continuo", (dialog, which) -> {
+                    // Restauramos el color original (Transparente con borde blanco)
+                    btnPlantarse.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+                    btnPlantarse.setTextColor(Color.WHITE);
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    private void irAResultados(int nivel) {
+        Intent intent = new Intent(this, ResultadoActivity.class);
+        intent.putExtra("NIVEL_ALCANZADO", nivel);
+        startActivity(intent);
+        finish();
+    }
+
+    private void mensajeAbandonar() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Salir")
+                .setMessage("¿Seguro que quieres salir? Perderás el progreso.")
+                .setPositiveButton("Salir", (d, w) -> finish())
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void ocultarElementosParaCarga() {
         tvEnunciado.setVisibility(View.INVISIBLE);
         imgPregunta.setVisibility(View.INVISIBLE);
         for (MaterialButton btn : btnOpciones) btn.setVisibility(View.INVISIBLE);
+    }
+
+    private void toggleMusica() {
+        musicaEncendida = !musicaEncendida;
+        btnMusica.setImageResource(musicaEncendida ? R.drawable.ic_music_on : R.drawable.ic_music_off);
     }
 
     private String convertirUrlDrive(String url) {
@@ -325,9 +330,8 @@ public class PreguntasActivity extends AppCompatActivity {
         v.setAlpha(0.3f);
     }
 
-    // --- MÉTODOS DE COMODINES (RESIDUOS DE LOGICA ANTERIOR MANTENIDOS) ---
     private void comodin50() {
-        if (usado50 || preguntaActual == null || preguntaActual.comodin_50 == null) return;
+        if (usado50 || preguntaActual == null) return;
         usado50 = true;
         desactivaBotonComodin(btn50);
         for (int i = 0; i < 4; i++) {
@@ -345,44 +349,17 @@ public class PreguntasActivity extends AppCompatActivity {
         if (usadoPublico || preguntaActual == null) return;
         usadoPublico = true;
         desactivaBotonComodin(btnPublico);
-        int sugerencia = preguntaActual.comodin_publico;
-        btnOpciones[sugerencia].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
-        btnOpciones[sugerencia].setTextColor(Color.BLACK);
-        Toast.makeText(this, "El público vota la opción " + (sugerencia + 1), Toast.LENGTH_SHORT).show();
+        int sug = preguntaActual.comodin_publico;
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
+        Toast.makeText(this, "El público dice la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 
     private void comodinLlamada() {
         if (usadoLlamada || preguntaActual == null) return;
         usadoLlamada = true;
         desactivaBotonComodin(btnLlamada);
-        int sugerencia = preguntaActual.comodin_llamada;
-        btnOpciones[sugerencia].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
-        btnOpciones[sugerencia].setTextColor(Color.BLACK);
-        Toast.makeText(this, "Tu amigo sugiere la opción " + (sugerencia + 1), Toast.LENGTH_SHORT).show();
-    }
-
-    private void mensajePlantarse() {
-        // Si nivelActual es 1, el premio es 0. Si es 5, se lleva el premio del nivel 4.
-        int premioActual = (nivelActual > 1) ? escalaPremios[nivelActual - 1] : 0;
-
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("¿Deseas plantarte?")
-                .setMessage("Si te plantas ahora, el juego termina y te llevas:\n\n" + premioActual + " €")
-                .setCancelable(false)
-                .setPositiveButton("SÍ, ME PLANTO", (dialog, which) -> {
-                    if (reloj != null) reloj.cancel();
-                    irAResultados(premioActual); // Enviamos el dinero a la pantalla del PDF
-                })
-                .setNegativeButton("SEGUIR JUGANDO", (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .show();
-    }
-
-    private void irAResultados(int money) {
-        Intent intent = new Intent(PreguntasActivity.this, ResultadoActivity.class);
-        intent.putExtra("PREMIO", money); // Aquí mandamos el dato que leerá el switch de la otra pantalla
-        startActivity(intent);
-        finish(); // Importante: cerramos la partida para que no pueda volver atrás
+        int sug = preguntaActual.comodin_llamada;
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
+        Toast.makeText(this, "Tu amigo cree que es la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 }

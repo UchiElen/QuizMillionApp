@@ -1,97 +1,149 @@
 package com.dam.quizmillionapp;
 
-import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import androidx.annotation.Nullable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import android.view.View;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.widget.Button;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class ResultadoActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
-    private TextView tvBanner;
-    private ImageView imgCromo;
-    private Button btnMenuPrincipal, btnPuntuaciones;
+    private TextView tvBanner, tvMensaje;
+    private ImageView imgPremio;
+
+    private ConstraintLayout layoutCarga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resultado);
 
-        // 1. Inicializar vistas
+        // Enlaces con el XML
         tvBanner = findViewById(R.id.tv_banner_mensaje);
-        imgCromo = findViewById(R.id.img_premio);
-        btnMenuPrincipal = findViewById(R.id.btn_menu_principal);
-        btnPuntuaciones = findViewById(R.id.btn_ver_puntuaciones);
+        tvMensaje = findViewById(R.id.tv_frase_graciosa);
+        imgPremio = findViewById(R.id.img_premio);
+        layoutCarga = findViewById(R.id.layout_carga);
 
-        // 2. Inicializar Firebase
         db = FirebaseFirestore.getInstance();
 
-        // 3. Obtener el premio que viene de la partida
-        int premioConseguido = getIntent().getIntExtra("PREMIO", 0);
+        // Recuperamos el nivel enviado (0 a 15)
+        int nivel = getIntent().getIntExtra("NIVEL_ALCANZADO", 0);
 
-        // 4. Cargar datos desde Firebase
-        cargarDatosPremio(premioConseguido);
+        // Llamada a la base de datos
+        consultarPremio(nivel);
 
-        // 5. Configurar botones
-        btnMenuPrincipal.setOnClickListener(v -> {
-            Intent intent = new Intent(ResultadoActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
-        });
-
-        btnPuntuaciones.setOnClickListener(v -> {
-            // Aquí iría tu Intent a la pantalla de Ranking/Puntuaciones
-            Toast.makeText(this, "Cargando Ranking...", Toast.LENGTH_SHORT).show();
-        });
+        // Botón para salir
+        findViewById(R.id.btn_menu_principal).setOnClickListener(v -> finish());
     }
 
-    private void cargarDatosPremio(int cifra) {
-        // Consultamos el documento que tiene como ID el valor del premio (ej: "1500")
-        db.collection("premios").document(String.valueOf(cifra))
+    private void consultarPremio(int nivelAlcanzado) {
+        db.collection("premios")
+                .whereEqualTo("nivel", nivelAlcanzado)
                 .get()
-                .addOnSuccessListener(document -> {
-                    if (document.exists()) {
-                        // Extraemos los datos de Firebase
-                        String titulo = document.getString("titulo");
-                        String colorHex = document.getString("colorHex");
-                        String urlImagen = document.getString("imagenUrl");
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
-                        // Aplicamos los textos y colores
-                        tvBanner.setText(titulo != null ? titulo : "¡BIEN JUGADO!");
-                        if (colorHex != null) {
-                            tvBanner.setBackgroundColor(Color.parseColor(colorHex));
+                            // 1. Extraer datos...
+                            String titulo = doc.getString("titulo");
+                            String colorHex = doc.getString("banner");
+                            String mensaje = doc.getString("mensaje");
+                            String urlDrive = doc.getString("img");
+
+                            // 2. Aplicar textos y color (Esto no tarda)
+                            tvBanner.setText(titulo);
+                            tvMensaje.setText(mensaje);
+                            try {
+                                tvBanner.setBackgroundColor(Color.parseColor(colorHex));
+                            } catch (Exception e) {
+                                tvBanner.setBackgroundColor(Color.RED);
+                            }
+
+                            // 3. CARGA CON GLIDE CON TRANSICIÓN (Igual que en preguntas)
+                            if (urlDrive != null && !urlDrive.isEmpty()) {
+                                Glide.with(this)
+                                        .load(convertirUrlDrive(urlDrive))
+                                        .listener(new RequestListener<Drawable>() {
+                                            @Override
+                                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                                // Si falla, quitamos la cortina para no bloquear
+                                                ocultarCargaConAnimacion();
+                                                Toast.makeText(ResultadoActivity.this, "Error cargando cromo", Toast.LENGTH_SHORT).show();
+                                                return false; // Dejar que Glide muestre el error() si tienes
+                                            }
+
+                                            @Override
+                                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                                // ¡IMAGEN LISTA! Quitamos la cortina
+                                                ocultarCargaConAnimacion();
+                                                return false; // Dejar que Glide muestre la imagen
+                                            }
+                                        })
+                                        .into(imgPremio);
+                            } else {
+                                // Si no hay imagen, quitamos la carga directamente
+                                ocultarCargaConAnimacion();
+                            }
                         }
-
-                        // Cargamos la imagen con Glide
-                        Glide.with(this)
-                                .load(urlImagen)
-                                .placeholder(android.R.drawable.progress_horizontal) // Icono mientras carga
-                                .error(R.drawable.cromo_0) // Imagen por defecto si falla
-                                .into(imgCromo);
-
                     } else {
-                        // Caso por defecto si no existe el premio en la BBDD
-                        configurarVistaError();
+                        // Si el nivel no existe, quitamos la carga y mostramos el error
+                        ocultarCargaConAnimacion();
+                        tvBanner.setText("NIVEL " + nivelAlcanzado + " NO ENCONTRADO");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    configurarVistaError();
-                    Toast.makeText(this, "Error al conectar con la base de datos", Toast.LENGTH_SHORT).show();
+                    ocultarCargaConAnimacion();
+                    Toast.makeText(this, "Error de red", Toast.LENGTH_SHORT).show();
                 });
     }
 
-    private void configurarVistaError() {
-        tvBanner.setText("¡FIN DEL JUEGO!");
-        tvBanner.setBackgroundColor(Color.parseColor("#444444"));
-        imgCromo.setImageResource(R.drawable.cromo_0); // Imagen local de reserva
+    // NUEVO MÉTODO PARA HACER EL EFECTO DE DESVANECIDO
+    private void ocultarCargaConAnimacion() {
+        layoutCarga.animate()
+                .alpha(0.0f) // Se vuelve transparente
+                .setDuration(500) // Tarda medio segundo
+                .withEndAction(() -> layoutCarga.setVisibility(View.GONE)) // Y luego desaparece
+                .start();
+    }
+
+    private String convertirUrlDrive(String url) {
+        if (url == null || url.isEmpty()) return "";
+        try {
+            String fileId = "";
+            if (url.contains("/d/")) {
+                fileId = url.split("/d/")[1].split("/")[0];
+            } else if (url.contains("id=")) {
+                fileId = url.split("id=")[1].split("&")[0];
+            }
+            // Este es el formato de descarga directa que NUNCA falla si el archivo es público
+            return "https://drive.google.com/uc?export=download&id=" + fileId;
+        } catch (Exception e) {
+            return url;
+        }
     }
 }
