@@ -143,10 +143,12 @@ public class PreguntasActivity extends AppCompatActivity {
         }
         preguntaActual = listaPreguntasNivel.get(indicePregunta);
 
+        // IMPORTANTE: Asegurar que el enunciado y las opciones vuelvan a ser visibles
+        tvEnunciado.setVisibility(View.VISIBLE);
         btnPlantarse.setVisibility(View.VISIBLE);
 
         for (MaterialButton btn : btnOpciones) {
-            btn.setVisibility(View.VISIBLE);
+            btn.setVisibility(View.VISIBLE); // <--- ESTO ES CLAVE
             btn.setEnabled(true);
             btn.setAlpha(1.0f);
             btn.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
@@ -219,8 +221,18 @@ public class PreguntasActivity extends AppCompatActivity {
 
     private void mostrarTransicionYNivel() {
         tvTransicionTitulo.setText("NIVEL " + nivelActual);
-        tvTransicionMensaje.setText("Juegas por");
+
+        // Personalizamos el mensaje si es un nivel de "seguro"
+        if (nivelActual == 6 || nivelActual == 11) {
+            tvTransicionMensaje.setText("¡HAS LOGRADO UN SEGURO!\n Ahora juegas por :");
+            tvTransicionMensaje.setTextColor(Color.parseColor("#FFC107"));
+        } else {
+            tvTransicionMensaje.setText("Juegas por");
+            tvTransicionMensaje.setTextColor(Color.WHITE); // Color normal
+        }
+
         tvTransicionPremio.setText(escalaPremios[nivelActual] + "€");
+
         layoutTransicion.setVisibility(View.VISIBLE);
         layoutTransicion.setAlpha(1.0f);
 
@@ -245,13 +257,19 @@ public class PreguntasActivity extends AppCompatActivity {
             public void onFinish() {
                 btnPlantarse.setVisibility(View.INVISIBLE);
                 tvCronometro.setText("0");
+
+                // Mostramos la correcta en verde para que el usuario aprenda
                 btnOpciones[preguntaActual.correcta].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+
                 actualizarFallos();
+
+                // Solo si no ha perdido la partida, pasamos a la siguiente
                 if (contadorFallos < 3) {
-                    indicePregunta++;
                     new Handler().postDelayed(() -> {
-                        ocultarElementosParaCarga();
-                        mostrarSiguientePregunta();
+                        ocultarElementosParaCarga(); // Los ocultamos un momento para el efecto de carga
+                        indicePregunta++; // Pasamos a la siguiente pregunta del mismo nivel
+                        prepararDatosPregunta(); // <--- LLAMAR ESTO AQUÍ garantiza que vuelvan a aparecer
+                        mostrarSiguientePregunta(); // Carga la imagen e inicia el reloj
                     }, 1500);
                 }
             }
