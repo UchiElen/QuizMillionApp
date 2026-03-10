@@ -23,5 +23,8 @@
     <string name="editar_perfil">Editar perfil</string>
     <string name="actualizar">Actualizar</string>
     <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="recordar_contrasena">He olvidado mi contraseña</string>
+    <string name="recuperar_contrasena">Recuperar contraseña</string>
+    <string name="intro_email">Introduce tu email:</string>
 
 </resources>
