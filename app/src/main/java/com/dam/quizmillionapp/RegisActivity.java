@@ -3,6 +3,7 @@ package com.dam.quizmillionapp;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -21,12 +22,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,9 +45,11 @@ public class RegisActivity extends BaseActivity {
     ImageButton fotoIB;
     FirebaseFirestore fStore;
     String userID;
+    StorageReference storageReference;
     private androidx.activity.result.ActivityResultLauncher<Intent> galleryLauncher;
     private androidx.activity.result.ActivityResultLauncher<android.net.Uri> cameraLauncher;
     private android.net.Uri cameraUri;
+    private Uri imagenSeleccionadaUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +72,7 @@ public class RegisActivity extends BaseActivity {
         progressBar = findViewById(R.id.progressBar);
         fotoIB = findViewById(R.id.fotoIB);
         fStore = FirebaseFirestore.getInstance();
+        storageReference= FirebaseStorage.getInstance().getReference();
 
 
 
@@ -80,8 +88,13 @@ public class RegisActivity extends BaseActivity {
                 new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
-                        android.net.Uri imageUri = result.getData().getData();
-                        fotoIB.setImageURI(imageUri);
+                        imagenSeleccionadaUri = result.getData().getData();
+
+                        // USAR PICASSO PARA RECORTAR EN CÍRCULO
+                        com.squareup.picasso.Picasso.get()
+                                .load(imagenSeleccionadaUri)
+                                .transform(new CircleTransform()) // Aplicamos el recorte circular
+                                .into(fotoIB);
                     }
                 }
         );
@@ -90,7 +103,11 @@ public class RegisActivity extends BaseActivity {
                 new androidx.activity.result.contract.ActivityResultContracts.TakePicture(),
                 success -> {
                     if (success && cameraUri != null) {
-                        fotoIB.setImageURI(cameraUri);
+                        imagenSeleccionadaUri = cameraUri;
+                        com.squareup.picasso.Picasso.get()
+                                .load(imagenSeleccionadaUri)
+                                .transform(new CircleTransform()) // Aplicamos el recorte circular
+                                .into(fotoIB);
                     }
                 }
         );
@@ -114,6 +131,7 @@ public class RegisActivity extends BaseActivity {
                     }
                 });
                 builder.show();
+
             }
         });
 
@@ -150,23 +168,20 @@ public class RegisActivity extends BaseActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(RegisActivity.this, "Usuario creado.", Toast.LENGTH_SHORT).show();
                             userID = fAuth.getCurrentUser().getUid();
                             DocumentReference documentReference = fStore.collection("usuarios").document(userID);
                             Map<String, Object> user = new HashMap<>();
                             user.put("nombreUsuario", nombre);
                             user.put("email", email);
-                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    Log.d(TAG, "onSuccess: usuario creado para " + userID);
-                                }
-                            });
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            documentReference.set(user);
+                            if (imagenSeleccionadaUri != null) {
+                                uploadImageToFirebase(imagenSeleccionadaUri);
+                            } else {
+                                Toast.makeText(RegisActivity.this, "Usuario creado sin foto.", Toast.LENGTH_SHORT).show();
+                                finalizarRegistro();
+                            }
 
-                        } else {
-                            Toast.makeText(RegisActivity.this, "Error !" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(RegisActivity.this, "Usuario creado correctamente.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -183,5 +198,53 @@ public class RegisActivity extends BaseActivity {
         if (cameraUri != null) {
             cameraLauncher.launch(cameraUri);
         }
+    }
+
+    private void uploadImageToFirebase(Uri imageUri){
+        StorageReference fileRef = storageReference.child("users/" + userID + "/profile.jpg");
+        fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d(TAG, "Imagen subida al storage para el usuario: " + userID);
+                finalizarRegistro();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Fallo al subir imagen: " + e.getMessage());
+                finalizarRegistro();
+            }
+        });
+
+    }
+
+
+    private void finalizarRegistro() {
+        progressBar.setVisibility(View.GONE);
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+    }
+
+    public class CircleTransform implements com.squareup.picasso.Transformation {
+        @Override
+        public android.graphics.Bitmap transform(android.graphics.Bitmap source) {
+            int size = Math.min(source.getWidth(), source.getHeight());
+            int x = (source.getWidth() - size) / 2;
+            int y = (source.getHeight() - size) / 2;
+            android.graphics.Bitmap squaredBitmap = android.graphics.Bitmap.createBitmap(source, x, y, size, size);
+            if (squaredBitmap != source) source.recycle();
+            android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(size, size, source.getConfig());
+            android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+            android.graphics.Paint paint = new android.graphics.Paint();
+            android.graphics.BitmapShader shader = new android.graphics.BitmapShader(squaredBitmap,
+                    android.graphics.Shader.TileMode.CLAMP, android.graphics.Shader.TileMode.CLAMP);
+            paint.setShader(shader);
+            paint.setAntiAlias(true);
+            float r = size / 2f;
+            canvas.drawCircle(r, r, r, paint);
+            squaredBitmap.recycle();
+            return bitmap;
+        }
+        @Override public String key() { return "circle"; }
     }
 }

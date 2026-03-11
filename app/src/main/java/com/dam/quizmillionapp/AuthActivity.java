@@ -49,14 +49,6 @@ public class AuthActivity extends BaseActivity {
         fAuth = FirebaseAuth.getInstance();
         recupTV = findViewById(R.id.recupTV);
 
-        if (fAuth.getCurrentUser() != null) {
-            String emailLogueado = fAuth.getCurrentUser().getEmail();
-            Toast.makeText(AuthActivity.this, "Usuario ya logueado con: " + emailLogueado, Toast.LENGTH_LONG).show();
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
-
-        }
-
         AuthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

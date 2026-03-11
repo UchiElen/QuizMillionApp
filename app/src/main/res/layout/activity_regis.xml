@@ -179,8 +179,8 @@
 
     <ImageButton
         android:id="@+id/fotoIB"
-        android:layout_width="97dp"
-        android:layout_height="98dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_gravity="center"
         android:layout_marginTop="1dp"
         android:background="@drawable/circle_background"
