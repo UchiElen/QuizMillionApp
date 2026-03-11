@@ -90,10 +90,9 @@ public class RegisActivity extends BaseActivity {
                     if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
                         imagenSeleccionadaUri = result.getData().getData();
 
-                        // USAR PICASSO PARA RECORTAR EN CÍRCULO
                         com.squareup.picasso.Picasso.get()
                                 .load(imagenSeleccionadaUri)
-                                .transform(new CircleTransform()) // Aplicamos el recorte circular
+                                .transform(new CircleTransform())
                                 .into(fotoIB);
                     }
                 }
@@ -106,7 +105,7 @@ public class RegisActivity extends BaseActivity {
                         imagenSeleccionadaUri = cameraUri;
                         com.squareup.picasso.Picasso.get()
                                 .load(imagenSeleccionadaUri)
-                                .transform(new CircleTransform()) // Aplicamos el recorte circular
+                                .transform(new CircleTransform())
                                 .into(fotoIB);
                     }
                 }
@@ -177,7 +176,6 @@ public class RegisActivity extends BaseActivity {
                             if (imagenSeleccionadaUri != null) {
                                 uploadImageToFirebase(imagenSeleccionadaUri);
                             } else {
-                                Toast.makeText(RegisActivity.this, "Usuario creado sin foto.", Toast.LENGTH_SHORT).show();
                                 finalizarRegistro();
                             }
 

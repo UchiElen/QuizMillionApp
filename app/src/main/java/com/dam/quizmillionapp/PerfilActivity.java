@@ -6,14 +6,17 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Shader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -38,6 +41,11 @@ public class PerfilActivity extends BaseActivity {
     FirebaseFirestore fStore;
     StorageReference storageReference;
     String userID;
+    Button ActualizarBtn, logoutBtn;
+
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<android.net.Uri> cameraLauncher;
+    private Uri cameraUri, imagenSeleccionadaUri;
 
 
     @Override
@@ -61,36 +69,87 @@ public class PerfilActivity extends BaseActivity {
         fStore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
 
-
-        //String emailLogueado = fAuth.getCurrentUser().getEmail();
-        //emailTI.setText(emailLogueado);
-        //String userID = fAuth.getCurrentUser().getUid();
-
         if (fAuth.getCurrentUser() != null) {
             userID = fAuth.getCurrentUser().getUid();
             cargarDatosUsuario();
         }
+
+        // Configurar Galería
+        galleryLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
+                        imagenSeleccionadaUri = result.getData().getData();
+                        Picasso.get().load(imagenSeleccionadaUri).transform(new CircleTransform()).into(fotoIB);
+                    }
+                }
+        );
+
+// Configurar Cámara
+        cameraLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.TakePicture(),
+                success -> {
+                    if (success && cameraUri != null) {
+                        imagenSeleccionadaUri = cameraUri;
+                        Picasso.get().load(imagenSeleccionadaUri).transform(new CircleTransform()).into(fotoIB);
+                    }
+                }
+        );
+
+        fotoIB.setOnClickListener(v -> mostrarOpcionesFoto());
+
+        ActualizarBtn = findViewById(R.id.ActualizarBtn);
+
+        ActualizarBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String nuevoNombre = nombreTI.getText().toString().trim();
+                String nuevaContra = contraTI.getText().toString().trim();
+
+
+                if (nuevoNombre.isEmpty()) {
+                    nombreTI.setError("El nombre de usuario no puede estar vacío.");
+                    nombreTI.requestFocus();
+                    return;
+                }
+
+                if (nuevoNombre.length() > 20) {
+                    nombreTI.setError("El nombre no puede superar los 20 caracteres.");
+                    nombreTI.requestFocus();
+                    return;
+                }
+
+                if (!nuevoNombre.isEmpty()) {
+                    fStore.collection("usuarios").document(userID).update("nombreUsuario", nuevoNombre);
+                }
+
+                if (imagenSeleccionadaUri != null) {
+                    uploadImageToFirebase(imagenSeleccionadaUri);
+                }
+
+                if (!nuevaContra.isEmpty()) {
+                    if (nuevaContra.length() < 6) {
+                        contraTI.setError("Mínimo 6 caracteres");
+                    } else {
+                        fAuth.getCurrentUser().updatePassword(nuevaContra)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(PerfilActivity.this, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
+                                        contraTI.setText("");
+                                    } else {
+                                        Toast.makeText(PerfilActivity.this, "Cierra e inicia sesión de nuevo para ver los cambios en la contraseña", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+                }
+                Toast.makeText(PerfilActivity.this, "Cambios realizados", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
     }
 
-    /*StorageReference profileRef = storage.getReference().child("users/" + userID + "/profile.jpg");
-
-    profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-        @Override
-        public void onSuccess(Uri uri) {
-            // 4. ¡Aquí entra Picasso!
-            Picasso.get()
-                    .load(uri)
-                    .placeholder(R.drawable.usuario_default) // Imagen mientras carga
-                    .error(R.drawable.error_imagen)         // Imagen si algo falla
-                    .into(perfilIV);
-        }
-    }).addOnFailureListener(new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception e) {
-            Log.e("TAG", "No se pudo obtener la URL: " + e.getMessage());
-            // Aquí podrías poner una imagen por defecto si el usuario no tiene una
-        }
-    });*/
     public void logout (View view) {
         FirebaseAuth.getInstance().signOut();
         Toast.makeText(PerfilActivity.this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
@@ -100,7 +159,6 @@ public class PerfilActivity extends BaseActivity {
     }
 
     private void cargarDatosUsuario() {
-        // --- PARTE 1: TRAER EL NOMBRE DE FIRESTORE ---
         DocumentReference docRef = fStore.collection("usuarios").document(userID);
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -114,7 +172,6 @@ public class PerfilActivity extends BaseActivity {
             Toast.makeText(this, "Error al cargar datos", Toast.LENGTH_SHORT).show();
         });
 
-        // --- PARTE 2: TRAER LA FOTO DE STORAGE CON PICASSO ---
         StorageReference profileRef = storageReference.child("users/" + userID + "/profile.jpg");
 
         profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -149,7 +206,43 @@ public class PerfilActivity extends BaseActivity {
             squaredBitmap.recycle();
             return bitmap;
         }
-        @Override public String key() { return "circle"; }
+
+        @Override
+        public String key() {
+            return "circle";
+        }
+    }
+    private void mostrarOpcionesFoto() {
+        String[] opciones = {"Hacer foto", "Elegir de galería", "Cancelar"};
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Actualizar foto de perfil");
+        builder.setItems(opciones, (dialog, which) -> {
+            if (which == 0) {
+                abrirCamara();
+            } else if (which == 1) {
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                galleryLauncher.launch(intent);
+            } else {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
+    private void abrirCamara() {
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(android.provider.MediaStore.Images.Media.TITLE, "Nueva Foto");
+        cameraUri = getContentResolver().insert(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        cameraLauncher.launch(cameraUri);
+    }
+
+    private void uploadImageToFirebase(android.net.Uri uri) {
+        StorageReference fileRef = storageReference.child("users/" + userID + "/profile.jpg");
+        fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
+            Toast.makeText(PerfilActivity.this, "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(PerfilActivity.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+        });
     }
 
 }
