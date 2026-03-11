@@ -146,6 +146,12 @@ public class RegisActivity extends BaseActivity {
                     return;
                 }
 
+                if (nombre.length() > 20) {
+                    nombreTI.setError("El nombre no puede superar los 20 caracteres.");
+                    nombreTI.requestFocus();
+                    return;
+                }
+
                 if (TextUtils.isEmpty(email)) {
                     emailTI.setError("Se requiere un email.");
                     return;

@@ -46,7 +46,7 @@
                 android:id="@+id/OlvidadoText"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="17dp"
                 android:fontFamily="@font/poppinsbold"
                 android:gravity="center"
                 android:lineSpacingExtra="-10sp"
