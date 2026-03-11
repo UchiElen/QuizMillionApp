@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,9 @@ public class RegisActivity extends BaseActivity {
     ImageButton fotoIB;
     FirebaseFirestore fStore;
     String userID;
+    private androidx.activity.result.ActivityResultLauncher<Intent> galleryLauncher;
+    private androidx.activity.result.ActivityResultLauncher<android.net.Uri> cameraLauncher;
+    private android.net.Uri cameraUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +76,47 @@ public class RegisActivity extends BaseActivity {
 
         }
 
+        galleryLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
+                        android.net.Uri imageUri = result.getData().getData();
+                        fotoIB.setImageURI(imageUri);
+                    }
+                }
+        );
+
+        cameraLauncher = registerForActivityResult(
+                new androidx.activity.result.contract.ActivityResultContracts.TakePicture(),
+                success -> {
+                    if (success && cameraUri != null) {
+                        fotoIB.setImageURI(cameraUri);
+                    }
+                }
+        );
+
+        fotoIB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] opciones = {"Hacer foto", "Elegir de galería", "Cancelar"};
+
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(RegisActivity.this);
+                builder.setTitle("Selecciona una foto");
+                builder.setItems(opciones, (dialog, which) -> {
+                    if (which == 0) {
+                        abrirCamara();
+                    } else if (which == 1) {
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setType("image/*");
+                        galleryLauncher.launch(intent);
+                    } else {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+            }
+        });
+
         AuthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +125,7 @@ public class RegisActivity extends BaseActivity {
                 String nombre = nombreTI.getText().toString().trim();
 
                 if (TextUtils.isEmpty(nombre)) {
-                    nombreTI.setError("Se requiere un email.");
+                    nombreTI.setError("Se requiere un nombre de usuario.");
                     return;
                 }
 
@@ -126,6 +171,17 @@ public class RegisActivity extends BaseActivity {
                     }
                 });
             }
+
         });
+
+    }
+    private void abrirCamara() {
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "Nueva Foto");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "Desde la Cámara");
+        cameraUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        if (cameraUri != null) {
+            cameraLauncher.launch(cameraUri);
+        }
     }
 }
