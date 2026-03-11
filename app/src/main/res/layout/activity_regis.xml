@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
+    android:fitsSystemWindows="true"
     tools:context=".RegisActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -56,7 +57,7 @@
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="16dp"
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
         android:lineSpacingExtra="-10sp"
@@ -65,6 +66,7 @@
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/NomTV"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
