@@ -183,6 +183,7 @@ public class PerfilActivity extends BaseActivity {
                     .load(uri)
                     .placeholder(R.drawable.mascot)
                     .error(R.drawable.mascot)
+                    .rotate(0)
                     .transform(new CircleTransform())
                     .into(fotoIB);
         }).addOnFailureListener(e -> {

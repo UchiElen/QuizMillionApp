@@ -105,6 +105,9 @@ public class RegisActivity extends BaseActivity {
                         imagenSeleccionadaUri = cameraUri;
                         com.squareup.picasso.Picasso.get()
                                 .load(imagenSeleccionadaUri)
+                                .placeholder(R.drawable.mascot)
+                                .error(R.drawable.mascot)
+                                .rotate(0)
                                 .transform(new CircleTransform())
                                 .into(fotoIB);
                     }
