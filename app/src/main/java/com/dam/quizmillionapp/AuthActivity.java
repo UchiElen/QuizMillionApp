@@ -79,6 +79,7 @@ public class AuthActivity extends BaseActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(AuthActivity.this, "Sesión iniciada correctamente.", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
 
                         } else {
                             progressBar.setVisibility(View.GONE);
