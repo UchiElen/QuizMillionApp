@@ -3,37 +3,27 @@ package com.dam.quizmillionapp;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Shader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
+import com.bumptech.glide.Glide;
 
 public class PerfilActivity extends BaseActivity {
 
@@ -82,7 +72,10 @@ public class PerfilActivity extends BaseActivity {
                 result -> {
                     if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
                         imagenSeleccionadaUri = result.getData().getData();
-                        Picasso.get().load(imagenSeleccionadaUri).transform(new CircleTransform()).into(fotoIB);
+                        Glide.with(this)
+                                .load(imagenSeleccionadaUri)
+                                .circleCrop()
+                                .into(fotoIB);
                     }
                 }
         );
@@ -93,7 +86,10 @@ public class PerfilActivity extends BaseActivity {
                 success -> {
                     if (success && cameraUri != null) {
                         imagenSeleccionadaUri = cameraUri;
-                        Picasso.get().load(imagenSeleccionadaUri).transform(new CircleTransform()).into(fotoIB);
+                        Glide.with(this)
+                                .load(imagenSeleccionadaUri)
+                                .circleCrop()
+                                .into(fotoIB);
                     }
                 }
         );
@@ -179,43 +175,15 @@ public class PerfilActivity extends BaseActivity {
         StorageReference profileRef = storageReference.child("users/" + userID + "/profile.jpg");
 
         profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            Picasso.get()
+            Glide.with(this)
                     .load(uri)
                     .placeholder(R.drawable.mascot)
                     .error(R.drawable.mascot)
-                    .rotate(0)
-                    .transform(new CircleTransform())
+                    .circleCrop()
                     .into(fotoIB);
         }).addOnFailureListener(e -> {
             Log.e("Storage", "El usuario no tiene foto o hubo un error.");
         });
-    }
-
-    public class CircleTransform implements com.squareup.picasso.Transformation {
-        @Override
-        public android.graphics.Bitmap transform(android.graphics.Bitmap source) {
-            int size = Math.min(source.getWidth(), source.getHeight());
-            int x = (source.getWidth() - size) / 2;
-            int y = (source.getHeight() - size) / 2;
-            android.graphics.Bitmap squaredBitmap = android.graphics.Bitmap.createBitmap(source, x, y, size, size);
-            if (squaredBitmap != source) source.recycle();
-            android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(size, size, source.getConfig());
-            android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
-            android.graphics.Paint paint = new android.graphics.Paint();
-            android.graphics.BitmapShader shader = new android.graphics.BitmapShader(squaredBitmap,
-                    android.graphics.Shader.TileMode.CLAMP, android.graphics.Shader.TileMode.CLAMP);
-            paint.setShader(shader);
-            paint.setAntiAlias(true);
-            float r = size / 2f;
-            canvas.drawCircle(r, r, r, paint);
-            squaredBitmap.recycle();
-            return bitmap;
-        }
-
-        @Override
-        public String key() {
-            return "circle";
-        }
     }
     private void mostrarOpcionesFoto() {
         String[] opciones = {"Hacer foto", "Elegir de galería", "Cancelar"};

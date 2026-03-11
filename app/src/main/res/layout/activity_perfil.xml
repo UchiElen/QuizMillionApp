@@ -180,7 +180,7 @@
                 android:layout_width="274dp"
                 android:layout_height="53dp"
                 android:layout_marginStart="68dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginEnd="69dp"
                 android:text="@string/actualizar"
                 android:textColor="@color/white"
