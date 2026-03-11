@@ -57,11 +57,13 @@
         android:id="@+id/logo"
         android:layout_width="405dp"
         android:layout_height="180dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginBottom="-16dp"
         android:contentDescription="@string/app_name"
         app:layout_constraintBottom_toTopOf="@+id/IniciarText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
         app:srcCompat="@drawable/lettering_quizmillion" />
 
 
@@ -70,7 +72,7 @@
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginBottom="66dp"
+        android:layout_marginBottom="45dp"
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
         android:lineSpacingExtra="-10sp"
