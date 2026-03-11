@@ -1,5 +1,7 @@
 package com.dam.quizmillionapp;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -120,7 +122,11 @@ public class PerfilActivity extends BaseActivity {
                 }
 
                 if (!nuevoNombre.isEmpty()) {
-                    fStore.collection("usuarios").document(userID).update("nombreUsuario", nuevoNombre);
+                    fStore.collection("usuarios").document(userID).update("nombreUsuario", nuevoNombre)
+                            .addOnSuccessListener(aVoid -> {
+                                Toast.makeText(PerfilActivity.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
+                                finish();
+                            });
                 }
 
                 if (imagenSeleccionadaUri != null) {
@@ -142,8 +148,6 @@ public class PerfilActivity extends BaseActivity {
                                 });
                     }
                 }
-                Toast.makeText(PerfilActivity.this, "Cambios realizados", Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -239,7 +243,7 @@ public class PerfilActivity extends BaseActivity {
     private void uploadImageToFirebase(android.net.Uri uri) {
         StorageReference fileRef = storageReference.child("users/" + userID + "/profile.jpg");
         fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
-            Toast.makeText(PerfilActivity.this, "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Imagen actualizada correctamente.");
         }).addOnFailureListener(e -> {
             Toast.makeText(PerfilActivity.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
         });

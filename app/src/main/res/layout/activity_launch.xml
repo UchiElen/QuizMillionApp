@@ -12,12 +12,10 @@
         android:id="@+id/my_toolbar"
         android:layout_width="411dp"
         android:layout_height="?attr/actionBarSize"
-        android:layout_marginBottom="40dp"
         android:background="#00000000"
         android:paddingStart="20dp"
         android:paddingTop="20dp"
         android:paddingEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,11 +25,12 @@
         android:id="@+id/logo"
         android:layout_width="215dp"
         android:layout_height="209dp"
-        android:layout_marginTop="104dp"
+        android:layout_marginBottom="60dp"
         android:contentDescription="@string/app_name"
+        app:layout_constraintBottom_toTopOf="@+id/LaunchText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/my_toolbar"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
         app:srcCompat="@drawable/logo_app" />
 
     <TextView
@@ -39,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="141dp"
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
         android:lineSpacingExtra="-10sp"
@@ -48,23 +47,22 @@
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/LaunchBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/LaunchBtn"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="274dp"
         android:layout_height="53dp"
-        android:layout_marginTop="140dp"
+        android:layout_marginBottom="156dp"
         android:text="@string/averiguarlo"
         android:textColor="@color/white"
         android:textSize="17sp"
         app:cornerRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LaunchText"
         app:strokeColor="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
