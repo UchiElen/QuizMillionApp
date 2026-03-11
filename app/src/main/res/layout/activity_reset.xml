@@ -60,8 +60,10 @@
         android:id="@+id/logo"
         android:layout_width="315dp"
         android:layout_height="135dp"
+        android:layout_marginBottom="3dp"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/OlvidadoText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
@@ -73,7 +75,6 @@
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="3dp"
         android:layout_marginBottom="40dp"
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
@@ -83,8 +84,7 @@
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/IntoEmailTV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/RecupBtn"
@@ -101,6 +101,5 @@
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="@color/white" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

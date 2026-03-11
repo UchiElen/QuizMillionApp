@@ -26,8 +26,10 @@
         android:id="@+id/logo"
         android:layout_width="315dp"
         android:layout_height="135dp"
+        android:layout_marginBottom="1dp"
         android:contentDescription="@string/app_name"
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/LaunchText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
@@ -54,7 +56,7 @@
         android:layout_width="252dp"
         android:layout_height="66dp"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="3dp"
+        android:layout_marginBottom="2dp"
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
         android:lineSpacingExtra="-10sp"
@@ -63,15 +65,14 @@
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/NomTV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo" />
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/NomTV"
         android:layout_width="266dp"
         android:layout_height="24dp"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
         android:fontFamily="@font/poppinsregular"
         android:gravity="start"
@@ -81,8 +82,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/nomTI"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/LaunchText" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/EmailTV"
