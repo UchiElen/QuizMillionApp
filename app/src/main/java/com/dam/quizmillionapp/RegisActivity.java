@@ -32,7 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
+import com.bumptech.glide.Glide;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,9 +90,9 @@ public class RegisActivity extends BaseActivity {
                     if (result.getResultCode() == android.app.Activity.RESULT_OK && result.getData() != null) {
                         imagenSeleccionadaUri = result.getData().getData();
 
-                        com.squareup.picasso.Picasso.get()
+                        Glide.with(this)
                                 .load(imagenSeleccionadaUri)
-                                .transform(new CircleTransform())
+                                .circleCrop()
                                 .into(fotoIB);
                     }
                 }
@@ -103,12 +103,11 @@ public class RegisActivity extends BaseActivity {
                 success -> {
                     if (success && cameraUri != null) {
                         imagenSeleccionadaUri = cameraUri;
-                        com.squareup.picasso.Picasso.get()
+                        Glide.with(this)
                                 .load(imagenSeleccionadaUri)
                                 .placeholder(R.drawable.mascot)
                                 .error(R.drawable.mascot)
-                                .rotate(0)
-                                .transform(new CircleTransform())
+                                .circleCrop()
                                 .into(fotoIB);
                     }
                 }
@@ -181,7 +180,18 @@ public class RegisActivity extends BaseActivity {
                             Map<String, Object> user = new HashMap<>();
                             user.put("nombreUsuario", nombre);
                             user.put("email", email);
-                            documentReference.set(user);
+                            documentReference.set(user)
+                                    .addOnSuccessListener(unused -> {
+                                        if (imagenSeleccionadaUri != null) {
+                                            uploadImageToFirebase(imagenSeleccionadaUri);
+                                        } else {
+                                            finalizarRegistro();
+                                        }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        progressBar.setVisibility(View.GONE);
+                                        Toast.makeText(RegisActivity.this, "Error guardando usuario", Toast.LENGTH_SHORT).show();
+                                    });
                             if (imagenSeleccionadaUri != null) {
                                 uploadImageToFirebase(imagenSeleccionadaUri);
                             } else {
@@ -232,26 +242,5 @@ public class RegisActivity extends BaseActivity {
         finish();
     }
 
-    public class CircleTransform implements com.squareup.picasso.Transformation {
-        @Override
-        public android.graphics.Bitmap transform(android.graphics.Bitmap source) {
-            int size = Math.min(source.getWidth(), source.getHeight());
-            int x = (source.getWidth() - size) / 2;
-            int y = (source.getHeight() - size) / 2;
-            android.graphics.Bitmap squaredBitmap = android.graphics.Bitmap.createBitmap(source, x, y, size, size);
-            if (squaredBitmap != source) source.recycle();
-            android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(size, size, source.getConfig());
-            android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
-            android.graphics.Paint paint = new android.graphics.Paint();
-            android.graphics.BitmapShader shader = new android.graphics.BitmapShader(squaredBitmap,
-                    android.graphics.Shader.TileMode.CLAMP, android.graphics.Shader.TileMode.CLAMP);
-            paint.setShader(shader);
-            paint.setAntiAlias(true);
-            float r = size / 2f;
-            canvas.drawCircle(r, r, r, paint);
-            squaredBitmap.recycle();
-            return bitmap;
-        }
-        @Override public String key() { return "circle"; }
-    }
+
 }
