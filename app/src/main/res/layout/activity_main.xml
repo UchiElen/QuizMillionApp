@@ -10,78 +10,88 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
-        android:layout_width="411dp"
+        android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#00000000"
-        android:paddingStart="20dp"
-        android:paddingTop="20dp"
         android:paddingEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="315dp"
-        android:layout_height="135dp"
-        android:layout_marginBottom="45dp"
-        android:contentDescription="@string/app_name"
-        android:scaleType="centerCrop"
-        app:layout_constraintBottom_toTopOf="@+id/BienvenidaText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
-        app:srcCompat="@drawable/lettering_quizmillion" />
-
-
-    <TextView
-        android:id="@+id/BienvenidaText"
-        android:layout_width="250dp"
-        android:layout_height="100dp"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginBottom="64dp"
-        android:fontFamily="@font/poppinsbold"
-        android:gravity="center"
-        android:lineSpacingExtra="-10sp"
-        android:text="@string/bienvenida"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/jugarBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/jugarBtn"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="274dp"
-        android:layout_height="53dp"
-        android:layout_marginBottom="27dp"
-        android:text="@string/jugar"
-        android:textColor="@color/white"
-        android:textSize="17sp"
-        app:cornerRadius="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/perfilBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/white" />
-
-    <Button
-        android:id="@+id/perfilBtn"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="274dp"
-        android:layout_height="53dp"
-        android:layout_marginBottom="350dp"
-        android:text="@string/perfil"
-        android:textColor="@color/white"
-        android:textSize="17sp"
-        app:cornerRadius="15dp"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:strokeColor="@color/white" />
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="40dp">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="315dp"
+                android:layout_height="135dp"
+                android:layout_marginBottom="45dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toTopOf="@+id/BienvenidaText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/lettering_quizmillion" />
+
+
+            <TextView
+                android:id="@+id/BienvenidaText"
+                android:layout_width="250dp"
+                android:layout_height="100dp"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginBottom="64dp"
+                android:fontFamily="@font/poppinsbold"
+                android:gravity="center"
+                android:lineSpacingExtra="-10sp"
+                android:text="@string/bienvenida"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                app:layout_constraintBottom_toTopOf="@+id/jugarBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/jugarBtn"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="274dp"
+                android:layout_height="53dp"
+                android:layout_marginBottom="27dp"
+                android:text="@string/jugar"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                app:cornerRadius="15dp"
+                app:layout_constraintBottom_toTopOf="@+id/perfilBtn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="parent"
+                app:strokeColor="@color/white" />
+
+            <Button
+                android:id="@+id/perfilBtn"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="274dp"
+                android:layout_height="53dp"
+                android:layout_marginBottom="350dp"
+                android:text="@string/perfil"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                app:cornerRadius="15dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="parent"
+                app:strokeColor="@color/white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
