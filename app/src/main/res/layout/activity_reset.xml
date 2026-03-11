@@ -50,6 +50,7 @@
         android:paddingStart="20dp"
         android:paddingTop="20dp"
         android:paddingEnd="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -57,11 +58,10 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="405dp"
-        android:layout_height="180dp"
-        android:layout_marginBottom="7dp"
+        android:layout_width="315dp"
+        android:layout_height="135dp"
         android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toTopOf="@+id/OlvidadoText"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
@@ -73,6 +73,7 @@
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_marginHorizontal="40dp"
+        android:layout_marginTop="3dp"
         android:layout_marginBottom="40dp"
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
@@ -82,14 +83,15 @@
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/IntoEmailTV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <Button
         android:id="@+id/RecupBtn"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="274dp"
         android:layout_height="53dp"
-        android:layout_marginBottom="254dp"
+        android:layout_marginBottom="304dp"
         android:text="@string/recuperar_contrasena"
         android:textColor="@color/white"
         android:textSize="17sp"

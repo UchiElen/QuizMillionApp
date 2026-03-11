@@ -16,6 +16,7 @@
         android:paddingStart="20dp"
         android:paddingTop="20dp"
         android:paddingEnd="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -23,11 +24,10 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="405dp"
-        android:layout_height="180dp"
-        android:layout_marginBottom="-24dp"
+        android:layout_width="315dp"
+        android:layout_height="135dp"
         android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toTopOf="@+id/LaunchText"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
@@ -54,7 +54,8 @@
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_marginHorizontal="40dp"
-        android:layout_marginBottom="17dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="14dp"
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
         android:lineSpacingExtra="-10sp"
@@ -63,7 +64,8 @@
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/NomTV"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo" />
 
     <TextView
         android:id="@+id/NomTV"
@@ -79,6 +81,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/nomTI"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -168,14 +171,14 @@
         android:layout_height="53dp"
         android:layout_marginStart="68dp"
         android:layout_marginEnd="69dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="92dp"
         android:text="@string/resgistrarse"
         android:textColor="@color/white"
         android:textSize="17sp"
         app:cornerRadius="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="@color/white" />
 
