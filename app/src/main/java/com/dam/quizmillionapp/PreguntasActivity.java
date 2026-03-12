@@ -64,7 +64,9 @@ public class PreguntasActivity extends AppCompatActivity {
     // --- Constantes de Diseño ---
     private final int[] escalaPremios = {0, 100, 250, 500, 750, 1500, 2500, 5000, 10000, 15000, 20000, 30000, 50000, 100000, 300000, 1000000};
     private final int COLOR_AMBAR = Color.parseColor("#FFC107");
-    private static final int COLOR_NARANJA_OSCURO = Color.parseColor("#E65100");
+    private static final int COLOR_CYAN = Color.parseColor("#00FFFF");
+    private static final int COLOR_MAGENTA = Color.parseColor("#FF00FF");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,7 +333,7 @@ public class PreguntasActivity extends AppCompatActivity {
         desactivaBotonComodin(btnPublico);
 
         int sug = preguntaActual.comodin_publico;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_NARANJA_OSCURO));
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_CYAN));
         Toast.makeText(this, "El público opina que la correcta es la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 
@@ -346,7 +348,7 @@ public class PreguntasActivity extends AppCompatActivity {
         desactivaBotonComodin(btnLlamada);
 
         int sug = preguntaActual.comodin_llamada;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_NARANJA_OSCURO));
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_MAGENTA));
         Toast.makeText(this, "Tu contacto cree que es la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 
