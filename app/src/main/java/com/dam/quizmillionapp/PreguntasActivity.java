@@ -48,7 +48,7 @@ public class PreguntasActivity extends AppCompatActivity {
 
     // --- Layouts de Transición (Cortinas) ---
     private androidx.constraintlayout.widget.ConstraintLayout layoutTransicion;
-    private TextView tvTransicionTitulo, tvTransicionMensaje, tvTransicionPremio;
+    private TextView tvTransicionTitulo, tvTransicionMensajeLinea1,tvTransicionMensajeLinea2, tvTransicionPremio;
 
     // --- Lógica de Juego y Datos ---
     private FirebaseFirestore db;
@@ -92,7 +92,8 @@ public class PreguntasActivity extends AppCompatActivity {
 
         layoutTransicion = findViewById(R.id.layout_transicion_nivel);
         tvTransicionTitulo = findViewById(R.id.tv_texto_transicion_titulo);
-        tvTransicionMensaje = findViewById(R.id.tv_texto_transicion_mensaje);
+        tvTransicionMensajeLinea1 = findViewById(R.id.tv_texto_transicion_mensaje_1);
+        tvTransicionMensajeLinea2 = findViewById(R.id.tv_texto_transicion_mensaje_2);
         tvTransicionPremio = findViewById(R.id.tv_texto_transicion_premio);
 
         btnOpciones[0] = findViewById(R.id.btn_opcion_1);
@@ -243,11 +244,13 @@ public class PreguntasActivity extends AppCompatActivity {
         tvTransicionPremio.setText(escalaPremios[nivelActual] + "€");
 
         if (nivelActual == 6 || nivelActual == 11) {
-            tvTransicionMensaje.setText("¡ZONA SEGURA LOGRADA!\nJuegas por:");
-            tvTransicionMensaje.setTextColor(COLOR_AMBAR);
+            tvTransicionMensajeLinea1.setTextColor(COLOR_AMBAR);
+            tvTransicionMensajeLinea1.setText("¡ZONA SEGURA LOGRADA!");
+            tvTransicionMensajeLinea2.setTextColor(Color.WHITE);
+            tvTransicionMensajeLinea2.setText("Juegas por:");
         } else {
-            tvTransicionMensaje.setText("Juegas por:");
-            tvTransicionMensaje.setTextColor(Color.WHITE);
+            tvTransicionMensajeLinea1.setText("Juegas por:");
+            tvTransicionMensajeLinea1.setTextColor(Color.WHITE);
         }
 
         layoutTransicion.setVisibility(View.VISIBLE);
