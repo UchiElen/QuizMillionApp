@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity">
+    tools:context=".LaunchActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -33,18 +33,18 @@
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="315dp"
-                android:layout_height="100dp"
+                android:layout_width="215dp"
+                android:layout_height="209dp"
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="80dp"
                 android:contentDescription="@string/app_name"
-                android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/lettering_quizmillion" />
-
+                app:srcCompat="@drawable/logo_app" />
 
             <TextView
-                android:id="@+id/BienvenidaText"
+                android:id="@+id/LaunchText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
@@ -52,7 +52,7 @@
                 android:fontFamily="@font/poppinsbold"
                 android:gravity="center"
                 android:lineSpacingExtra="-10sp"
-                android:text="@string/bienvenida"
+                android:text="@string/convertirse"
                 android:textColor="@color/white"
                 android:textSize="40sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,35 +60,18 @@
                 app:layout_constraintTop_toBottomOf="@+id/logo" />
 
             <Button
-                android:id="@+id/jugarBtn"
+                android:id="@+id/LaunchBtn"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="274dp"
                 android:layout_height="53dp"
-                android:layout_marginTop="50dp"
-                android:text="@string/jugar"
+                android:layout_marginTop="60dp"
+                android:text="@string/averiguarlo"
                 android:textColor="@color/white"
                 android:textSize="17sp"
                 app:cornerRadius="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.496"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/BienvenidaText"
-                app:strokeColor="@color/white" />
-
-            <Button
-                android:id="@+id/perfilBtn"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="274dp"
-                android:layout_height="53dp"
-                android:layout_marginTop="17dp"
-                android:text="@string/perfil"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                app:cornerRadius="15dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.496"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/jugarBtn"
+                app:layout_constraintTop_toBottomOf="@+id/LaunchText"
                 app:strokeColor="@color/white" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

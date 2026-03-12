@@ -16,5 +16,15 @@
     <string name="contrasena_hint">*********</string>
     <string name="foto_perfil">FOTO DE PERFIL</string>
     <string name="foto_perfil_description">foto de perfil</string>
+    <string name="bienvenida">Te damos la bienvenida</string>
+    <string name="jugar">Jugar</string>
+    <string name="perfil">Perfil</string>
+    <string name="records">Top de records</string>
+    <string name="editar_perfil">Editar perfil</string>
+    <string name="guardar">Guardar</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="recordar_contrasena">He olvidado mi contraseña</string>
+    <string name="recuperar_contrasena">Recuperar contraseña</string>
+    <string name="intro_email">Introduce tu email:</string>
 
 </resources>
