@@ -19,6 +19,9 @@ import com.dam.quizmillionapp.interfaces.JoinRoomCallback;
 import com.dam.quizmillionapp.interfaces.LoadRoomsCallback;
 import com.dam.quizmillionapp.models.RoomSummary;
 import com.dam.quizmillionapp.repositories.RoomRepository;
+import com.dam.quizmillionapp.constants.MemberStatus;
+import com.dam.quizmillionapp.constants.RoomStatus;
+
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
