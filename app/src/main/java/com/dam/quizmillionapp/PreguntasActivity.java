@@ -63,6 +63,8 @@ public class PreguntasActivity extends AppCompatActivity {
     private final int[] escalaPremios = {0, 100, 250, 500, 750, 1500, 2500, 5000, 10000, 15000, 20000, 30000, 50000, 100000, 300000, 1000000};
     private final int COLOR_AMBAR = Color.parseColor("#FFC107");
 
+    private static final int COLOR_NARANJA_OSCURO = Color.parseColor("#E65100");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,6 +178,7 @@ public class PreguntasActivity extends AppCompatActivity {
                             iniciarReloj();
                             return false;
                         }
+
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             progressLoader.setVisibility(View.GONE);
@@ -206,8 +209,10 @@ public class PreguntasActivity extends AppCompatActivity {
             pbProgreso.setProgress(nivelActual);
             tvPremioActual.setText("NIVEL " + nivelActual + " > Premio: " + escalaPremios[nivelActual] + " €");
 
-            if (nivelActual == 5) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.GREEN));
-            if (nivelActual == 10) pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.RED));
+            if (nivelActual == 5)
+                pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.GREEN));
+            if (nivelActual == 10)
+                pbProgreso.setProgressTintList(ColorStateList.valueOf(Color.RED));
 
             nivelActual++;
             new Handler().postDelayed(this::mostrarTransicionYNivel, 1500);
@@ -254,6 +259,7 @@ public class PreguntasActivity extends AppCompatActivity {
                 if (millisUntilFinished < 6000) tvCronometro.setTextColor(Color.RED);
                 else tvCronometro.setTextColor(Color.WHITE);
             }
+
             public void onFinish() {
                 btnPlantarse.setVisibility(View.INVISIBLE);
                 tvCronometro.setText("0");
@@ -340,7 +346,9 @@ public class PreguntasActivity extends AppCompatActivity {
         try {
             String id = url.split("/d/")[1].split("/")[0];
             return "https://docs.google.com/uc?export=download&id=" + id;
-        } catch (Exception e) { return url; }
+        } catch (Exception e) {
+            return url;
+        }
     }
 
     private void desactivaBotonComodin(View v) {
@@ -366,18 +374,32 @@ public class PreguntasActivity extends AppCompatActivity {
     private void comodinPublico() {
         if (usadoPublico || preguntaActual == null) return;
         usadoPublico = true;
+
+        // 1. Resaltamos el botón del propio comodín en naranja oscuro
+        btnPublico.setBackgroundTintList(ColorStateList.valueOf(COLOR_NARANJA_OSCURO));
         desactivaBotonComodin(btnPublico);
+        btnPublico.setColorFilter(Color.WHITE);
         int sug = preguntaActual.comodin_publico;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
+
+        // 2. Resaltamos la opción que sugiere el público también en naranja oscuro
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_NARANJA_OSCURO));
+
         Toast.makeText(this, "El público dice la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 
     private void comodinLlamada() {
         if (usadoLlamada || preguntaActual == null) return;
         usadoLlamada = true;
+
+        // 1. Resaltamos el botón del propio comodín en naranja oscuro
+        btnLlamada.setBackgroundTintList(ColorStateList.valueOf(COLOR_NARANJA_OSCURO));
         desactivaBotonComodin(btnLlamada);
+        btnLlamada.setColorFilter(Color.WHITE);
         int sug = preguntaActual.comodin_llamada;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
+
+        // 2. Resaltamos la opción que sugiere el amigo en naranja oscuro
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_NARANJA_OSCURO));
+
         Toast.makeText(this, "Tu amigo cree que es la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 }

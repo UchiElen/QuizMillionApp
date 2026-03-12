@@ -73,7 +73,7 @@ public class ResultadoActivity extends AppCompatActivity {
                             String titulo = doc.getString("titulo");
                             String colorHex = doc.getString("banner");
                             String mensaje = doc.getString("mensaje");
-                            String urlDrive = doc.getString("img");
+                            String urlFirebase = doc.getString("img");
 
                             // 2. Aplicar textos y color (Esto no tarda)
                             tvBanner.setText(titulo);
@@ -85,23 +85,25 @@ public class ResultadoActivity extends AppCompatActivity {
                             }
 
                             // 3. CARGA CON GLIDE CON TRANSICIÓN (Igual que en preguntas)
-                            if (urlDrive != null && !urlDrive.isEmpty()) {
+                            if (urlFirebase != null && !urlFirebase.isEmpty()) {
                                 Glide.with(this)
-                                        .load(convertirUrlDrive(urlDrive))
+                                        .load(urlFirebase) // Recuerda: usa la URL directa, sin el método convertir
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                                         .listener(new RequestListener<Drawable>() {
                                             @Override
                                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                                // Si falla, quitamos la cortina para no bloquear
+                                                // Log para saber qué ha fallado exactamente
+                                                Log.e("GLIDE_ERROR", "Error al cargar: " + (e != null ? e.getMessage() : "Desconocido"));
+
                                                 ocultarCargaConAnimacion();
-                                                Toast.makeText(ResultadoActivity.this, "Error cargando cromo", Toast.LENGTH_SHORT).show();
-                                                return false; // Dejar que Glide muestre el error() si tienes
+                                                return false; // Importante: dejar en false para que Glide gestione el error internamente
                                             }
 
                                             @Override
                                             public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                                // ¡IMAGEN LISTA! Quitamos la cortina
+                                                // ¡Todo bien!
                                                 ocultarCargaConAnimacion();
-                                                return false; // Dejar que Glide muestre la imagen
+                                                return false; // Importante: dejar en false para que la imagen se pinte en el ImageView
                                             }
                                         })
                                         .into(imgPremio);
@@ -131,19 +133,4 @@ public class ResultadoActivity extends AppCompatActivity {
                 .start();
     }
 
-    private String convertirUrlDrive(String url) {
-        if (url == null || url.isEmpty()) return "";
-        try {
-            String fileId = "";
-            if (url.contains("/d/")) {
-                fileId = url.split("/d/")[1].split("/")[0];
-            } else if (url.contains("id=")) {
-                fileId = url.split("id=")[1].split("&")[0];
-            }
-            // Este es el formato de descarga directa que NUNCA falla si el archivo es público
-            return "https://drive.google.com/uc?export=download&id=" + fileId;
-        } catch (Exception e) {
-            return url;
-        }
-    }
 }
