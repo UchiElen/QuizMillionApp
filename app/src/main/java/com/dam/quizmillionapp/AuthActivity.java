@@ -43,7 +43,7 @@ public class AuthActivity extends BaseActivity {
         emailTI = findViewById(R.id.emailTI);
         contraTI = findViewById(R.id.contraTI);
         AuthBtn = findViewById(R.id.AuthBtn);
-        progressBar = findViewById(R.id.progressBar2);
+        progressBar = findViewById(R.id.progressBar);
         fAuth = FirebaseAuth.getInstance();
         recupTV = findViewById(R.id.recupTV);
 

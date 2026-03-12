@@ -98,7 +98,7 @@ public class PerfilActivity extends BaseActivity {
 
         fotoIB.setOnClickListener(v -> mostrarOpcionesFoto());
 
-        ActualizarBtn = findViewById(R.id.ActualizarBtn);
+        ActualizarBtn = findViewById(R.id.GuardarBtn);
 
         ActualizarBtn.setOnClickListener(new View.OnClickListener() {
             @Override

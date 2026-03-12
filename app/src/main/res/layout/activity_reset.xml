@@ -44,7 +44,7 @@
 
             <TextView
                 android:id="@+id/OlvidadoText"
-                android:layout_width="280dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="17dp"
                 android:fontFamily="@font/poppinsbold"
@@ -75,7 +75,7 @@
                 android:id="@+id/emailTI"
                 android:layout_width="276dp"
                 android:layout_height="54dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="1dp"
                 android:background="@drawable/input_background"
                 android:hint="@string/email_hint"
                 android:inputType="textEmailAddress"

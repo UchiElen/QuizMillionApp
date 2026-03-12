@@ -31,6 +31,49 @@
             android:layout_height="wrap_content"
             android:paddingBottom="40dp">
 
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="315dp"
+                android:layout_height="100dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/lettering_quizmillion" />
+
+            <TextView
+                android:id="@+id/IniciarText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="17dp"
+                android:fontFamily="@font/poppinsbold"
+                android:gravity="center"
+                android:lineSpacingExtra="-10sp"
+                android:text="@string/iniciar_sesion"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+            <TextView
+                android:id="@+id/EmailTV"
+                android:layout_width="266dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/poppinsregular"
+                android:gravity="start"
+                android:lineSpacingExtra="-10sp"
+                android:text="@string/email"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/IniciarText" />
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/emailTI"
                 android:layout_width="276dp"
@@ -46,6 +89,22 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/EmailTV" />
+
+            <TextView
+                android:id="@+id/ContraTV"
+                android:layout_width="261dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="17dp"
+                android:fontFamily="@font/poppinsregular"
+                android:gravity="start"
+                android:lineSpacingExtra="-10sp"
+                android:text="@string/contrasena"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emailTI" />
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/contraTI"
@@ -63,66 +122,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ContraTV" />
 
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="315dp"
-                android:layout_height="100dp"
-                android:contentDescription="@string/app_name"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/lettering_quizmillion" />
-
-
-            <TextView
-                android:id="@+id/IniciarText"
-                android:layout_width="250dp"
-                android:layout_height="100dp"
-                android:layout_marginHorizontal="40dp"
-                android:layout_marginTop="17dp"
-                android:fontFamily="@font/poppinsbold"
-                android:gravity="center"
-                android:lineSpacingExtra="-10sp"
-                android:text="@string/iniciar_sesion"
-                android:textColor="@color/white"
-                android:textSize="40sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logo" />
-
-            <TextView
-                android:id="@+id/EmailTV"
-                android:layout_width="266dp"
-                android:layout_height="25dp"
-                android:layout_marginHorizontal="40dp"
-                android:layout_marginTop="44dp"
-                android:fontFamily="@font/poppinsregular"
-                android:gravity="start"
-                android:lineSpacingExtra="-10sp"
-                android:text="@string/email"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/IniciarText" />
-
-            <TextView
-                android:id="@+id/ContraTV"
-                android:layout_width="261dp"
-                android:layout_height="26dp"
-                android:layout_marginHorizontal="40dp"
-                android:layout_marginTop="17dp"
-                android:fontFamily="@font/poppinsregular"
-                android:gravity="start"
-                android:lineSpacingExtra="-10sp"
-                android:text="@string/contrasena"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/emailTI" />
-
             <Button
                 android:id="@+id/AuthBtn"
                 style="?attr/materialButtonOutlinedStyle"
@@ -139,18 +138,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/contraTI"
                 app:strokeColor="@color/white" />
 
-            <ProgressBar
-                android:id="@+id/progressBar2"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="230dp"
-                android:layout_height="230dp"
-                android:layout_marginTop="120dp"
-                android:progressTint="@color/colorPrimary"
-                android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logo" />
-
             <TextView
                 android:id="@+id/recupTV"
                 android:layout_width="wrap_content"
@@ -163,6 +150,18 @@
                 app:layout_constraintHorizontal_bias="0.497"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/AuthBtn" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:progressTint="@color/colorPrimary"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

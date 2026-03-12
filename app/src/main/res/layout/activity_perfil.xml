@@ -42,6 +42,38 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/lettering_quizmillion" />
 
+            <TextView
+                android:id="@+id/LaunchText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="-30dp"
+                android:fontFamily="@font/poppinsbold"
+                android:gravity="center"
+                android:lineSpacingExtra="-10sp"
+                android:text="@string/editar_perfil"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/logo" />
+
+            <TextView
+                android:id="@+id/NomTV"
+                android:layout_width="266dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="1dp"
+                android:fontFamily="@font/poppinsregular"
+                android:gravity="start"
+                android:lineSpacingExtra="-10sp"
+                android:text="@string/nombre_usuario"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/LaunchText" />
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nomTI"
                 android:layout_width="276dp"
@@ -59,42 +91,9 @@
                 app:layout_constraintTop_toBottomOf="@+id/NomTV" />
 
             <TextView
-                android:id="@+id/LaunchText"
-                android:layout_width="252dp"
-                android:layout_height="66dp"
-                android:layout_marginHorizontal="40dp"
-                android:layout_marginTop="-30dp"
-                android:fontFamily="@font/poppinsbold"
-                android:gravity="center"
-                android:lineSpacingExtra="-10sp"
-                android:text="@string/editar_perfil"
-                android:textColor="@color/white"
-                android:textSize="40sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.496"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logo" />
-
-            <TextView
-                android:id="@+id/NomTV"
-                android:layout_width="266dp"
-                android:layout_height="24dp"
-                android:layout_marginHorizontal="40dp"
-                android:layout_marginTop="1dp"
-                android:fontFamily="@font/poppinsregular"
-                android:gravity="start"
-                android:lineSpacingExtra="-10sp"
-                android:text="@string/nombre_usuario"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/LaunchText" />
-
-            <TextView
                 android:id="@+id/EmailTV"
                 android:layout_width="266dp"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
                 android:layout_marginTop="17dp"
                 android:fontFamily="@font/poppinsregular"
@@ -128,7 +127,7 @@
             <TextView
                 android:id="@+id/ContraTV"
                 android:layout_width="261dp"
-                android:layout_height="26dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
                 android:layout_marginTop="17dp"
                 android:fontFamily="@font/poppinsregular"
@@ -161,7 +160,7 @@
             <TextView
                 android:id="@+id/FotoTV"
                 android:layout_width="264dp"
-                android:layout_height="26dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
                 android:layout_marginTop="17dp"
                 android:fontFamily="@font/poppinsregular"
@@ -174,20 +173,34 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/contraTI" />
 
+            <ImageButton
+                android:id="@+id/fotoIB"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/circle_background"
+                android:contentDescription="@string/foto_perfil_description"
+                android:scaleType="centerInside"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/FotoTV"
+                app:srcCompat="@drawable/mascot" />
+
             <Button
-                android:id="@+id/ActualizarBtn"
+                android:id="@+id/GuardarBtn"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="274dp"
                 android:layout_height="53dp"
                 android:layout_marginStart="68dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="69dp"
-                android:text="@string/actualizar"
+                android:text="@string/guardar"
                 android:textColor="@color/white"
                 android:textSize="17sp"
                 app:cornerRadius="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fotoIB"
                 app:strokeColor="@color/white" />
@@ -208,34 +221,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ActualizarBtn"
+                app:layout_constraintTop_toBottomOf="@+id/GuardarBtn"
                 app:strokeColor="@color/white" />
-
-            <ImageButton
-                android:id="@+id/fotoIB"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/circle_background"
-                android:contentDescription="@string/foto_perfil_description"
-                android:scaleType="centerInside"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/FotoTV"
-                app:srcCompat="@drawable/mascot" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyle"
-                android:layout_width="230dp"
-                android:layout_height="230dp"
-                android:layout_marginTop="200dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:progressTint="@color/colorPrimary"
                 android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/logo" />
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
