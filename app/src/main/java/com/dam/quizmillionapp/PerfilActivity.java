@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -33,11 +34,13 @@ public class PerfilActivity extends BaseActivity {
     FirebaseFirestore fStore;
     StorageReference storageReference;
     String userID;
-    Button ActualizarBtn, logoutBtn;
+    Button ActualizarBtn;
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private ActivityResultLauncher<android.net.Uri> cameraLauncher;
     private Uri cameraUri, imagenSeleccionadaUri;
+
+    private ProgressBar progressBar;
 
 
     @Override
@@ -57,6 +60,7 @@ public class PerfilActivity extends BaseActivity {
         emailTI = findViewById(R.id.emailTI);
         contraTI = findViewById(R.id.contraTI);
         fotoIB = findViewById(R.id.fotoIB);
+        progressBar = findViewById(R.id.progressBar);
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -117,17 +121,26 @@ public class PerfilActivity extends BaseActivity {
                     return;
                 }
 
-                if (!nuevoNombre.isEmpty()) {
-                    fStore.collection("usuarios").document(userID).update("nombreUsuario", nuevoNombre)
-                            .addOnSuccessListener(aVoid -> {
+
+
+                progressBar.setVisibility(View.VISIBLE);
+                ActualizarBtn.setEnabled(false);
+
+                fStore.collection("usuarios").document(userID).update("nombreUsuario", nuevoNombre)
+                        .addOnSuccessListener(aVoid -> {
+                            if (imagenSeleccionadaUri != null) {
+                                uploadImageAndFinish(imagenSeleccionadaUri);
+                            } else {
+                                progressBar.setVisibility(View.GONE);
                                 Toast.makeText(PerfilActivity.this, "Datos actualizados", Toast.LENGTH_SHORT).show();
                                 finish();
-                            });
-                }
-
-                if (imagenSeleccionadaUri != null) {
-                    uploadImageToFirebase(imagenSeleccionadaUri);
-                }
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            progressBar.setVisibility(View.GONE);
+                            ActualizarBtn.setEnabled(true);
+                            Toast.makeText(PerfilActivity.this, "Error al actualizar datos", Toast.LENGTH_SHORT).show();
+                        });
 
                 if (!nuevaContra.isEmpty()) {
                     if (nuevaContra.length() < 6) {
@@ -180,6 +193,8 @@ public class PerfilActivity extends BaseActivity {
                     .placeholder(R.drawable.mascot)
                     .error(R.drawable.mascot)
                     .circleCrop()
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .into(fotoIB);
         }).addOnFailureListener(e -> {
             Log.e("Storage", "El usuario no tiene foto o hubo un error.");
@@ -209,10 +224,12 @@ public class PerfilActivity extends BaseActivity {
         cameraLauncher.launch(cameraUri);
     }
 
-    private void uploadImageToFirebase(android.net.Uri uri) {
+    private void uploadImageAndFinish(android.net.Uri uri) {
         StorageReference fileRef = storageReference.child("users/" + userID + "/profile.jpg");
+
         fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {
-            Log.d(TAG, "Imagen actualizada correctamente.");
+            Toast.makeText(PerfilActivity.this, "Perfil actualizado con éxito", Toast.LENGTH_SHORT).show();
+            finish();
         }).addOnFailureListener(e -> {
             Toast.makeText(PerfilActivity.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
         });
