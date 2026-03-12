@@ -1,11 +1,9 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+<resources>
+
     <style name="Base.Theme.QuizMillionAppNight" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 
-    <!-- Customize your dark theme here. -->
-    <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/colorPrimaryDark</item>
 
