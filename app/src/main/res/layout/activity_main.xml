@@ -33,8 +33,10 @@
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="315dp"
+                android:layout_width="0dp"
                 android:layout_height="100dp"
+                android:layout_marginStart="70dp"
+                android:layout_marginEnd="70dp"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -48,7 +50,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
+                android:layout_marginStart="40dp"
                 android:layout_marginTop="17dp"
+                android:layout_marginEnd="40dp"
                 android:fontFamily="@font/poppinsbold"
                 android:gravity="center"
                 android:lineSpacingExtra="-10sp"

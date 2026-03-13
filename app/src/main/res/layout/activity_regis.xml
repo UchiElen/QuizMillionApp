@@ -36,8 +36,10 @@
 
             <ImageView
                 android:id="@+id/logo"
-                android:layout_width="315dp"
+                android:layout_width="0dp"
                 android:layout_height="100dp"
+                android:layout_marginStart="70dp"
+                android:layout_marginEnd="70dp"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +52,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
+                android:layout_marginStart="40dp"
                 android:layout_marginTop="-20dp"
+                android:layout_marginEnd="40dp"
                 android:fontFamily="@font/poppinsbold"
                 android:gravity="center"
                 android:lineSpacingExtra="-10sp"
@@ -64,10 +68,12 @@
 
             <TextView
                 android:id="@+id/NomTV"
-                android:layout_width="266dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="17dp"
+                android:layout_marginEnd="70dp"
                 android:fontFamily="@font/poppinsregular"
                 android:gravity="start"
                 android:lineSpacingExtra="-10sp"
@@ -81,9 +87,11 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nomTI"
-                android:layout_width="276dp"
-                android:layout_height="54dp"
+                android:layout_width="0dp"
+                android:layout_height="53dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="1dp"
+                android:layout_marginEnd="70dp"
                 android:background="@drawable/input_background"
                 android:hint="@string/nombre_usuario_hint"
                 android:inputType="text"
@@ -97,10 +105,12 @@
 
             <TextView
                 android:id="@+id/EmailTV"
-                android:layout_width="266dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="17dp"
+                android:layout_marginEnd="70dp"
                 android:fontFamily="@font/poppinsregular"
                 android:gravity="start"
                 android:lineSpacingExtra="-10sp"
@@ -113,9 +123,11 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/emailTI"
-                android:layout_width="276dp"
-                android:layout_height="54dp"
+                android:layout_width="0dp"
+                android:layout_height="53dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="1dp"
+                android:layout_marginEnd="70dp"
                 android:background="@drawable/input_background"
                 android:hint="@string/email_hint"
                 android:inputType="textEmailAddress"
@@ -129,10 +141,12 @@
 
             <TextView
                 android:id="@+id/ContraTV"
-                android:layout_width="261dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="17dp"
+                android:layout_marginEnd="70dp"
                 android:fontFamily="@font/poppinsregular"
                 android:gravity="start"
                 android:lineSpacingExtra="-10sp"
@@ -145,9 +159,11 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/contraTI"
-                android:layout_width="276dp"
-                android:layout_height="54dp"
+                android:layout_width="0dp"
+                android:layout_height="53dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="1dp"
+                android:layout_marginEnd="70dp"
                 android:background="@drawable/input_background"
                 android:hint="@string/contrasena_hint"
                 android:inputType="textPassword"
@@ -161,10 +177,12 @@
 
             <TextView
                 android:id="@+id/FotoTV"
-                android:layout_width="264dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="40dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="17dp"
+                android:layout_marginEnd="70dp"
                 android:fontFamily="@font/poppinsregular"
                 android:gravity="start"
                 android:lineSpacingExtra="-10sp"
