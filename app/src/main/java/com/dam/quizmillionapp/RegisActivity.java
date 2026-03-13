@@ -74,8 +74,6 @@ public class RegisActivity extends BaseActivity {
         fStore = FirebaseFirestore.getInstance();
         storageReference= FirebaseStorage.getInstance().getReference();
 
-
-
         if (fAuth.getCurrentUser() != null) {
             String emailLogueado = fAuth.getCurrentUser().getEmail();
             Toast.makeText(RegisActivity.this, "Usuario ya logueado con: " + emailLogueado, Toast.LENGTH_LONG).show();
@@ -235,12 +233,10 @@ public class RegisActivity extends BaseActivity {
 
     }
 
-
     private void finalizarRegistro() {
         progressBar.setVisibility(View.GONE);
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
-
 
 }

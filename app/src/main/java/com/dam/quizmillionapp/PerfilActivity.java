@@ -68,7 +68,6 @@ public class PerfilActivity extends BaseActivity {
             cargarDatosUsuario();
         }
 
-        // Configurar Galería
         galleryLauncher = registerForActivityResult(
                 new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -82,7 +81,6 @@ public class PerfilActivity extends BaseActivity {
                 }
         );
 
-// Configurar Cámara
         cameraLauncher = registerForActivityResult(
                 new androidx.activity.result.contract.ActivityResultContracts.TakePicture(),
                 success -> {

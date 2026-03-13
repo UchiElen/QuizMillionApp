@@ -34,14 +34,17 @@
 
         <activity
             android:name=".WelcomeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
 
         <activity
             android:name=".RegisActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <activity
             android:name=".AuthActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <activity
@@ -50,10 +53,12 @@
 
         <activity
             android:name=".PerfilActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <activity
             android:name=".ResetActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
 
         <service android:name=".MusicService" android:enabled="true" android:exported="false" />

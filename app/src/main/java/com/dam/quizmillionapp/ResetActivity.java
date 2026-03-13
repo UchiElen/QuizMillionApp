@@ -39,7 +39,6 @@ public class ResetActivity extends BaseActivity {
         RecupBtn = findViewById(R.id.RecupBtn);
         fAuth = FirebaseAuth.getInstance();
 
-
         RecupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -28,8 +28,6 @@ public class MusicService extends Service {
         return START_STICKY;
     }
 
-
-
     @Override
     public void onDestroy() {
         mediaPlayer.stop();
