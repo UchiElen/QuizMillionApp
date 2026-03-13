@@ -3,10 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
     android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
     tools:context=".AuthActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -125,9 +128,11 @@
             <Button
                 android:id="@+id/AuthBtn"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="274dp"
+                android:layout_width="match_parent"
                 android:layout_height="53dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="50dp"
+                android:layout_marginEnd="70dp"
                 android:text="@string/iniciar_sesion"
                 android:textColor="@color/white"
                 android:textSize="17sp"

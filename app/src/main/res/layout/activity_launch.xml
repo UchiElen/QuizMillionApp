@@ -62,9 +62,11 @@
             <Button
                 android:id="@+id/LaunchBtn"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="274dp"
+                android:layout_width="match_parent"
                 android:layout_height="53dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="60dp"
+                android:layout_marginEnd="70dp"
                 android:text="@string/averiguarlo"
                 android:textColor="@color/white"
                 android:textSize="17sp"

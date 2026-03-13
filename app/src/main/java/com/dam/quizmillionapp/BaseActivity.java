@@ -5,6 +5,7 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 import androidx.activity.EdgeToEdge;
@@ -12,13 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class BaseActivity extends AppCompatActivity {
-    // Variable estática para mantener el estado global
     public static boolean isMuted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // El diseño se extiende bajo la barra de estado y el toolbar
         EdgeToEdge.enable(this);
     }
 
@@ -36,7 +35,6 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Solo inflar si el Toolbar existe en esta actividad
         if (findViewById(R.id.my_toolbar) != null) {
             getMenuInflater().inflate(R.menu.music_menu, menu);
             MenuItem musicItem = menu.findItem(R.id.action_music);
@@ -60,7 +58,6 @@ public class BaseActivity extends AppCompatActivity {
     private void toggleMusic() {
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         if (audioManager != null) {
-            // Forma segura de mutear/desmutear en versiones modernas
             audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                     isMuted ? AudioManager.ADJUST_MUTE : AudioManager.ADJUST_UNMUTE, 0);
         }
@@ -68,5 +65,15 @@ public class BaseActivity extends AppCompatActivity {
 
     private void updateMenuIcon(MenuItem item) {
         item.setIcon(isMuted ? R.drawable.ic_music_off : R.drawable.ic_music_on);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            android.view.inputmethod.InputMethodManager imm =
+                    (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 }
