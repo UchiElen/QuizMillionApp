@@ -163,6 +163,7 @@ public class PerfilActivity extends BaseActivity {
         FirebaseAuth.getInstance().signOut();
         Toast.makeText(PerfilActivity.this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(PerfilActivity.this, WelcomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }
