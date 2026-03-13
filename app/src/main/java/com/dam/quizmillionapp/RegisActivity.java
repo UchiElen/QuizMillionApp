@@ -142,28 +142,28 @@ public class RegisActivity extends BaseActivity {
                 String nombre = nombreTI.getText().toString().trim();
 
                 if (TextUtils.isEmpty(nombre)) {
-                    nombreTI.setError("Se requiere un nombre de usuario.");
+                    nombreTI.setError("Se requiere un nombre de usuario");
                     return;
                 }
 
                 if (nombre.length() > 20) {
-                    nombreTI.setError("El nombre no puede superar los 20 caracteres.");
+                    nombreTI.setError("El nombre no puede superar los 20 caracteres");
                     nombreTI.requestFocus();
                     return;
                 }
 
                 if (TextUtils.isEmpty(email)) {
-                    emailTI.setError("Se requiere un email.");
+                    emailTI.setError("Se requiere un email");
                     return;
                 }
 
                 if (TextUtils.isEmpty(contrasena)) {
-                    contraTI.setError("Se requiere una contraseña.");
+                    contraTI.setError("Se requiere una contraseña");
                     return;
                 }
 
                 if (contrasena.length() < 6) {
-                    contraTI.setError("La contraseña debe tener al menos 6 caracteres.");
+                    contraTI.setError("La contraseña debe tener al menos 6 caracteres");
                     return;
                 }
 
@@ -180,6 +180,7 @@ public class RegisActivity extends BaseActivity {
                             user.put("email", email);
                             documentReference.set(user)
                                     .addOnSuccessListener(unused -> {
+                                        Toast.makeText(RegisActivity.this, "Usuario creado correctamente", Toast.LENGTH_SHORT).show();
                                         if (imagenSeleccionadaUri != null) {
                                             uploadImageToFirebase(imagenSeleccionadaUri);
                                         } else {
@@ -190,13 +191,9 @@ public class RegisActivity extends BaseActivity {
                                         progressBar.setVisibility(View.GONE);
                                         Toast.makeText(RegisActivity.this, "Error guardando usuario", Toast.LENGTH_SHORT).show();
                                     });
-                            if (imagenSeleccionadaUri != null) {
-                                uploadImageToFirebase(imagenSeleccionadaUri);
-                            } else {
-                                finalizarRegistro();
-                            }
-
-                            Toast.makeText(RegisActivity.this, "Usuario creado correctamente.", Toast.LENGTH_SHORT).show();
+                        }else {
+                            progressBar.setVisibility(View.GONE);
+                            Toast.makeText(RegisActivity.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -33,4 +33,10 @@ public class MusicService extends Service {
         mediaPlayer.stop();
         mediaPlayer.release();
     }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopSelf();
+    }
 }
