@@ -76,16 +76,21 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void toggleMusic() {
-        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        if (audioManager != null) {
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                    isMuted ? AudioManager.ADJUST_MUTE : AudioManager.ADJUST_UNMUTE, 0);
+        MusicService service = MusicService.getInstance();
+
+        if (service != null) {
+            service.setMuted(isMuted);
         }
     }
 
     private void updateMenuIcon(MenuItem item) {
-        item.setIcon(isMuted ? R.drawable.ic_music_off : R.drawable.ic_music_on);
+        if (isMuted) {
+            item.setIcon(R.drawable.ic_music_off);
+        } else {
+            item.setIcon(R.drawable.ic_music_on);
+        }
     }
+
 
     @Override
     public boolean dispatchTouchEvent(android.view.MotionEvent ev) {
