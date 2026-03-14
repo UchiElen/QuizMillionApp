@@ -29,7 +29,7 @@ public class MainActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,WelcomeActivity.class);
+                Intent intent = new Intent(MainActivity.this, LobbyActivity.class);
                 startActivity(intent);
             }
         });
