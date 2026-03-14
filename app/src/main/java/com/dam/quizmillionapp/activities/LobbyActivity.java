@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dam.quizmillionapp.BaseActivity;
 import com.dam.quizmillionapp.R;
 import com.dam.quizmillionapp.adapters.RoomsAdapter;
 import com.dam.quizmillionapp.auth.UserSession;
@@ -23,7 +24,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
 
-public class LobbyActivity extends AppCompatActivity {
+public class LobbyActivity extends BaseActivity {
 
     private ListenerRegistration roomsListener;
     private RoomsAdapter roomsAdapter;

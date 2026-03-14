@@ -1,6 +1,8 @@
 package com.dam.quizmillionapp.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -8,8 +10,10 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dam.quizmillionapp.AuthActivity;
 import com.dam.quizmillionapp.BaseActivity;
 import com.dam.quizmillionapp.R;
+import com.dam.quizmillionapp.ResetActivity;
 import com.dam.quizmillionapp.adapters.MembersAdapter;
 import com.dam.quizmillionapp.auth.UserSession;
 import com.dam.quizmillionapp.interfaces.LeaveRoomCallback;
@@ -83,7 +87,16 @@ public class WaitingActivity extends BaseActivity {
                 btnStartGame.setEnabled(canStart);
 
                 if ("in_progress".equals(status)) {
-                    showToast("Juego iniciado! (Próxima ventana)");
+                    //showToast("Juego iniciado! (Próxima ventana)");
+
+                    btnStartGame.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(PreguntasActivity.this);
+                            startActivity(intent);
+                        }
+                    });
+
                 }
             }
 
@@ -167,4 +180,6 @@ public class WaitingActivity extends BaseActivity {
             membersListener.remove();
         }
     }
+
+
 }

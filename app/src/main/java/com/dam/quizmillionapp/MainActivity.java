@@ -10,6 +10,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.dam.quizmillionapp.activities.LobbyActivity;
+
 public class MainActivity extends BaseActivity {
 
     @Override
