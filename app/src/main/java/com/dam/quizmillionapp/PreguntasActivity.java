@@ -88,7 +88,7 @@ public class PreguntasActivity extends BaseActivity {
         imgPregunta = findViewById(R.id.img_pregunta);
         btnAbandonar = findViewById(R.id.btn_abandonar);
         btnPlantarse = findViewById(R.id.btn_plantarse);
-        btnMusica = findViewById(R.id.btn_musica);
+        //btnMusica = findViewById(R.id.btn_musica);
 
         layoutTransicion = findViewById(R.id.layout_transicion_nivel);
         tvTransicionTitulo = findViewById(R.id.tv_texto_transicion_titulo);
