@@ -251,6 +251,7 @@ public class PreguntasActivity extends BaseActivity {
         } else {
             tvTransicionMensajeLinea1.setText("Juegas por:");
             tvTransicionMensajeLinea1.setTextColor(Color.WHITE);
+            tvTransicionMensajeLinea2.setVisibility(View.GONE);
         }
 
         layoutTransicion.setVisibility(View.VISIBLE);
