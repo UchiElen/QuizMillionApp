@@ -1,5 +1,6 @@
 package com.dam.quizmillionapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -54,7 +55,12 @@ public class ResultadoActivity extends AppCompatActivity {
         consultarPremio(nivel);
 
         // Listener para volver al inicio y cerrar esta activity
-        findViewById(R.id.btn_menu_principal).setOnClickListener(v -> finish());
+        findViewById(R.id.btn_menu_principal).setOnClickListener(v -> {
+            Intent intent = new Intent(ResultadoActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
     }
 
     /**

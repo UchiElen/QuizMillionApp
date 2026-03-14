@@ -36,7 +36,7 @@ import java.util.List;
  * Actividad Principal del Juego.
  * Controla el ciclo de vida de las preguntas, cronómetro, comodines y transiciones de nivel.
  */
-public class PreguntasActivity extends AppCompatActivity {
+public class PreguntasActivity extends BaseActivity {
 
     // --- Componentes ---
     private ProgressBar progressLoader, pbProgreso;
