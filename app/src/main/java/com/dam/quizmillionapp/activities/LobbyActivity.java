@@ -19,9 +19,6 @@ import com.dam.quizmillionapp.interfaces.JoinRoomCallback;
 import com.dam.quizmillionapp.interfaces.LoadRoomsCallback;
 import com.dam.quizmillionapp.models.RoomSummary;
 import com.dam.quizmillionapp.repositories.RoomRepository;
-import com.dam.quizmillionapp.constants.MemberStatus;
-import com.dam.quizmillionapp.constants.RoomStatus;
-
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
@@ -94,8 +91,17 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void createNewRoom(String roomName) {
-        String uid = UserSession.getOrCreateUid(this);
+        String uid = UserSession.getCurrentUid(this);
         String displayName = UserSession.getCurrentDisplayName(this);
+
+        if (uid == null || uid.trim().isEmpty()) {
+            showToast("No se pudo obtener el usuario actual.");
+            return;
+        }
+
+        if (displayName == null || displayName.trim().isEmpty()) {
+            displayName = "Jugador";
+        }
 
         roomRepository.createRoom(roomName, uid, displayName, new CreateRoomCallback() {
             @Override
@@ -111,8 +117,17 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void joinRoomByRoomId(String roomId) {
-        String currentUid = UserSession.getOrCreateUid(this);
+        String currentUid = UserSession.getCurrentUid(this);
         String currentDisplayName = UserSession.getCurrentDisplayName(this);
+
+        if (currentUid == null || currentUid.trim().isEmpty()) {
+            showToast("No se pudo obtener el usuario actual.");
+            return;
+        }
+
+        if (currentDisplayName == null || currentDisplayName.trim().isEmpty()) {
+            currentDisplayName = "Jugador";
+        }
 
         roomRepository.joinRoomByRoomId(roomId, currentUid, currentDisplayName, new JoinRoomCallback() {
             @Override
@@ -131,8 +146,17 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     private void joinRoomByCode(String roomCode) {
-        String currentUid = UserSession.getOrCreateUid(this);
+        String currentUid = UserSession.getCurrentUid(this);
         String currentDisplayName = UserSession.getCurrentDisplayName(this);
+
+        if (currentUid == null || currentUid.trim().isEmpty()) {
+            showToast("No se pudo obtener el usuario actual.");
+            return;
+        }
+
+        if (currentDisplayName == null || currentDisplayName.trim().isEmpty()) {
+            currentDisplayName = "Jugador";
+        }
 
         roomRepository.joinRoomByCode(roomCode, currentUid, currentDisplayName, new JoinRoomCallback() {
             @Override

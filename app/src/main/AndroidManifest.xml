@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-    
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.dam.quizmillionapp">
+
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- Para Android 10 o inferior -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -19,14 +29,19 @@
         android:theme="@style/Theme.QuizMillionApp">
 
         <activity
-            android:name=".LaunchActivity"
-            android:theme="@style/Theme.App.Starting"
+            android:name=".RoomActivity"
+            android:exported="false" />
+
+
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            -->
         </activity>
 
         <activity
@@ -42,18 +57,19 @@
             android:exported="false" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.WaitingActivity"
             android:exported="false" />
 
         <activity
-            android:name=".PerfilActivity"
-            android:exported="false" />
+            android:name=".activities.LobbyActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
-        <activity
-            android:name=".ResetActivity"
-            android:exported="false" />
-
-        <service android:name=".MusicService" android:enabled="true" android:exported="false" />
+        <!-- <service android:name=".MusicService" />  -->
     </application>
 
 </manifest>

@@ -5,10 +5,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dam.quizmillionapp.BaseActivity;
 import com.dam.quizmillionapp.R;
 import com.dam.quizmillionapp.adapters.MembersAdapter;
 import com.dam.quizmillionapp.auth.UserSession;
@@ -17,13 +17,11 @@ import com.dam.quizmillionapp.interfaces.LoadMembersCallback;
 import com.dam.quizmillionapp.interfaces.LoadRoomDetailsCallback;
 import com.dam.quizmillionapp.interfaces.StartGameCallback;
 import com.dam.quizmillionapp.repositories.RoomRepository;
-import com.dam.quizmillionapp.constants.MemberStatus;
-import com.dam.quizmillionapp.constants.RoomStatus;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
 
-public class WaitingActivity extends AppCompatActivity {
+public class WaitingActivity extends BaseActivity {
 
     private String roomId;
     private ListenerRegistration roomListener;
@@ -72,15 +70,13 @@ public class WaitingActivity extends AppCompatActivity {
     }
 
     private void startRealtimeListeners() {
-
         roomListener = roomRepository.listenRoomDetails(roomId, new LoadRoomDetailsCallback() {
             @Override
             public void onRoomLoaded(String code, String status, String hostUid) {
-
                 txtRoomCode.setText("Code: " + (code != null ? code : "------"));
                 txtRoomStatus.setText("Status: " + (status != null ? status : "unknown"));
 
-                String myUid = UserSession.getOrCreateUid(WaitingActivity.this);
+                String myUid = UserSession.getCurrentUid(WaitingActivity.this);
                 boolean isHost = myUid != null && myUid.equals(hostUid);
                 boolean canStart = isHost && "waiting".equals(status);
 
@@ -117,7 +113,12 @@ public class WaitingActivity extends AppCompatActivity {
     }
 
     private void startGameIfHost() {
-        String myUid = UserSession.getOrCreateUid(this);
+        String myUid = UserSession.getCurrentUid(this);
+
+        if (myUid == null || myUid.trim().isEmpty()) {
+            showToast("No se pudo obtener el usuario actual.");
+            return;
+        }
 
         roomRepository.startGameIfHost(roomId, myUid, new StartGameCallback() {
             @Override
@@ -133,7 +134,12 @@ public class WaitingActivity extends AppCompatActivity {
     }
 
     private void leaveRoomAndExit() {
-        String uid = UserSession.getOrCreateUid(this);
+        String uid = UserSession.getCurrentUid(this);
+
+        if (uid == null || uid.trim().isEmpty()) {
+            finish();
+            return;
+        }
 
         roomRepository.leaveRoom(roomId, uid, new LeaveRoomCallback() {
             @Override

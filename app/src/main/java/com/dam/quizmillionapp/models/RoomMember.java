@@ -1,21 +1,22 @@
 package com.dam.quizmillionapp.models;
 
+import com.google.firebase.Timestamp;
+
 public class RoomMember {
 
     private String uid;
     private String displayName;
-    private Long joinedAt;
-    private Long lastSeenAt;
+    private Timestamp joinedAt;
+    private Timestamp lastSeenAt;
     private String memberStatus;
-    private boolean isHost;
-    private boolean isReady;
+    private Boolean isHost;
+    private Boolean isReady;
 
     public RoomMember() {
-
     }
 
-    public RoomMember(String uid, String displayName, Long joinedAt, Long lastSeenAt,
-                      String memberStatus, boolean isHost, boolean isReady) {
+    public RoomMember(String uid, String displayName, Timestamp joinedAt, Timestamp lastSeenAt,
+                      String memberStatus, Boolean isHost, Boolean isReady) {
         this.uid = uid;
         this.displayName = displayName;
         this.joinedAt = joinedAt;
@@ -41,19 +42,19 @@ public class RoomMember {
         this.displayName = displayName;
     }
 
-    public Long getJoinedAt() {
+    public Timestamp getJoinedAt() {
         return joinedAt;
     }
 
-    public void setJoinedAt(Long joinedAt) {
+    public void setJoinedAt(Timestamp joinedAt) {
         this.joinedAt = joinedAt;
     }
 
-    public Long getLastSeenAt() {
+    public Timestamp getLastSeenAt() {
         return lastSeenAt;
     }
 
-    public void setLastSeenAt(Long lastSeenAt) {
+    public void setLastSeenAt(Timestamp lastSeenAt) {
         this.lastSeenAt = lastSeenAt;
     }
 
@@ -65,19 +66,19 @@ public class RoomMember {
         this.memberStatus = memberStatus;
     }
 
-    public boolean isHost() {
+    public Boolean getIsHost() {
         return isHost;
     }
 
-    public void setHost(boolean host) {
+    public void setIsHost(Boolean host) {
         isHost = host;
     }
 
-    public boolean isReady() {
+    public Boolean getIsReady() {
         return isReady;
     }
 
-    public void setReady(boolean ready) {
+    public void setIsReady(Boolean ready) {
         isReady = ready;
     }
 }

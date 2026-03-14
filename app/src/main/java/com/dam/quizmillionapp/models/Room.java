@@ -1,21 +1,24 @@
 package com.dam.quizmillionapp.models;
 
+import com.google.firebase.Timestamp;
+
 public class Room {
 
     private String code;
-    private Long createdAt;
+    private Timestamp createdAt;
     private String hostUid;
-    private int maxPlayers;
-    private int playerCount;
+    private Long maxPlayers;
+    private Long playerCount;
     private String status;
-    private Long startedAt;
-    private Long closedAt;
+    private Timestamp startedAt;
+    private Timestamp closedAt;
+    private String name;
 
     public Room() {
     }
 
-    public Room(String code, Long createdAt, String hostUid, int maxPlayers, int playerCount,
-                String status, Long startedAt, Long closedAt) {
+    public Room(String code, Timestamp createdAt, String hostUid, Long maxPlayers, Long playerCount,
+                String status, Timestamp startedAt, Timestamp closedAt, String name) {
         this.code = code;
         this.createdAt = createdAt;
         this.hostUid = hostUid;
@@ -24,6 +27,7 @@ public class Room {
         this.status = status;
         this.startedAt = startedAt;
         this.closedAt = closedAt;
+        this.name = name;
     }
 
     public String getCode() {
@@ -34,11 +38,11 @@ public class Room {
         this.code = code;
     }
 
-    public Long getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Long createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -50,19 +54,19 @@ public class Room {
         this.hostUid = hostUid;
     }
 
-    public int getMaxPlayers() {
+    public Long getMaxPlayers() {
         return maxPlayers;
     }
 
-    public void setMaxPlayers(int maxPlayers) {
+    public void setMaxPlayers(Long maxPlayers) {
         this.maxPlayers = maxPlayers;
     }
 
-    public int getPlayerCount() {
+    public Long getPlayerCount() {
         return playerCount;
     }
 
-    public void setPlayerCount(int playerCount) {
+    public void setPlayerCount(Long playerCount) {
         this.playerCount = playerCount;
     }
 
@@ -74,19 +78,27 @@ public class Room {
         this.status = status;
     }
 
-    public Long getStartedAt() {
+    public Timestamp getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(Long startedAt) {
+    public void setStartedAt(Timestamp startedAt) {
         this.startedAt = startedAt;
     }
 
-    public Long getClosedAt() {
+    public Timestamp getClosedAt() {
         return closedAt;
     }
 
-    public void setClosedAt(Long closedAt) {
+    public void setClosedAt(Timestamp closedAt) {
         this.closedAt = closedAt;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
