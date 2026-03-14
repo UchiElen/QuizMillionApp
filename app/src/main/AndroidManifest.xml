@@ -68,6 +68,15 @@
             android:name=".activities.LobbyActivity"
             android:exported="false" />
 
+        <activity
+            android:name="PreguntasActivity"
+            android:exported="false" />
+        <activity
+            android:name="ResultadoActivity"
+            android:exported="false" />
+
+
+
         <service android:name=".MusicService" android:enabled="true" android:exported="false" />
     </application>
 

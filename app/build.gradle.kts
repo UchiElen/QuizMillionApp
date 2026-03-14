@@ -67,7 +67,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore:26.1.1")
     implementation("com.google.firebase:firebase-storage:22.0.1")
-    implementation("com.squareup.picasso:picasso:2.8")
     implementation ("com.github.bumptech.glide:glide:5.0.5")
     annotationProcessor ("com.github.bumptech.glide:compiler:5.0.5")
 

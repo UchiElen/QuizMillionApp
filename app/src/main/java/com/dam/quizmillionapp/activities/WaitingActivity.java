@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dam.quizmillionapp.AuthActivity;
 import com.dam.quizmillionapp.BaseActivity;
+import com.dam.quizmillionapp.PreguntasActivity;
 import com.dam.quizmillionapp.R;
 import com.dam.quizmillionapp.ResetActivity;
 import com.dam.quizmillionapp.adapters.MembersAdapter;
@@ -38,6 +39,9 @@ public class WaitingActivity extends BaseActivity {
     private MembersAdapter membersAdapter;
 
     private RoomRepository roomRepository;
+
+    private boolean hasNavigatedToQuestions = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,21 +86,19 @@ public class WaitingActivity extends BaseActivity {
 
                 String myUid = UserSession.getCurrentUid(WaitingActivity.this);
                 boolean isHost = myUid != null && myUid.equals(hostUid);
-                boolean canStart = isHost && "waiting".equals(status);
 
+                // El botón solo lo puede usar el host y solo si la sala está esperando
+                boolean canStart = isHost && "waiting".equals(status);
                 btnStartGame.setEnabled(canStart);
 
-                if ("in_progress".equals(status)) {
-                    //showToast("Juego iniciado! (Próxima ventana)");
+                // Cuando Firestore indique que la partida ya está en curso, navegamos
+                if ("in_progress".equals(status) && !hasNavigatedToQuestions) {
+                    hasNavigatedToQuestions = true;
 
-                    btnStartGame.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(PreguntasActivity.this);
-                            startActivity(intent);
-                        }
-                    });
-
+                    Intent intent = new Intent(WaitingActivity.this, PreguntasActivity.class);
+                    intent.putExtra("roomId", roomId);
+                    startActivity(intent);
+                    finish();
                 }
             }
 
