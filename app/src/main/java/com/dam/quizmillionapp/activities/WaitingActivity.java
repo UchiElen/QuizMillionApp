@@ -17,10 +17,12 @@ import com.dam.quizmillionapp.R;
 import com.dam.quizmillionapp.ResetActivity;
 import com.dam.quizmillionapp.adapters.MembersAdapter;
 import com.dam.quizmillionapp.auth.UserSession;
+import com.dam.quizmillionapp.constants.RoomStatus;
 import com.dam.quizmillionapp.interfaces.LeaveRoomCallback;
 import com.dam.quizmillionapp.interfaces.LoadMembersCallback;
 import com.dam.quizmillionapp.interfaces.LoadRoomDetailsCallback;
 import com.dam.quizmillionapp.interfaces.StartGameCallback;
+import com.dam.quizmillionapp.models.MemberListItem;
 import com.dam.quizmillionapp.repositories.RoomRepository;
 import com.google.firebase.firestore.ListenerRegistration;
 
@@ -30,22 +32,21 @@ public class WaitingActivity extends BaseActivity {
 
     private String roomId;
     private ListenerRegistration roomListener;
-    private ListenerRegistration membersListener;
 
+    private ListenerRegistration membersListener;
     private TextView txtRoomCode;
     private TextView txtRoomStatus;
     private Button btnStartGame;
     private Button btnLeaveRoom;
     private MembersAdapter membersAdapter;
-
     private RoomRepository roomRepository;
-
     private boolean hasNavigatedToQuestions = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_waiting);
 
         roomRepository = new RoomRepository();
@@ -59,12 +60,14 @@ public class WaitingActivity extends BaseActivity {
 
         txtRoomCode = findViewById(R.id.txtRoomCode);
         txtRoomStatus = findViewById(R.id.txtRoomStatus);
+
         btnStartGame = findViewById(R.id.btnStartGame);
         btnLeaveRoom = findViewById(R.id.btnLeaveRoom);
 
         RecyclerView rvMembers = findViewById(R.id.rvMembers);
         rvMembers.setLayoutManager(new LinearLayoutManager(this));
         membersAdapter = new MembersAdapter();
+
         rvMembers.setAdapter(membersAdapter);
 
         btnStartGame.setOnClickListener(view -> startGameIfHost());
@@ -81,18 +84,64 @@ public class WaitingActivity extends BaseActivity {
         roomListener = roomRepository.listenRoomDetails(roomId, new LoadRoomDetailsCallback() {
             @Override
             public void onRoomLoaded(String code, String status, String hostUid) {
-                txtRoomCode.setText("Code: " + (code != null ? code : "------"));
-                txtRoomStatus.setText("Status: " + (status != null ? status : "unknown"));
+
+
+                if (code != null) {
+                    txtRoomCode.setText("Code: " + code);
+                } else {
+                    txtRoomCode.setText("Code: ------");
+                }
+
+
+
+                String statusText;
+
+                if (status == null) {
+
+                    statusText = "Preparando la sala...";
+
+                } else {
+
+                    switch (status) {
+
+                        case RoomStatus.OPEN:
+                            statusText = "Esperando jugadores...";
+                            break;
+
+                        case RoomStatus.FULL:
+                            statusText = "Sala llena";
+                            break;
+
+                        case RoomStatus.IN_GAME:
+                            statusText = "Partida en curso";
+                            break;
+
+                        case RoomStatus.FINISHED:
+                            statusText = "Partida finalizada";
+                            break;
+
+                        case RoomStatus.CANCELLED:
+                            statusText = "Sala cancelada";
+                            break;
+
+                        default:
+                            statusText = "Estado desconocido";
+                            break;
+                    }
+                }
+
+                txtRoomStatus.setText(statusText);
+
+
 
                 String myUid = UserSession.getCurrentUid(WaitingActivity.this);
                 boolean isHost = myUid != null && myUid.equals(hostUid);
 
-                // El botón solo lo puede usar el host y solo si la sala está esperando
-                boolean canStart = isHost && "waiting".equals(status);
+                boolean canStart = isHost &&
+                        ( RoomStatus.OPEN.equals(status) || RoomStatus.FULL.equals(status) );
                 btnStartGame.setEnabled(canStart);
 
-                // Cuando Firestore indique que la partida ya está en curso, navegamos
-                if ("in_progress".equals(status) && !hasNavigatedToQuestions) {
+                if (RoomStatus.IN_GAME.equals(status) && !hasNavigatedToQuestions) {
                     hasNavigatedToQuestions = true;
 
                     Intent intent = new Intent(WaitingActivity.this, PreguntasActivity.class);
@@ -116,7 +165,7 @@ public class WaitingActivity extends BaseActivity {
 
         membersListener = roomRepository.listenRoomMembers(roomId, new LoadMembersCallback() {
             @Override
-            public void onMembersLoaded(List<String> memberNames) {
+            public void onMembersLoaded(List<MemberListItem> memberNames) {
                 membersAdapter.updateMembers(memberNames);
             }
 
@@ -138,8 +187,9 @@ public class WaitingActivity extends BaseActivity {
         roomRepository.startGameIfHost(roomId, myUid, new StartGameCallback() {
             @Override
             public void onSuccess() {
-                showToast("Started!");
+                showToast("Partida iniciada!");
             }
+
 
             @Override
             public void onError(String errorMessage) {

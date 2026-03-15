@@ -14,7 +14,7 @@ public class UserSession {
     private static final String KEY_UID = "uid";
     private static final String KEY_DISPLAY_NAME = "display_name";
 
-    // Activa esto solo mientras el login real aún no esté plenamente integrado
+
     private static final boolean ALLOW_DEV_FALLBACK = true;
 
     public static String getCurrentUid(Context context) {
@@ -40,10 +40,12 @@ public class UserSession {
                 return displayName;
             }
 
+            /*
             String email = user.getEmail();
             if (email != null && !email.trim().isEmpty()) {
                 return email;
             }
+            */
         }
 
         if (ALLOW_DEV_FALLBACK) {

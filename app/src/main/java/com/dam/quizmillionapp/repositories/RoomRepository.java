@@ -1,7 +1,7 @@
-package com.dam.quizmillionapp.repositories;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+
+
+package com.dam.quizmillionapp.repositories;
 
 import com.dam.quizmillionapp.interfaces.CreateRoomCallback;
 import com.dam.quizmillionapp.interfaces.JoinRoomCallback;
@@ -10,18 +10,17 @@ import com.dam.quizmillionapp.interfaces.LoadMembersCallback;
 import com.dam.quizmillionapp.interfaces.LoadRoomDetailsCallback;
 import com.dam.quizmillionapp.interfaces.LoadRoomsCallback;
 import com.dam.quizmillionapp.interfaces.StartGameCallback;
-import com.dam.quizmillionapp.models.Room;
+
+import com.dam.quizmillionapp.models.MemberListItem;
 import com.dam.quizmillionapp.models.RoomSummary;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 
@@ -32,6 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import com.dam.quizmillionapp.constants.MemberStatus;
+import com.dam.quizmillionapp.constants.RoomStatus;
+
 public class RoomRepository {
 
     private final FirebaseFirestore db;
@@ -40,6 +42,24 @@ public class RoomRepository {
     public RoomRepository() {
         db = FirebaseFirestore.getInstance();
         roomsRef = db.collection("rooms");
+    }
+
+    private String normalizeDisplayName(String displayName) {
+        if (displayName == null || displayName.trim().isEmpty()) {
+            return "Jugador";
+        }
+        return displayName.trim();
+    }
+    private String generateRoomCode() {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 6; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return sb.toString().toUpperCase(Locale.ROOT);
     }
 
     public void createRoom(String roomName, String uid, String displayName, CreateRoomCallback callback) {
@@ -55,12 +75,12 @@ public class RoomRepository {
         String roomCode = generateRoomCode();
 
         Map<String, Object> roomData = new HashMap<>();
-        roomData.put("name", roomName != null ? roomName : "Room");
+        roomData.put("name", roomName != null && !roomName.trim().isEmpty() ? roomName.trim() : "Room");
         roomData.put("code", roomCode);
         roomData.put("hostUid", uid);
         roomData.put("maxPlayers", 4L);
         roomData.put("playerCount", 1L);
-        roomData.put("status", "waiting");
+        roomData.put("status", RoomStatus.OPEN);
         roomData.put("createdAt", FieldValue.serverTimestamp());
         roomData.put("startedAt", null);
         roomData.put("closedAt", null);
@@ -70,7 +90,7 @@ public class RoomRepository {
         memberData.put("displayName", safeDisplayName);
         memberData.put("joinedAt", FieldValue.serverTimestamp());
         memberData.put("lastSeenAt", FieldValue.serverTimestamp());
-        memberData.put("memberStatus", "joined");
+        memberData.put("memberStatus", MemberStatus.ACTIVE);
         memberData.put("isHost", true);
         memberData.put("isReady", false);
         memberData.put("score", 0L);
@@ -89,6 +109,11 @@ public class RoomRepository {
     public void joinRoomByCode(String roomCode, String currentUid, String displayName, JoinRoomCallback callback) {
         if (roomCode == null || roomCode.trim().isEmpty()) {
             callback.onError("Código vacío.");
+            return;
+        }
+
+        if (currentUid == null || currentUid.trim().isEmpty()) {
+            callback.onError("UID vacío.");
             return;
         }
 
@@ -141,14 +166,18 @@ public class RoomRepository {
                         maxPlayers = 4L;
                     }
 
-                    if (status == null || !"waiting".equals(status)) {
+                    if (!RoomStatus.OPEN.equals(status)) {
                         throw new RuntimeException("La sala no está disponible.");
                     }
 
                     DocumentSnapshot memberSnapshot = transaction.get(memberRef);
 
+                    // Si ya existe como miembro, solo refrescamos presencia
                     if (memberSnapshot.exists()) {
-                        transaction.update(memberRef, "lastSeenAt", FieldValue.serverTimestamp());
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("lastSeenAt", FieldValue.serverTimestamp());
+                        updates.put("memberStatus", MemberStatus.ACTIVE);
+                        transaction.update(memberRef, updates);
                         return true;
                     }
 
@@ -161,7 +190,7 @@ public class RoomRepository {
                     memberData.put("displayName", safeDisplayName);
                     memberData.put("joinedAt", FieldValue.serverTimestamp());
                     memberData.put("lastSeenAt", FieldValue.serverTimestamp());
-                    memberData.put("memberStatus", "joined");
+                    memberData.put("memberStatus", MemberStatus.ACTIVE);
                     memberData.put("isHost", false);
                     memberData.put("isReady", false);
                     memberData.put("score", 0L);
@@ -170,41 +199,52 @@ public class RoomRepository {
                     transaction.update(roomRef, "playerCount", playerCount + 1L);
 
                     return false;
-                }).addOnSuccessListener(alreadyJoined -> callback.onSuccess(roomId, alreadyJoined))
+                })
+                .addOnSuccessListener(alreadyJoined -> callback.onSuccess(roomId, alreadyJoined))
                 .addOnFailureListener(e -> callback.onError("Error al unirse: " + e.getMessage()));
     }
 
     public ListenerRegistration listenRoomMembers(String roomId, LoadMembersCallback callback) {
-        return roomsRef.document(roomId)
-                .collection("members")
-                .orderBy("joinedAt", Query.Direction.ASCENDING)
-                .addSnapshotListener((snapshot, error) -> {
-                    if (error != null) {
-                        callback.onError("Error cargando miembros: " + error.getMessage());
-                        return;
-                    }
+        DocumentReference roomRef = roomsRef.document(roomId);
 
-                    List<String> names = new ArrayList<>();
+        return roomRef.addSnapshotListener((roomSnapshot, roomError) -> {
+            if (roomError != null) {
+                callback.onError("Error leyendo host de sala: " + roomError.getMessage());
+                return;
+            }
 
-                    if (snapshot != null) {
+            if (roomSnapshot == null || !roomSnapshot.exists()) {
+                callback.onError("La sala ya no existe.");
+                return;
+            }
+
+            String currentHostUid = roomSnapshot.getString("hostUid");
+
+            roomRef.collection("members")
+                    .orderBy("joinedAt", Query.Direction.ASCENDING)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        List<MemberListItem> members = new ArrayList<>();
+
                         for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                            String uid = doc.getId();
                             String name = doc.getString("displayName");
-                            Boolean isHost = doc.getBoolean("isHost");
 
                             if (name == null || name.trim().isEmpty()) {
-                                name = doc.getId();
+                                name = "Jugador";
                             }
 
-                            if (Boolean.TRUE.equals(isHost)) {
-                                name = name + " (Anfitrión)";
-                            }
+                            boolean isHost = currentHostUid != null && currentHostUid.equals(uid);
 
-                            names.add(name);
+                            members.add(new MemberListItem(name, isHost));
                         }
-                    }
 
-                    callback.onMembersLoaded(names);
-                });
+                        callback.onMembersLoaded(members);
+                    })
+                    .addOnFailureListener(e ->
+                            callback.onError("Error cargando miembros: " + e.getMessage())
+                    );
+        });
     }
 
     public ListenerRegistration listenRoomDetails(String roomId, LoadRoomDetailsCallback callback) {
@@ -250,77 +290,35 @@ public class RoomRepository {
 
                     String hostUid = roomSnapshot.getString("hostUid");
                     String status = roomSnapshot.getString("status");
+                    Long playerCount = roomSnapshot.getLong("playerCount");
 
                     if (hostUid == null || !hostUid.equals(uid)) {
                         throw new RuntimeException("Solo el host puede iniciar.");
                     }
 
-                    if (!"waiting".equals(status)) {
-                        throw new RuntimeException("La sala no está en estado waiting.");
+                    if (!RoomStatus.OPEN.equals(status)) {
+                        throw new RuntimeException("La sala no está lista para iniciar.");
                     }
 
-                    transaction.update(roomRef, "status", "in_progress");
-                    transaction.update(roomRef, "startedAt", FieldValue.serverTimestamp());
+                    if (playerCount == null || playerCount < 1L) {
+                        throw new RuntimeException("No hay jugadores suficientes.");
+                    }
+
+                    Map<String, Object> roomUpdates = new HashMap<>();
+                    roomUpdates.put("status", RoomStatus.IN_GAME);
+                    roomUpdates.put("startedAt", FieldValue.serverTimestamp());
+
+                    transaction.update(roomRef, roomUpdates);
                     return null;
-                }).addOnSuccessListener(unused -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError(e.getMessage()));
+                })
+                .addOnSuccessListener(unused -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onError(e.getMessage() != null ? e.getMessage() : "Error al iniciar la partida."));
     }
 
-    public void leaveRoom(String roomId, String uid, LeaveRoomCallback callback) {
-        if (roomId == null || roomId.trim().isEmpty()) {
-            callback.onError("RoomId vacío.");
-            return;
-        }
 
-        if (uid == null || uid.trim().isEmpty()) {
-            callback.onError("UID vacío.");
-            return;
-        }
-
-        DocumentReference roomRef = roomsRef.document(roomId);
-        DocumentReference memberRef = roomRef.collection("members").document(uid);
-
-        db.runTransaction((Transaction.Function<Void>) transaction -> {
-                    DocumentSnapshot roomSnapshot = transaction.get(roomRef);
-
-                    if (!roomSnapshot.exists()) {
-                        return null;
-                    }
-
-                    DocumentSnapshot memberSnapshot = transaction.get(memberRef);
-
-                    if (!memberSnapshot.exists()) {
-                        return null;
-                    }
-
-                    Long playerCount = roomSnapshot.getLong("playerCount");
-                    if (playerCount == null) {
-                        playerCount = 1L;
-                    }
-
-                    Boolean wasHost = memberSnapshot.getBoolean("isHost");
-
-                    transaction.delete(memberRef);
-
-                    if (playerCount <= 1L) {
-                        transaction.delete(roomRef);
-                        return null;
-                    }
-
-                    transaction.update(roomRef, "playerCount", playerCount - 1L);
-
-                    if (Boolean.TRUE.equals(wasHost)) {
-                        // Transferencia de host todavía no resuelta aquí.
-                        // Primero arregla members y luego vienes a por esto.
-                    }
-
-                    return null;
-                }).addOnSuccessListener(unused -> callback.onSuccess())
-                .addOnFailureListener(e -> callback.onError("Error al salir de la sala: " + e.getMessage()));
-    }
 
     public ListenerRegistration listenAvailableRooms(LoadRoomsCallback callback) {
-        return roomsRef.whereEqualTo("status", "waiting")
+        return roomsRef.whereEqualTo("status", RoomStatus.OPEN)
                 .addSnapshotListener((snapshot, error) -> {
                     if (error != null) {
                         callback.onError("Error cargando salas: " + error.getMessage());
@@ -337,12 +335,20 @@ public class RoomRepository {
                             Long playerCount = doc.getLong("playerCount");
                             Long maxPlayers = doc.getLong("maxPlayers");
 
+                            long safePlayerCount = playerCount != null ? playerCount : 0L;
+                            long safeMaxPlayers = maxPlayers != null ? maxPlayers : 0L;
+
+
+                            if (safeMaxPlayers > 0 && safePlayerCount >= safeMaxPlayers) {
+                                continue;
+                            }
+
                             RoomSummary summary = new RoomSummary(
                                     doc.getId(),
                                     code != null ? code : "",
                                     status != null ? status : "unknown",
-                                    playerCount != null ? playerCount : 0L,
-                                    maxPlayers != null ? maxPlayers : 0L,
+                                    safePlayerCount,
+                                    safeMaxPlayers,
                                     hostUid
                             );
 
@@ -354,22 +360,120 @@ public class RoomRepository {
                 });
     }
 
-    private String normalizeDisplayName(String displayName) {
-        if (displayName == null || displayName.trim().isEmpty()) {
-            return "Jugador";
-        }
-        return displayName.trim();
-    }
+    public void leaveRoom(String roomId, String uid, LeaveRoomCallback callback) {
 
-    private String generateRoomCode() {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < 6; i++) {
-            sb.append(chars.charAt(random.nextInt(chars.length())));
+        if (roomId == null || roomId.trim().isEmpty()) {
+            callback.onError("RoomId vacío.");
+            return;
         }
 
-        return sb.toString().toUpperCase(Locale.ROOT);
+        if (uid == null || uid.trim().isEmpty()) {
+            callback.onError("UID vacío.");
+            return;
+        }
+
+        DocumentReference roomRef = roomsRef.document(roomId);
+        DocumentReference leavingMemberRef = roomRef.collection("members").document(uid);
+        CollectionReference membersRef = roomRef.collection("members");
+
+        roomRef.get()
+                .addOnSuccessListener(roomSnapshot -> {
+
+                    if (roomSnapshot == null || !roomSnapshot.exists()) {
+                        callback.onSuccess();
+                        return;
+                    }
+
+                    String hostUid = roomSnapshot.getString("hostUid");
+                    boolean leavingUserWasHost = hostUid != null && hostUid.equals(uid);
+
+                    Long countFromDb = roomSnapshot.getLong("playerCount");
+                    long currentPlayerCount = (countFromDb == null || countFromDb < 1L) ? 1L : countFromDb;
+                    long remainingPlayers = Math.max(0L, currentPlayerCount - 1L);
+
+                    if (!leavingUserWasHost) {
+                        leaveAsNormalPlayer(roomRef, leavingMemberRef, remainingPlayers, callback);
+                    } else {
+                        leaveAsHost(roomRef, membersRef, leavingMemberRef, uid, remainingPlayers, callback);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        callback.onError("Error leyendo la sala: " + e.getMessage())
+                );
     }
+
+    private void leaveAsNormalPlayer(DocumentReference roomRef, DocumentReference leavingMemberRef, long remainingPlayers, LeaveRoomCallback callback) {
+
+        WriteBatch batch = db.batch();
+
+        batch.delete(leavingMemberRef);
+
+        if (remainingPlayers == 0L) {
+            batch.delete(roomRef);
+        } else {
+            batch.update(roomRef, "playerCount", remainingPlayers);
+        }
+
+        batch.commit()
+                .addOnSuccessListener(unused -> callback.onSuccess())
+                .addOnFailureListener(e ->
+                        callback.onError("Error al salir de la sala: " + e.getMessage())
+                );
+    }
+
+    private void leaveAsHost(
+            DocumentReference roomRef,
+            CollectionReference membersRef,
+            DocumentReference leavingMemberRef,
+            String leavingUid,
+            long remainingPlayers,
+            LeaveRoomCallback callback) {
+
+        membersRef.orderBy("joinedAt", Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(memberSnapshots -> {
+
+                    String newHostUid = null;
+
+                    for (DocumentSnapshot doc : memberSnapshots.getDocuments()) {
+                        String candidateUid = doc.getId();
+
+                        if (!candidateUid.equals(leavingUid)) {
+                            newHostUid = candidateUid;
+                            break;
+                        }
+                    }
+
+                    WriteBatch batch = db.batch();
+                    batch.delete(leavingMemberRef);
+
+                    // Si no quedan jugadores entonces se elimina la sala
+                    if (remainingPlayers == 0L) {
+                        batch.delete(roomRef);
+                    } else {
+                        if (newHostUid == null || newHostUid.trim().isEmpty()) {
+                            callback.onError("No se pudo asignar nuevo anfitrión.");
+                            return;
+                        }
+
+                        batch.update(roomRef, "playerCount", remainingPlayers);
+                        batch.update(roomRef, "hostUid", newHostUid);
+
+                        DocumentReference newHostRef = membersRef.document(newHostUid);
+                        batch.update(newHostRef, "isHost", true);
+                    }
+
+                    batch.commit()
+                            .addOnSuccessListener(unused -> callback.onSuccess())
+                            .addOnFailureListener(e ->
+                                    callback.onError("Error al salir de la sala: " + e.getMessage())
+                            );
+                })
+                .addOnFailureListener(e ->
+                        callback.onError("Error buscando nuevo anfitrión: " + e.getMessage())
+                );
+    }
+
+
+
 }

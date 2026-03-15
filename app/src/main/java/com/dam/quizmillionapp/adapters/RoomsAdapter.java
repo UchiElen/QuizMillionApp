@@ -47,7 +47,8 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
         RoomSummary room = roomList.get(position);
 
-        holder.txtRoomName.setText("Room " + room.getCode());
+        //holder.txtRoomName.setText("Room " + room.getCode());
+        holder.txtRoomName.setText("Sala disponible");
 
         holder.txtRoomCode.setText(
                 holder.itemView.getContext().getString(R.string.room_code_prefix) + " " + room.getCode()

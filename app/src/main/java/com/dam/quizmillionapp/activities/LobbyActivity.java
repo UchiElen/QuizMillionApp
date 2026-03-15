@@ -20,12 +20,12 @@ import com.dam.quizmillionapp.interfaces.JoinRoomCallback;
 import com.dam.quizmillionapp.interfaces.LoadRoomsCallback;
 import com.dam.quizmillionapp.models.RoomSummary;
 import com.dam.quizmillionapp.repositories.RoomRepository;
+import com.dam.quizmillionapp.repositories.UserRepository;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
 
 public class LobbyActivity extends BaseActivity {
-
     private ListenerRegistration roomsListener;
     private RoomsAdapter roomsAdapter;
     private EditText edtRoomCode;
@@ -92,22 +92,32 @@ public class LobbyActivity extends BaseActivity {
     }
 
     private void createNewRoom(String roomName) {
+
         String uid = UserSession.getCurrentUid(this);
-        String displayName = UserSession.getCurrentDisplayName(this);
 
         if (uid == null || uid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
             return;
         }
 
-        if (displayName == null || displayName.trim().isEmpty()) {
-            displayName = "Jugador";
-        }
+        UserRepository userRepository = new UserRepository();
+        userRepository.getUserNameByUid(uid, new UserRepository.OnUserNameLoadedCallback() {
 
-        roomRepository.createRoom(roomName, uid, displayName, new CreateRoomCallback() {
             @Override
-            public void onSuccess(String roomId) {
-                openRoom(roomId);
+            public void onSuccess(String userName) {
+
+                roomRepository.createRoom(roomName, uid, userName, new CreateRoomCallback() {
+                    @Override
+                    public void onSuccess(String roomId) {
+                        openRoom(roomId);
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        showToast(errorMessage);
+                    }
+
+                });
             }
 
             @Override
@@ -118,54 +128,67 @@ public class LobbyActivity extends BaseActivity {
     }
 
     private void joinRoomByRoomId(String roomId) {
+
         String currentUid = UserSession.getCurrentUid(this);
-        String currentDisplayName = UserSession.getCurrentDisplayName(this);
 
         if (currentUid == null || currentUid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
             return;
         }
 
-        if (currentDisplayName == null || currentDisplayName.trim().isEmpty()) {
-            currentDisplayName = "Jugador";
-        }
-
-        roomRepository.joinRoomByRoomId(roomId, currentUid, currentDisplayName, new JoinRoomCallback() {
+        UserRepository userRepository = new UserRepository();
+        userRepository.getUserNameByUid(currentUid, new UserRepository.OnUserNameLoadedCallback() {
             @Override
-            public void onSuccess(String roomId, boolean alreadyJoined) {
-                if (alreadyJoined) {
-                    showToast("Ya estás en esta sala.");
-                }
-                openRoom(roomId);
+            public void onSuccess(String userName) {
+                roomRepository.joinRoomByRoomId(roomId, currentUid, userName, new JoinRoomCallback() {
+                    @Override
+                    public void onSuccess(String roomId, boolean alreadyJoined) {
+                        if (alreadyJoined) {
+                            showToast("Ya estás en esta sala.");
+                        }
+                        openRoom(roomId);
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        showToast(errorMessage);
+                    }
+                });
             }
 
             @Override
             public void onError(String errorMessage) {
-                showToast("Error: " + errorMessage);
+                showToast(errorMessage);
             }
         });
     }
 
     private void joinRoomByCode(String roomCode) {
         String currentUid = UserSession.getCurrentUid(this);
-        String currentDisplayName = UserSession.getCurrentDisplayName(this);
 
         if (currentUid == null || currentUid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
             return;
         }
 
-        if (currentDisplayName == null || currentDisplayName.trim().isEmpty()) {
-            currentDisplayName = "Jugador";
-        }
-
-        roomRepository.joinRoomByCode(roomCode, currentUid, currentDisplayName, new JoinRoomCallback() {
+        UserRepository userRepository = new UserRepository();
+        userRepository.getUserNameByUid(currentUid, new UserRepository.OnUserNameLoadedCallback() {
             @Override
-            public void onSuccess(String roomId, boolean alreadyJoined) {
-                if (alreadyJoined) {
-                    showToast("Ya estás en esta sala.");
-                }
-                openRoom(roomId);
+            public void onSuccess(String userName) {
+                roomRepository.joinRoomByCode(roomCode, currentUid, userName, new JoinRoomCallback() {
+                    @Override
+                    public void onSuccess(String roomId, boolean alreadyJoined) {
+                        if (alreadyJoined) {
+                            showToast("Ya estás en esta sala.");
+                        }
+                        openRoom(roomId);
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        showToast(errorMessage);
+                    }
+                });
             }
 
             @Override
@@ -189,4 +212,22 @@ public class LobbyActivity extends BaseActivity {
             roomsListener.remove();
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (edtRoomCode != null) {
+            edtRoomCode.setText("");
+        }
+    }
+
+
+
+
+
+
+
+
+
 }
