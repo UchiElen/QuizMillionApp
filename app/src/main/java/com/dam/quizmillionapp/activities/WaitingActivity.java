@@ -81,8 +81,8 @@ public class WaitingActivity extends BaseActivity {
         roomListener = roomRepository.listenRoomDetails(roomId, new LoadRoomDetailsCallback() {
             @Override
             public void onRoomLoaded(String code, String status, String hostUid) {
-                txtRoomCode.setText("Code: " + (code != null ? code : "------"));
-                txtRoomStatus.setText("Status: " + (status != null ? status : "unknown"));
+                txtRoomCode.setText("Código: " + (code != null ? code : "------"));
+                txtRoomStatus.setText("Estado: " + (status != null ? status : "unknown"));
 
                 String myUid = UserSession.getCurrentUid(WaitingActivity.this);
                 boolean isHost = myUid != null && myUid.equals(hostUid);
@@ -131,7 +131,7 @@ public class WaitingActivity extends BaseActivity {
         String myUid = UserSession.getCurrentUid(this);
 
         if (myUid == null || myUid.trim().isEmpty()) {
-            showToast("No se pudo obtener el usuario actual.");
+            showToast("No se pudo obtener el usuario actual");
             return;
         }
 
