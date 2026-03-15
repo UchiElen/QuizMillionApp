@@ -27,7 +27,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
  * Clase que gestiona la pantalla final de premios.
  * Se encarga de mostrar el premio obtenido consultando a Firestore según el nivel.
  */
-public class ResultadoActivity extends AppCompatActivity {
+public class ResultadoActivity extends BaseActivity {
 
     private FirebaseFirestore db;
     private TextView tvBanner, tvMensaje;

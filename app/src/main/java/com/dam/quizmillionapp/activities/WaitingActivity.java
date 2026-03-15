@@ -138,7 +138,7 @@ public class WaitingActivity extends BaseActivity {
         roomRepository.startGameIfHost(roomId, myUid, new StartGameCallback() {
             @Override
             public void onSuccess() {
-                showToast("Started!");
+                showToast("¡Vamos a ello!");
             }
 
             @Override
