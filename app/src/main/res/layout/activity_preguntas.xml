@@ -23,7 +23,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#00000000"
-        app:layout_constraintTop_toTopOf="@+id/guideline_top_safe">
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -72,7 +75,7 @@
         android:id="@+id/layout_comodines"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/tv_cronometro">
@@ -81,7 +84,7 @@
             android:id="@+id/btn_50"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_margin="6dp"
+            android:layout_marginHorizontal="25dp"
             android:background="@drawable/circle_push"
             android:padding="10dp"
             android:scaleType="fitCenter"
@@ -91,7 +94,7 @@
             android:id="@+id/btn_publico"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_margin="6dp"
+            android:layout_marginHorizontal="25dp"
             android:background="@drawable/circle_push"
             android:padding="10dp"
             android:scaleType="fitCenter"
@@ -101,7 +104,7 @@
             android:id="@+id/btn_llamada"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_margin="6dp"
+            android:layout_marginHorizontal="25dp"
             android:background="@drawable/circle_push"
             android:padding="10dp"
             android:scaleType="fitCenter"
@@ -113,8 +116,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="50dp"
-        android:layout_marginTop="4dp"
+        android:paddingHorizontal="20dp"
+        android:layout_marginTop="17dp"
         app:layout_constraintTop_toBottomOf="@id/layout_comodines">
 
         <TextView
@@ -125,14 +128,15 @@
             android:text="NIVEL 1 > Premio acumulado: 0€"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:textSize="20sp" />
+            android:textSize="22sp" />
 
         <ProgressBar
             android:id="@+id/pb_progreso_juego"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="6dp"
-            android:layout_marginTop="2dp"
+            android:layout_height="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="40dp"
             android:max="15"
             android:progressTint="@color/colorAccent"
             android:progressBackgroundTint="#44FFFFFF" />
@@ -143,7 +147,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="100dp"
         android:text="Plantarse"
         android:textColor="@color/white"
@@ -158,15 +162,16 @@
     <ImageView
         android:id="@+id/img_pregunta"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="120dp"
         android:layout_marginHorizontal="80dp"
-        android:layout_marginTop="8dp"
-        android:background="#33FFFFFF"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_imagen_redondeada"
         android:scaleType="centerCrop"
+        android:clipToOutline="true"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/btn_plantarse"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/btn_plantarse" />
 
     <TextView
         android:id="@+id/tv_enunciado"
@@ -177,7 +182,7 @@
         android:fontFamily="@font/poppinsbold"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:visibility="invisible"
         app:layout_constraintTop_toBottomOf="@id/img_pregunta"
         app:layout_constraintStart_toStartOf="parent"
@@ -190,16 +195,16 @@
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="53dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="50dp"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:visibility="invisible"
         app:cornerRadius="15dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_enunciado"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_enunciado"
         app:strokeColor="@color/white" />
 
 
@@ -208,16 +213,16 @@
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="53dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="50dp"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:visibility="invisible"
         app:cornerRadius="15dp"
-        app:layout_constraintTop_toBottomOf="@id/btn_opcion_1"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_opcion_1"
         app:strokeColor="@color/white" />
 
     <com.google.android.material.button.MaterialButton
@@ -225,16 +230,16 @@
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="53dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="50dp"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:visibility="invisible"
         app:cornerRadius="15dp"
-        app:layout_constraintTop_toBottomOf="@id/btn_opcion_2"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_opcion_2"
         app:strokeColor="@color/white" />
 
     <com.google.android.material.button.MaterialButton
@@ -242,16 +247,16 @@
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="match_parent"
         android:layout_height="53dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
+        android:layout_marginStart="50dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="50dp"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:visibility="invisible"
         app:cornerRadius="15dp"
-        app:layout_constraintTop_toBottomOf="@id/btn_opcion_3"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_opcion_3"
         app:strokeColor="@color/white" />
 
     <ProgressBar
