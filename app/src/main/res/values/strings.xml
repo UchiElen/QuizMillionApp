@@ -62,4 +62,6 @@
     <string name="leave_room">Salir de la sala</string>
     <string name="host_only">Solo el anfitrión puede iniciar la partida</string>
 
+    <string name="ver_puntuaciones">Ver puntuaciones</string>
+
 </resources>

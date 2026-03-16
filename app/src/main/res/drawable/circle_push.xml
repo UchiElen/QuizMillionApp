@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Color: Morado grisáceo con transparencia (80 es ~50% de opacidad) -->
+    <!-- El código 6B5B95 es un morado grisáceo elegante -->
+    <solid android:color="#50753192" />
+
+    <!-- Si quieres que sea un círculo relleno puro, elimina el stroke -->
+    <!-- O déjalo con un color similar para un efecto de relieve -->
+    <!--<stroke
+        android:width="2dp"
+        android:color="#A06B5B95" />-->
+
+    <size android:width="100dp" android:height="100dp" />
+</shape>

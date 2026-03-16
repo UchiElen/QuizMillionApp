@@ -63,7 +63,7 @@ public class LobbyActivity extends BaseActivity {
             String code = edtRoomCode.getText().toString().trim().toUpperCase();
 
             if (code.length() != 6) {
-                showToast("El código de la sala debe tener 6 caracteres.");
+                showToast("El código de la sala debe tener 6 caracteres");
                 return;
             }
 
@@ -96,7 +96,7 @@ public class LobbyActivity extends BaseActivity {
         String displayName = UserSession.getCurrentDisplayName(this);
 
         if (uid == null || uid.trim().isEmpty()) {
-            showToast("No se pudo obtener el usuario actual.");
+            showToast("No se pudo obtener el usuario actual");
             return;
         }
 
@@ -122,7 +122,7 @@ public class LobbyActivity extends BaseActivity {
         String currentDisplayName = UserSession.getCurrentDisplayName(this);
 
         if (currentUid == null || currentUid.trim().isEmpty()) {
-            showToast("No se pudo obtener el usuario actual.");
+            showToast("No se pudo obtener el usuario actual");
             return;
         }
 
@@ -134,7 +134,7 @@ public class LobbyActivity extends BaseActivity {
             @Override
             public void onSuccess(String roomId, boolean alreadyJoined) {
                 if (alreadyJoined) {
-                    showToast("Ya estás en esta sala.");
+                    showToast("Ya estás en esta sala");
                 }
                 openRoom(roomId);
             }
@@ -151,7 +151,7 @@ public class LobbyActivity extends BaseActivity {
         String currentDisplayName = UserSession.getCurrentDisplayName(this);
 
         if (currentUid == null || currentUid.trim().isEmpty()) {
-            showToast("No se pudo obtener el usuario actual.");
+            showToast("No se pudo obtener el usuario actual");
             return;
         }
 
@@ -163,7 +163,7 @@ public class LobbyActivity extends BaseActivity {
             @Override
             public void onSuccess(String roomId, boolean alreadyJoined) {
                 if (alreadyJoined) {
-                    showToast("Ya estás en esta sala.");
+                    showToast("Ya estás en esta sala");
                 }
                 openRoom(roomId);
             }
