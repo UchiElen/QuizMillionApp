@@ -61,11 +61,12 @@ public class PreguntasActivity extends BaseActivity {
     private int indicePregunta = 0;
     private boolean usado50 = false, usadoPublico = false, usadoLlamada = false;
 
+    private boolean efectoActivo = false; // Bloqueo de seguridad para que no se pisen los efectos
+
     // --- Constantes de Diseño ---
     private final int[] escalaPremios = {0, 100, 250, 500, 750, 1500, 2500, 5000, 10000, 15000, 20000, 30000, 50000, 100000, 300000, 1000000};
     private final int COLOR_AMBAR = Color.parseColor("#FFC107");
     private static final int COLOR_CYAN = Color.parseColor("#00FFFF");
-    private static final int COLOR_MAGENTA = Color.parseColor("#FF00FF");
 
 
     @Override
@@ -332,13 +333,96 @@ public class PreguntasActivity extends BaseActivity {
     A su vez, llama al metodo que apaga el boton del comodin
     */
     private void comodinPublico() {
-        if (usadoPublico || preguntaActual == null) return;
+        // Si ya se usó, no hay pregunta o hay otro efecto en marcha, salimos
+        if (usadoPublico || preguntaActual == null || efectoActivo) return;
+
         usadoPublico = true;
+        efectoActivo = true; // Bloqueamos otros comodines temporalmente
         desactivaBotonComodin(btnPublico);
 
-        int sug = preguntaActual.comodin_publico;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_CYAN));
-        Toast.makeText(this, "El público opina que la correcta es la " + (sug + 1), Toast.LENGTH_SHORT).show();
+        //  Generar porcentajes teniendo en cuenta si el 50% se utilizó anteriormente y eliminó opciones
+        int correcta = preguntaActual.comodin_publico;
+        int[] porcentajes = generarVotosInteligentes(correcta);
+
+        // Aplicar "Mapa de Calor" y textos temporales
+        for (int i = 0; i < 4; i++) {
+            // Solo afectamos a los botones que no han sido eliminados por el 50%
+            if (btnOpciones[i].isEnabled()) {
+                String enunciadoOriginal = preguntaActual.opciones.get(i);
+                btnOpciones[i].setText(enunciadoOriginal + " (" + porcentajes[i] + "%)");
+                btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(obtenerColor(porcentajes[i])));
+            }
+        }
+
+        Toast.makeText(this, "Consultando al público...", Toast.LENGTH_SHORT).show();
+
+        // 3. Temporizador para revertir los cambios
+        new Handler().postDelayed(() -> {
+            for (int i = 0; i < 4; i++) {
+                // Restauramos el texto original (siempre)
+                btnOpciones[i].setText(preguntaActual.opciones.get(i));
+
+                // Si el botón está habilitado, le quitamos el color de calor
+                if (btnOpciones[i].isEnabled()) {
+                    btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+                }
+            }
+            efectoActivo = false; // Liberamos el bloqueo
+        }, 3000); // 3 segundos de espera
+    }
+
+    /**
+     * Genera votos coherentes. Si el 50% ocultó opciones, esas reciben 0%.
+     */
+    private int[] generarVotosInteligentes(int indiceCorrecto) {
+        int[] votos = new int[4];
+        List<Integer> indicesActivos = new ArrayList<>();
+
+        // Detectamos qué botones están "vivos" (no eliminados por el 50%)
+        for (int i = 0; i < 4; i++) {
+            if (btnOpciones[i].isEnabled()) {
+                indicesActivos.size();
+                indicesActivos.add(i);
+            }
+        }
+
+        // Caso: Solo quedan 2 opciones (50% usado)
+        if (indicesActivos.size() == 2) {
+            votos[indiceCorrecto] = (int) (Math.random() * 16) + 75; // 75% a 90%
+            for (int idx : indicesActivos) {
+                if (idx != indiceCorrecto) votos[idx] = 100 - votos[indiceCorrecto];
+            }
+        }
+        // Caso: Quedan las 4 opciones
+        else {
+            votos[indiceCorrecto] = (int) (Math.random() * 21) + 50; // 50% a 70%
+            int restante = 100 - votos[indiceCorrecto];
+            for (int i = 0; i < indicesActivos.size(); i++) {
+                int currentIdx = indicesActivos.get(i);
+                if (currentIdx == indiceCorrecto) continue;
+
+                // Reparto aleatorio para el resto
+                int randomVoto = (int) (Math.random() * (restante / 1.5));
+                votos[currentIdx] = randomVoto;
+                restante -= randomVoto;
+            }
+            // Ajuste final para sumar 100 exactamente
+            for (int idx : indicesActivos) {
+                if (idx != indiceCorrecto) { votos[idx] += restante; break; }
+            }
+        }
+        return votos;
+    }
+
+    /**
+     * Escala de colores para el feedback visual
+     */
+    private int obtenerColor(int porcentaje) {
+        if (porcentaje >= 75) return Color.parseColor("#880E4F"); // Magenta muy oscuro
+        if (porcentaje >= 50) return Color.parseColor("#C2185B"); // Magenta intenso
+        if (porcentaje >= 25) return Color.parseColor("#E91E63"); // Magenta medio
+        if (porcentaje >= 10) return Color.parseColor("#F06292"); // Magenta suave
+        return Color.parseColor("#BDBDBD"); // Gris para opciones casi sin votos
     }
 
     /* Metodo del comodin de la llamada
@@ -352,7 +436,7 @@ public class PreguntasActivity extends BaseActivity {
         desactivaBotonComodin(btnLlamada);
 
         int sug = preguntaActual.comodin_llamada;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_MAGENTA));
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_CYAN));
         Toast.makeText(this, "Tu contacto cree que es la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 
