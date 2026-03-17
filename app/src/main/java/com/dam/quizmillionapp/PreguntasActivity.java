@@ -368,7 +368,7 @@ public class PreguntasActivity extends BaseActivity {
                 }
             }
             efectoActivo = false; // Liberamos el bloqueo
-        }, 3000); // 3 segundos de espera
+        }, 5000); // 5 segundos de espera
     }
 
     /**
