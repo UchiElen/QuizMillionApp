@@ -20,8 +20,13 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Clase que gestiona la pantalla final de premios.
@@ -56,6 +61,7 @@ public class ResultadoActivity extends BaseActivity {
 
         // Listener para volver al inicio y cerrar esta activity
         findViewById(R.id.btn_menu_principal).setOnClickListener(v -> {
+            SoundManager.getInstance(ResultadoActivity.this).playClick();
             Intent intent = new Intent(ResultadoActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -72,6 +78,7 @@ public class ResultadoActivity extends BaseActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
+                        SoundManager.getInstance(ResultadoActivity.this).playMoney();
                         // Aunque sea un for, solo debería venir un premio por nivel
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
@@ -133,6 +140,7 @@ public class ResultadoActivity extends BaseActivity {
                 });
     }
 
+
     /**
      * Animación suave para ocultar la pantalla de carga porque las imagenes a veces tardan
      */
@@ -146,4 +154,5 @@ public class ResultadoActivity extends BaseActivity {
                     .start();
         }
     }
+
 }

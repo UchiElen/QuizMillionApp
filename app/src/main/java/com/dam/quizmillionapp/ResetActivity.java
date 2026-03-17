@@ -42,6 +42,7 @@ public class ResetActivity extends BaseActivity {
         RecupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(ResetActivity.this).playClick();
                 String email = emailTI.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {

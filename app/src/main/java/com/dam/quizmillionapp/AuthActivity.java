@@ -110,6 +110,7 @@ public class AuthActivity extends BaseActivity {
         recupTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(AuthActivity.this).playClick();
                 Intent intent = new Intent(AuthActivity.this,ResetActivity.class);
                 startActivity(intent);
             }

@@ -17,6 +17,8 @@ public class LaunchActivity extends BaseActivity {
         androidx.core.splashscreen.SplashScreen.installSplashScreen(this);
 
         super.onCreate(savedInstanceState);
+
+        SoundManager.getInstance(this);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_launch);
 
@@ -38,8 +40,10 @@ public class LaunchActivity extends BaseActivity {
 
         Button button = findViewById(R.id.LaunchBtn);
         button.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(LaunchActivity.this).playClick();
                 Intent intent = new Intent(LaunchActivity.this,WelcomeActivity.class);
                 startActivity(intent);
             }

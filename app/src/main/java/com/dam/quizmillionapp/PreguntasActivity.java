@@ -213,8 +213,11 @@ public class PreguntasActivity extends BaseActivity {
         if (reloj != null) reloj.cancel();
         btnPlantarse.setVisibility(View.INVISIBLE);
 
+        SoundManager.getInstance(PreguntasActivity.this).playClick();
+
         if (seleccionado == preguntaActual.correcta) {
             // Acierto: Color Verde
+            SoundManager.getInstance(PreguntasActivity.this).playSuccess();
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
 
             if (nivelActual == 15) { // ¡Ha ganado el millón!
@@ -230,7 +233,9 @@ public class PreguntasActivity extends BaseActivity {
             new Handler().postDelayed(this::mostrarTransicionYNivel, 1500);
         } else {
             // Fallo: Color Rojo y sumamos un fallo
+            SoundManager.getInstance(PreguntasActivity.this).playError();
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
+            //vibrarAlFallar();
             actualizarFallos();
         }
     }
@@ -294,6 +299,7 @@ public class PreguntasActivity extends BaseActivity {
     // Metodo que controla el contador de fallos
     private void actualizarFallos() {
         contadorFallos++;
+        vibrarAlFallar();
         tvFallos.setText("Fallos: " + contadorFallos + "/3");
         if (contadorFallos >= 3) {
             if (reloj != null) reloj.cancel();
@@ -312,6 +318,7 @@ public class PreguntasActivity extends BaseActivity {
     */
     private void comodin50() {
         if (usado50 || preguntaActual == null) return;
+        SoundManager.getInstance(PreguntasActivity.this).playClick();
         usado50 = true;
         desactivaBotonComodin(btn50);
 
@@ -333,6 +340,7 @@ public class PreguntasActivity extends BaseActivity {
     */
     private void comodinPublico() {
         if (usadoPublico || preguntaActual == null) return;
+        SoundManager.getInstance(PreguntasActivity.this).playClick();
         usadoPublico = true;
         desactivaBotonComodin(btnPublico);
 
@@ -348,6 +356,7 @@ public class PreguntasActivity extends BaseActivity {
      */
     private void comodinLlamada() {
         if (usadoLlamada || preguntaActual == null) return;
+        SoundManager.getInstance(PreguntasActivity.this).playClick();
         usadoLlamada = true;
         desactivaBotonComodin(btnLlamada);
 
@@ -374,6 +383,7 @@ public class PreguntasActivity extends BaseActivity {
 
     // Al pulsar "Plantarse" pedimos confirmación
     private void mensajePlantarse() {
+        SoundManager.getInstance(PreguntasActivity.this).playClick();
         int dinero = (nivelActual > 1) ? escalaPremios[nivelActual - 1] : 0;
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("¿Te plantas?")
@@ -383,13 +393,30 @@ public class PreguntasActivity extends BaseActivity {
                 .show();
     }
 
-    // Al pulsar "Atras" tamiben pedimos confirmación
+    // Al pulsar "Atras" también pedimos confirmación
     private void mensajeAbandonar() {
+        SoundManager.getInstance(PreguntasActivity.this).playClick();
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Salir")
                 .setMessage("Si sales ahora, se perderá todo el progreso.")
                 .setPositiveButton("Salir", (d, w) -> finish())
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+    // Para hacer vibrar el móvil si la opción está activada en ajustes
+    private void vibrarAlFallar() {
+                android.content.SharedPreferences prefs = getSharedPreferences(ConfiguracionActivity.PREFS_NAME, MODE_PRIVATE);
+        boolean vibracionActivada = prefs.getBoolean(ConfiguracionActivity.KEY_VIBRATION, true);
+
+        if (vibracionActivada) {
+            android.os.Vibrator vibrator = (android.os.Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (vibrator != null) {
+                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    vibrator.vibrate(android.os.VibrationEffect.createOneShot(200, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    vibrator.vibrate(200);
+                }
+            }
+        }
     }
 }
