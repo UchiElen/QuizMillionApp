@@ -235,7 +235,6 @@ public class PreguntasActivity extends BaseActivity {
             // Fallo: Color Rojo y sumamos un fallo
             SoundManager.getInstance(PreguntasActivity.this).playError();
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
-            //vibrarAlFallar();
             actualizarFallos();
         }
     }
