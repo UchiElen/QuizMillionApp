@@ -63,5 +63,24 @@
     <string name="host_only">Solo el anfitrión puede iniciar la partida</string>
 
     <string name="ver_puntuaciones">Ver puntuaciones</string>
+    <string name="creditos_texto">
+        CRÉDITOS
+
+        Desarrollado por
+        Elena G.
+
+        Equipo
+        Alejandro
+        Iván
+
+        Tutor
+        Alejandro
+
+        Inspirado en
+        Who Wants to Be a Millionaire?
+
+        Proyecto educativo
+        2026
+    </string>
 
 </resources>

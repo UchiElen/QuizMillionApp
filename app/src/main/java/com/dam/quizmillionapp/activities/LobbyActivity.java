@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.dam.quizmillionapp.BaseActivity;
 import com.dam.quizmillionapp.R;
+import com.dam.quizmillionapp.SoundManager;
 import com.dam.quizmillionapp.adapters.RoomsAdapter;
 import com.dam.quizmillionapp.auth.UserSession;
 import com.dam.quizmillionapp.interfaces.CreateRoomCallback;
@@ -51,15 +52,20 @@ public class LobbyActivity extends BaseActivity {
         roomsAdapter = new RoomsAdapter(new RoomsAdapter.OnRoomClickListener() {
             @Override
             public void onRoomClicked(RoomSummary room) {
+                SoundManager.getInstance(LobbyActivity.this).playClick(); // Sonido instantáneo
                 joinRoomByRoomId(room.getRoomId());
             }
         });
 
         rvRooms.setAdapter(roomsAdapter);
 
-        btnCreateRoom.setOnClickListener(view -> createNewRoom("Room"));
+        btnCreateRoom.setOnClickListener(view -> {
+            SoundManager.getInstance(LobbyActivity.this).playClick(); // Sonido instantáneo
+            createNewRoom("Room");
+        });
 
         btnJoinByCode.setOnClickListener(view -> {
+            SoundManager.getInstance(LobbyActivity.this).playClick();
             String code = edtRoomCode.getText().toString().trim().toUpperCase();
 
             if (code.length() != 6) {

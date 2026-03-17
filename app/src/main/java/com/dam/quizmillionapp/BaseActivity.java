@@ -1,7 +1,5 @@
 package com.dam.quizmillionapp;
 
-import android.content.Context;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +60,24 @@ public class BaseActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MusicService musicService = MusicService.getInstance();
+        if (musicService != null) {
+            musicService.pauseMusicForBackground();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MusicService musicService = MusicService.getInstance();
+        if (musicService != null) {
+            musicService.resumeMusicFromBackground();
+        }
     }
 
     @Override

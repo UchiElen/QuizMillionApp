@@ -101,6 +101,7 @@ public class PerfilActivity extends BaseActivity {
         ActualizarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(PerfilActivity.this).playClick();
                 String nuevoNombre = nombreTI.getText().toString().trim();
                 String nuevaContra = contraTI.getText().toString().trim();
 
@@ -160,6 +161,7 @@ public class PerfilActivity extends BaseActivity {
     }
 
     public void logout (View view) {
+        SoundManager.getInstance(PerfilActivity.this).playClick();
         FirebaseAuth.getInstance().signOut();
         Toast.makeText(PerfilActivity.this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(PerfilActivity.this, WelcomeActivity.class);

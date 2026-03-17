@@ -67,13 +67,13 @@
                 android:id="@+id/jugarBtn"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
-                android:layout_height="53dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="50dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginEnd="50dp"
                 android:text="@string/jugar"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="34sp"
                 app:cornerRadius="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.496"
@@ -81,15 +81,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/BienvenidaText"
                 app:strokeColor="@color/white" />
 
+
             <Button
-                android:id="@+id/perfilBtn"
+                android:id="@+id/configBtn"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="53dp"
-                android:layout_marginStart="50dp"
+                android:layout_marginStart="70dp"
                 android:layout_marginTop="17dp"
-                android:layout_marginEnd="50dp"
-                android:text="@string/perfil"
+                android:layout_marginEnd="70dp"
+                android:text="Configuración"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:cornerRadius="15dp"
@@ -99,7 +100,40 @@
                 app:layout_constraintTop_toBottomOf="@+id/jugarBtn"
                 app:strokeColor="@color/white" />
 
+
+            <Button
+                android:id="@+id/creditosBtn"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:layout_marginStart="70dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="70dp"
+                android:text="Créditos"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:cornerRadius="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/configBtn"
+                app:strokeColor="@color/white" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+    <ImageButton
+        android:id="@+id/perfilIB"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/circle_push"
+        android:contentDescription="@string/foto_perfil_description"
+        android:scaleType="centerInside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mascot" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

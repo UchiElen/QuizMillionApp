@@ -15,6 +15,7 @@ import com.dam.quizmillionapp.BaseActivity;
 import com.dam.quizmillionapp.PreguntasActivity;
 import com.dam.quizmillionapp.R;
 import com.dam.quizmillionapp.ResetActivity;
+import com.dam.quizmillionapp.SoundManager;
 import com.dam.quizmillionapp.adapters.MembersAdapter;
 import com.dam.quizmillionapp.auth.UserSession;
 import com.dam.quizmillionapp.interfaces.LeaveRoomCallback;
@@ -128,6 +129,7 @@ public class WaitingActivity extends BaseActivity {
     }
 
     private void startGameIfHost() {
+        SoundManager.getInstance(WaitingActivity.this).playClick();
         String myUid = UserSession.getCurrentUid(this);
 
         if (myUid == null || myUid.trim().isEmpty()) {
@@ -149,6 +151,7 @@ public class WaitingActivity extends BaseActivity {
     }
 
     private void leaveRoomAndExit() {
+        SoundManager.getInstance(WaitingActivity.this).playClick();
         String uid = UserSession.getCurrentUid(this);
 
         if (uid == null || uid.trim().isEmpty()) {
