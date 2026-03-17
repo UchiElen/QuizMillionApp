@@ -328,94 +328,92 @@ public class PreguntasActivity extends BaseActivity {
     }
 
     /* Metodo del comodin del publico
-    Resalta la opcion recomendada con un color distinto al resto de comodines
-    Al usarse muestra abajo un toaster con la recomendacion
-    A su vez, llama al metodo que apaga el boton del comodin
+    Resalta las opciones votadas disponibles con una escala de  color en funcion del porcentaje
+    Al usarse muestra abajo un toaster con el mensaje "Consultando al público..."
+    A su vez, llama al metodo que apaga el boton del comodin y bloquea los demás para evitar uso indevido
     */
     private void comodinPublico() {
-        // Si ya se usó, no hay pregunta o hay otro efecto en marcha, salimos
         if (usadoPublico || preguntaActual == null || efectoActivo) return;
 
         usadoPublico = true;
-        efectoActivo = true; // Bloqueamos otros comodines temporalmente
+        efectoActivo = true;
         desactivaBotonComodin(btnPublico);
 
-        //  Generar porcentajes teniendo en cuenta si el 50% se utilizó anteriormente y eliminó opciones
         int correcta = preguntaActual.comodin_publico;
-        int[] porcentajes = generarVotosInteligentes(correcta);
+        int[] porcentajes = generarVotos(correcta);
 
-        // Aplicar "Mapa de Calor" y textos temporales
         for (int i = 0; i < 4; i++) {
-            // Solo afectamos a los botones que no han sido eliminados por el 50%
             if (btnOpciones[i].isEnabled()) {
                 String enunciadoOriginal = preguntaActual.opciones.get(i);
                 btnOpciones[i].setText(enunciadoOriginal + " (" + porcentajes[i] + "%)");
                 btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(obtenerColor(porcentajes[i])));
+                btnOpciones[i].setTextColor(Color.WHITE); // Aseguramos legibilidad
             }
         }
 
         Toast.makeText(this, "Consultando al público...", Toast.LENGTH_SHORT).show();
 
-        // 3. Temporizador para revertir los cambios
         new Handler().postDelayed(() -> {
             for (int i = 0; i < 4; i++) {
-                // Restauramos el texto original (siempre)
                 btnOpciones[i].setText(preguntaActual.opciones.get(i));
-
-                // Si el botón está habilitado, le quitamos el color de calor
                 if (btnOpciones[i].isEnabled()) {
                     btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
                 }
             }
-            efectoActivo = false; // Liberamos el bloqueo
-        }, 5000); // 5 segundos de espera
+            efectoActivo = false;
+        }, 5000);
     }
 
-    /**
-     * Genera votos coherentes. Si el 50% ocultó opciones, esas reciben 0%.
-     */
-    private int[] generarVotosInteligentes(int indiceCorrecto) {
+    private int[] generarVotos(int indiceCorrecto) {
         int[] votos = new int[4];
         List<Integer> indicesActivos = new ArrayList<>();
 
-        // Detectamos qué botones están "vivos" (no eliminados por el 50%)
+        // Detectar qué botones de opciones están activos
         for (int i = 0; i < 4; i++) {
-            if (btnOpciones[i].isEnabled()) {
-                indicesActivos.size();
-                indicesActivos.add(i);
-            }
+            if (btnOpciones[i].isEnabled()) indicesActivos.add(i);
         }
 
-        // Caso: Solo quedan 2 opciones (50% usado)
+        int baseVoto, rangoVoto;
+
+        // Lógica de dificultad por nivel para obtener un resultado mas real
         if (indicesActivos.size() == 2) {
-            votos[indiceCorrecto] = (int) (Math.random() * 16) + 75; // 75% a 90%
-            for (int idx : indicesActivos) {
-                if (idx != indiceCorrecto) votos[idx] = 100 - votos[indiceCorrecto];
-            }
+            // --- CASO 50% USADO (Solo 2 opciones) ---
+            if (nivelActual <= 5) { baseVoto = 85; rangoVoto = 11; }      // 85-95%
+            else if (nivelActual > 5 && nivelActual <= 10) { baseVoto = 65; rangoVoto = 16; } // 65-80%
+            else { baseVoto = 51; rangoVoto = 10; }                       // 51-60%
+        } else {
+            // --- CASO NORMAL (4 opciones) ---
+            if (nivelActual <= 5) { baseVoto = 70; rangoVoto = 15; }      // 70-85%
+            else if (nivelActual > 5 && nivelActual <= 10) { baseVoto = 50; rangoVoto = 15; } // 50-65%
+            else { baseVoto = 35; rangoVoto = 12; }                       // 35-47%
         }
-        // Caso: Quedan las 4 opciones
-        else {
-            votos[indiceCorrecto] = (int) (Math.random() * 21) + 50; // 50% a 70%
-            int restante = 100 - votos[indiceCorrecto];
-            for (int i = 0; i < indicesActivos.size(); i++) {
-                int currentIdx = indicesActivos.get(i);
-                if (currentIdx == indiceCorrecto) continue;
 
-                // Reparto aleatorio para el resto
-                int randomVoto = (int) (Math.random() * (restante / 1.5));
+        // Asignar voto a la correcta
+        votos[indiceCorrecto] = (int) (Math.random() * rangoVoto) + baseVoto;
+        int restante = 100 - votos[indiceCorrecto];
+
+        // Repartir el resto entre las incorrectas habilitadas
+        List<Integer> incorrectasActivas = new ArrayList<>();
+        for (int idx : indicesActivos) {
+            if (idx != indiceCorrecto) incorrectasActivas.add(idx);
+        }
+
+        for (int i = 0; i < incorrectasActivas.size(); i++) {
+            int currentIdx = incorrectasActivas.get(i);
+            if (i == incorrectasActivas.size() - 1) {
+                votos[currentIdx] = restante; // La última se queda el resto exacto
+            } else {
+                // Reparto proporcional para que no sea siempre igual
+                int randomVoto = (int) (Math.random() * (restante / 1.2));
                 votos[currentIdx] = randomVoto;
                 restante -= randomVoto;
-            }
-            // Ajuste final para sumar 100 exactamente
-            for (int idx : indicesActivos) {
-                if (idx != indiceCorrecto) { votos[idx] += restante; break; }
             }
         }
         return votos;
     }
 
     /**
-     * Escala de colores para el feedback visual
+     * Escala de colores para el resultado visual
      */
     private int obtenerColor(int porcentaje) {
         if (porcentaje >= 75) return Color.parseColor("#880E4F"); // Magenta muy oscuro
