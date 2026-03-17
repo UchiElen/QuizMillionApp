@@ -25,6 +25,8 @@ public class Pregunta {
     public int comodin_llamada;
     public int comodin_publico;
 
+    public String categoria;
+
     /**
      * CONSTRUCTOR VACÍO (para Firebase).
      * Hemos tenido que añadirlo porque si no, el método .toObject(Pregunta.class) lanzaría una excepción
@@ -35,11 +37,12 @@ public class Pregunta {
     /**
      * Constructor completo para creación manual de preguntas si fuera necesario.
      */
-    public Pregunta(String enunciado, String imagen, int correcta, List<String> opciones, int nivel) {
+    public Pregunta(String enunciado, String imagen, int correcta, List<String> opciones, int nivel, String categoria) {
         this.enunciado = enunciado;
         this.imagen = imagen;
         this.correcta = correcta;
         this.opciones = opciones;
         this.nivel = nivel;
+        this.categoria = categoria;
     }
 }
