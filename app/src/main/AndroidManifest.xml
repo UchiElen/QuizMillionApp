@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -9,7 +9,10 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -21,63 +24,58 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuizMillionApp">
         <activity
+            android:name=".activities.RoomConfigActivity"
+            android:exported="false" />
+        <activity
             android:name=".LaunchActivity"
-            android:theme="@style/Theme.App.Starting"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".WelcomeActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
-
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".RegisActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
-
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".AuthActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
-
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
         <activity
             android:name=".PerfilActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
-
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ResetActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="false" />
-
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.WaitingActivity"
             android:exported="false" />
-
         <activity
             android:name=".activities.LobbyActivity"
             android:exported="false" />
-
         <activity
-            android:name="PreguntasActivity"
+            android:name=".PreguntasActivity"
             android:exported="false" />
         <activity
-            android:name="ResultadoActivity"
+            android:name=".ResultadoActivity"
             android:exported="false" />
 
-
-
-        <service android:name=".MusicService" android:enabled="true" android:exported="false" />
+        <service
+            android:name=".MusicService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

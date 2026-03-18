@@ -2,6 +2,7 @@ package com.dam.quizmillionapp.models;
 
 public class RoomSummary {
     private String roomId;
+    private String name;
     private String code;
     private String status;
     private long playerCount;
@@ -11,8 +12,10 @@ public class RoomSummary {
     public RoomSummary() {
     }
 
-    public RoomSummary(String roomId, String code, String status, long playerCount, long maxPlayers, String hostUid) {
+    public RoomSummary(String roomId, String name, String code, String status, long playerCount, long maxPlayers, String hostUid) {
+
         this.roomId = roomId;
+        this.name = name;
         this.code = code;
         this.status = status;
         this.playerCount = playerCount;
@@ -26,6 +29,14 @@ public class RoomSummary {
 
     public void setRoomId(String roomId) {
         this.roomId = roomId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCode() {

@@ -15,8 +15,8 @@ public class RoomMember {
     public RoomMember() {
     }
 
-    public RoomMember(String uid, String displayName, Timestamp joinedAt, Timestamp lastSeenAt,
-                      String memberStatus, Boolean isHost, Boolean isReady) {
+    public RoomMember(String uid, String displayName, Timestamp joinedAt, Timestamp lastSeenAt, String memberStatus, Boolean isHost, Boolean isReady) {
+
         this.uid = uid;
         this.displayName = displayName;
         this.joinedAt = joinedAt;

@@ -3,10 +3,10 @@ package com.dam.quizmillionapp.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dam.quizmillionapp.R;
@@ -21,9 +21,11 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MemberVi
 
     public void updateMembers(List<MemberListItem> newMembers) {
         members.clear();
+
         if (newMembers != null) {
             members.addAll(newMembers);
         }
+
         notifyDataSetChanged();
     }
 
@@ -32,6 +34,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MemberVi
     public MemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View row = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_member_row, parent, false);
+
         return new MemberViewHolder(row);
     }
 
@@ -42,12 +45,9 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MemberVi
         holder.txtMemberName.setText(member.getDisplayName());
 
         if (member.isHost()) {
-            holder.txtMemberName.setCompoundDrawablesWithIntrinsicBounds(
-                    android.R.drawable.btn_star_big_on, 0, 0, 0
-            );
-            holder.txtMemberName.setCompoundDrawablePadding(12);
+            holder.imgHost.setVisibility(View.VISIBLE);
         } else {
-            holder.txtMemberName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            holder.imgHost.setVisibility(View.GONE);
         }
     }
 
@@ -57,11 +57,15 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MemberVi
     }
 
     static class MemberViewHolder extends RecyclerView.ViewHolder {
+
         TextView txtMemberName;
+        ImageView imgHost;
 
         MemberViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtMemberName = itemView.findViewById(R.id.txtMemberName);
+
+            txtMemberName = itemView.findViewById(R.id.txtPlayerName);
+            imgHost = itemView.findViewById(R.id.imgHost);
         }
     }
 }

@@ -1,8 +1,9 @@
-
 package com.dam.quizmillionapp.interfaces;
 
 public interface LoadRoomDetailsCallback {
-    void onRoomLoaded(String code, String status, String hostUid);
+    // Este metodo recupera los datos de las sala
+    void onRoomLoaded(String code, String roomName, boolean isPublic,
+                      String status, String hostUid, int loadedMaxPlayers);
     void onRoomNotFound();
     void onError(String errorMessage);
 }
