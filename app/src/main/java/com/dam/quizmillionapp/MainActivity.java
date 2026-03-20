@@ -48,12 +48,22 @@ public class MainActivity extends BaseActivity {
             return insets;
         });
 
-        Button button = findViewById(R.id.jugarBtn);
+        Button button = findViewById(R.id.jugarMultiBtn);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(MainActivity.this).playClick();
                 Intent intent = new Intent(MainActivity.this, LobbyActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button button1 = findViewById(R.id.jugarSoloBtn);
+        button1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SoundManager.getInstance(MainActivity.this).playClick();
+                Intent intent = new Intent(MainActivity.this, PreguntasActivity.class);
                 startActivity(intent);
             }
         });
