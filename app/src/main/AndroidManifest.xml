@@ -78,7 +78,7 @@
             android:name=".PreguntasActivity"
             android:exported="false" />
         <activity
-            android:name=".ResultadoActivity"
+            android:name=".ResultadoMultiActivity"
             android:exported="false" />
 
         <service

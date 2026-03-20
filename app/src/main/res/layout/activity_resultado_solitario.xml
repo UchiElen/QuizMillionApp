@@ -8,7 +8,7 @@
     android:background="@drawable/background_gradient"
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
-    tools:context=".ResultadoActivity">
+    tools:context=".ResultadoSolitarioActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -139,7 +139,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_ver_puntuaciones"
+            android:id="@+id/btn_volver_jugar"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="53dp"
@@ -147,7 +147,7 @@
             android:layout_marginEnd="6dp"
             android:layout_marginBottom="10dp"
             android:textSize="16sp"
-            android:text="Ver puntuaciones"
+            android:text="Volver a jugar"
             android:textColor="@color/white"
             app:cornerRadius="15dp"
             app:strokeColor="@color/white"/>

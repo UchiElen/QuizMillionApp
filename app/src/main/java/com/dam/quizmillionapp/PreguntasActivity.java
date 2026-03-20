@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -462,9 +460,9 @@ public class PreguntasActivity extends BaseActivity {
         v.setAlpha(0.3f);
     }
 
-    // Metodo intent para la ResultadoActivity
+    // Metodo intent para la ResultadoMultiActivity
     private void irAResultados(int nivel) {
-        Intent intent = new Intent(this, ResultadoActivity.class);
+        Intent intent = new Intent(this, ResultadoMultiActivity.class);
         intent.putExtra("NIVEL_ALCANZADO", nivel);
         intent.putExtra("roomId", this.roomId);
         startActivity(intent);

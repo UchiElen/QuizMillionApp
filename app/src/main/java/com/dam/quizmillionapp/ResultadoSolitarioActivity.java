@@ -41,7 +41,7 @@ public class ResultadoSolitarioActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_resultado);
+        setContentView(R.layout.activity_resultado_multi);
 
         // Inicializamos los objetos de la interfaz
         tvBanner = findViewById(R.id.tv_banner_mensaje);
@@ -67,14 +67,11 @@ public class ResultadoSolitarioActivity extends BaseActivity {
             startActivity(intent);
             finish();
         });
-        findViewById(R.id.btn_ver_puntuaciones).setEnabled(false);
-        findViewById(R.id.btn_ver_puntuaciones).setOnClickListener(v -> {
+        findViewById(R.id.btn_volver_jugar).setOnClickListener(v -> {
             SoundManager.getInstance(ResultadoSolitarioActivity.this).playClick();
-            Intent intent = new Intent(ResultadoSolitarioActivity.this, PuntuacionesActivity.class);
+            Intent intent = new Intent(ResultadoSolitarioActivity.this, PreguntasActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra("roomId", roomId);
             startActivity(intent);
-
         });
     }
 
