@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +20,6 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -29,10 +27,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Clase que gestiona la pantalla final de premios del modo multijugador.
+ * Clase que gestiona la pantalla final de premios del modo individual.
  * Se encarga de mostrar el premio obtenido consultando a Firestore según el nivel.
  */
-public class ResultadoActivity extends BaseActivity {
+public class ResultadoSolitarioActivity extends BaseActivity {
 
     private FirebaseFirestore db;
     private TextView tvBanner, tvMensaje;
@@ -63,16 +61,16 @@ public class ResultadoActivity extends BaseActivity {
 
         // Listener para volver al inicio y cerrar esta activity
         findViewById(R.id.btn_menu_principal).setOnClickListener(v -> {
-            SoundManager.getInstance(ResultadoActivity.this).playClick();
-            Intent intent = new Intent(ResultadoActivity.this, MainActivity.class);
+            SoundManager.getInstance(ResultadoSolitarioActivity.this).playClick();
+            Intent intent = new Intent(ResultadoSolitarioActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         });
         findViewById(R.id.btn_ver_puntuaciones).setEnabled(false);
         findViewById(R.id.btn_ver_puntuaciones).setOnClickListener(v -> {
-            SoundManager.getInstance(ResultadoActivity.this).playClick();
-            Intent intent = new Intent(ResultadoActivity.this, PuntuacionesActivity.class);
+            SoundManager.getInstance(ResultadoSolitarioActivity.this).playClick();
+            Intent intent = new Intent(ResultadoSolitarioActivity.this, PuntuacionesActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.putExtra("roomId", roomId);
             startActivity(intent);
@@ -89,7 +87,7 @@ public class ResultadoActivity extends BaseActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
-                        SoundManager.getInstance(ResultadoActivity.this).playMoney();
+                        SoundManager.getInstance(ResultadoSolitarioActivity.this).playMoney();
                         // Aunque sea un for, solo debería venir un premio por nivel
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
