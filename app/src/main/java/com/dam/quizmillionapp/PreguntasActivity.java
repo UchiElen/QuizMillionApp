@@ -55,17 +55,19 @@ public class PreguntasActivity extends BaseActivity {
     private List<Pregunta> listaPreguntasNivel = new ArrayList<>();
     private Pregunta preguntaActual;
     private CountDownTimer reloj;
+    private String roomId;
 
     private int contadorFallos = 0;
     private int nivelActual = 1;
     private int indicePregunta = 0;
     private boolean usado50 = false, usadoPublico = false, usadoLlamada = false;
 
+    private boolean efectoActivo = false; // Bloqueo de seguridad para que no se pisen los efectos
+
     // --- Constantes de Diseño ---
     private final int[] escalaPremios = {0, 100, 250, 500, 750, 1500, 2500, 5000, 10000, 15000, 20000, 30000, 50000, 100000, 300000, 1000000};
     private final int COLOR_AMBAR = Color.parseColor("#FFC107");
     private static final int COLOR_CYAN = Color.parseColor("#00FFFF");
-    private static final int COLOR_MAGENTA = Color.parseColor("#FF00FF");
 
 
     @Override
@@ -73,8 +75,14 @@ public class PreguntasActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preguntas);
 
+        if (getIntent().hasExtra("roomId")) {
+            roomId = getIntent().getStringExtra("roomId");
+        }
+
+
         initViews();       // Enlazamos XML con Java
         initFirestore();    // Inicializamos DB
+
 
         // El juego comienza con la cortina del Nivel 1
         mostrarTransicionYNivel();
@@ -333,19 +341,101 @@ public class PreguntasActivity extends BaseActivity {
     }
 
     /* Metodo del comodin del publico
-    Resalta la opcion recomendada con un color distinto al resto de comodines
-    Al usarse muestra abajo un toaster con la recomendacion
-    A su vez, llama al metodo que apaga el boton del comodin
+    Resalta las opciones votadas disponibles con una escala de  color en funcion del porcentaje
+    Al usarse muestra abajo un toaster con el mensaje "Consultando al público..."
+    A su vez, llama al metodo que apaga el boton del comodin y bloquea los demás para evitar uso indevido
     */
     private void comodinPublico() {
-        if (usadoPublico || preguntaActual == null) return;
+
+        if (usadoPublico || preguntaActual == null || efectoActivo) return;
         SoundManager.getInstance(PreguntasActivity.this).playClick();
+
         usadoPublico = true;
+        efectoActivo = true;
         desactivaBotonComodin(btnPublico);
 
-        int sug = preguntaActual.comodin_publico;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_CYAN));
-        Toast.makeText(this, "El público opina que la correcta es la " + (sug + 1), Toast.LENGTH_SHORT).show();
+        int correcta = preguntaActual.comodin_publico;
+        int[] porcentajes = generarVotos(correcta);
+
+        for (int i = 0; i < 4; i++) {
+            if (btnOpciones[i].isEnabled()) {
+                String enunciadoOriginal = preguntaActual.opciones.get(i);
+                btnOpciones[i].setText(enunciadoOriginal + " (" + porcentajes[i] + "%)");
+                btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(obtenerColor(porcentajes[i])));
+                btnOpciones[i].setTextColor(Color.WHITE); // Aseguramos legibilidad
+            }
+        }
+
+        Toast.makeText(this, "Consultando al público...", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(() -> {
+            for (int i = 0; i < 4; i++) {
+                btnOpciones[i].setText(preguntaActual.opciones.get(i));
+                if (btnOpciones[i].isEnabled()) {
+                    btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+                }
+            }
+            efectoActivo = false;
+        }, 5000);
+    }
+
+    private int[] generarVotos(int indiceCorrecto) {
+        int[] votos = new int[4];
+        List<Integer> indicesActivos = new ArrayList<>();
+
+        // Detectar qué botones de opciones están activos
+        for (int i = 0; i < 4; i++) {
+            if (btnOpciones[i].isEnabled()) indicesActivos.add(i);
+        }
+
+        int baseVoto, rangoVoto;
+
+        // Lógica de dificultad por nivel para obtener un resultado mas real
+        if (indicesActivos.size() == 2) {
+            // --- CASO 50% USADO (Solo 2 opciones) ---
+            if (nivelActual <= 5) { baseVoto = 85; rangoVoto = 11; }      // 85-95%
+            else if (nivelActual > 5 && nivelActual <= 10) { baseVoto = 65; rangoVoto = 16; } // 65-80%
+            else { baseVoto = 51; rangoVoto = 10; }                       // 51-60%
+        } else {
+            // --- CASO NORMAL (4 opciones) ---
+            if (nivelActual <= 5) { baseVoto = 70; rangoVoto = 15; }      // 70-85%
+            else if (nivelActual > 5 && nivelActual <= 10) { baseVoto = 50; rangoVoto = 15; } // 50-65%
+            else { baseVoto = 35; rangoVoto = 12; }                       // 35-47%
+        }
+
+        // Asignar voto a la correcta
+        votos[indiceCorrecto] = (int) (Math.random() * rangoVoto) + baseVoto;
+        int restante = 100 - votos[indiceCorrecto];
+
+        // Repartir el resto entre las incorrectas habilitadas
+        List<Integer> incorrectasActivas = new ArrayList<>();
+        for (int idx : indicesActivos) {
+            if (idx != indiceCorrecto) incorrectasActivas.add(idx);
+        }
+
+        for (int i = 0; i < incorrectasActivas.size(); i++) {
+            int currentIdx = incorrectasActivas.get(i);
+            if (i == incorrectasActivas.size() - 1) {
+                votos[currentIdx] = restante; // La última se queda el resto exacto
+            } else {
+                // Reparto proporcional para que no sea siempre igual
+                int randomVoto = (int) (Math.random() * (restante / 1.2));
+                votos[currentIdx] = randomVoto;
+                restante -= randomVoto;
+            }
+        }
+        return votos;
+    }
+
+    /**
+     * Escala de colores para el resultado visual
+     */
+    private int obtenerColor(int porcentaje) {
+        if (porcentaje >= 75) return Color.parseColor("#880E4F"); // Magenta muy oscuro
+        if (porcentaje >= 50) return Color.parseColor("#C2185B"); // Magenta intenso
+        if (porcentaje >= 25) return Color.parseColor("#E91E63"); // Magenta medio
+        if (porcentaje >= 10) return Color.parseColor("#F06292"); // Magenta suave
+        return Color.parseColor("#BDBDBD"); // Gris para opciones casi sin votos
     }
 
     /* Metodo del comodin de la llamada
@@ -360,7 +450,7 @@ public class PreguntasActivity extends BaseActivity {
         desactivaBotonComodin(btnLlamada);
 
         int sug = preguntaActual.comodin_llamada;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_MAGENTA));
+        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_CYAN));
         Toast.makeText(this, "Tu contacto cree que es la " + (sug + 1), Toast.LENGTH_SHORT).show();
     }
 
@@ -376,6 +466,7 @@ public class PreguntasActivity extends BaseActivity {
     private void irAResultados(int nivel) {
         Intent intent = new Intent(this, ResultadoActivity.class);
         intent.putExtra("NIVEL_ALCANZADO", nivel);
+        intent.putExtra("roomId", this.roomId);
         startActivity(intent);
         finish();
     }
@@ -404,13 +495,13 @@ public class PreguntasActivity extends BaseActivity {
     }
     // Para hacer vibrar el móvil si la opción está activada en ajustes
     private void vibrarAlFallar() {
-                android.content.SharedPreferences prefs = getSharedPreferences(ConfiguracionActivity.PREFS_NAME, MODE_PRIVATE);
+        android.content.SharedPreferences prefs = getSharedPreferences(ConfiguracionActivity.PREFS_NAME, MODE_PRIVATE);
         boolean vibracionActivada = prefs.getBoolean(ConfiguracionActivity.KEY_VIBRATION, true);
 
         if (vibracionActivada) {
             android.os.Vibrator vibrator = (android.os.Vibrator) getSystemService(VIBRATOR_SERVICE);
             if (vibrator != null) {
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     vibrator.vibrate(android.os.VibrationEffect.createOneShot(200, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
                 } else {
                     vibrator.vibrate(200);

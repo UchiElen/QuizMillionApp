@@ -38,6 +38,7 @@ public class ResultadoActivity extends BaseActivity {
     private TextView tvBanner, tvMensaje;
     private ImageView imgPremio;
     private ConstraintLayout layoutCarga;
+    private String roomId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,7 @@ public class ResultadoActivity extends BaseActivity {
         tvMensaje = findViewById(R.id.tv_frase_graciosa);
         imgPremio = findViewById(R.id.img_premio);
         layoutCarga = findViewById(R.id.layout_carga);
+        roomId = getIntent().getStringExtra("roomId");
 
         db = FirebaseFirestore.getInstance();
 
@@ -66,6 +68,15 @@ public class ResultadoActivity extends BaseActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
+        });
+        findViewById(R.id.btn_ver_puntuaciones).setEnabled(false);
+        findViewById(R.id.btn_ver_puntuaciones).setOnClickListener(v -> {
+            SoundManager.getInstance(ResultadoActivity.this).playClick();
+            Intent intent = new Intent(ResultadoActivity.this, PuntuacionesActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("roomId", roomId);
+            startActivity(intent);
+
         });
     }
 
@@ -125,12 +136,20 @@ public class ResultadoActivity extends BaseActivity {
                                 // Si no hay URL definida, quitamos el loader para que no se quede infinitamente
                                 ocultarCargaConAnimacion();
                             }
+                            Long valorPremio = doc.getLong("cantidad");
+                            Log.d("DEBUG_PREMIO", "Documento encontrado: " + doc.getId());
+                            Log.d("DEBUG_PREMIO", "Valor recuperado de la DB: " + valorPremio);
+
+                            if (valorPremio == null) valorPremio = 0L;
+                            actualizarScoreEnFirestore(valorPremio);
+
                         }
                     } else {
                         // Caso de error: nivel no registrado en la base de datos, aunque no es probable pero cubre fallo humano al alimentar la bbdd
                         ocultarCargaConAnimacion();
                         tvBanner.setText("¡Nivel " + nivelAlcanzado + "!");
                         tvMensaje.setText("Aún no hay premio registrado para este nivel.");
+                        actualizarScoreEnFirestore(0L);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -139,11 +158,6 @@ public class ResultadoActivity extends BaseActivity {
                     Toast.makeText(this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
                 });
     }
-
-
-    /**
-     * Animación suave para ocultar la pantalla de carga porque las imagenes a veces tardan
-     */
 
     private void ocultarCargaConAnimacion() {
         if (layoutCarga != null && layoutCarga.getVisibility() == View.VISIBLE) {
@@ -155,4 +169,29 @@ public class ResultadoActivity extends BaseActivity {
         }
     }
 
+
+    private void actualizarScoreEnFirestore(Long puntuacionFinal) {
+        String myUid = FirebaseAuth.getInstance().getUid();
+
+        if (roomId != null && myUid != null) {
+            Map<String, Object> datosFinalizar = new HashMap<>();
+            datosFinalizar.put("score", puntuacionFinal);
+            datosFinalizar.put("terminado", true);
+
+            db.collection("rooms").document(roomId)
+                    .collection("members").document(myUid)
+                    .update(datosFinalizar)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("SCORE_UPDATE", "Puntuación y estado 'terminado' guardados.");
+                        findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("SCORE_UPDATE", "Error al actualizar", e);
+                        findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
+                    });
+        } else {
+            Log.e("SCORE_UPDATE", "Error: roomId o UID es nulo.");
+            findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
+        }
+    }
 }

@@ -71,6 +71,7 @@ public class CreditosActivity extends BaseActivity {
     }
 
     private void volverMenu() {
+        SoundManager.getInstance(CreditosActivity.this).playClick();
         handler.removeCallbacksAndMessages(null);
 
         MusicService musicService = MusicService.getInstance();
