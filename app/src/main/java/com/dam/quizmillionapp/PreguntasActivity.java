@@ -55,6 +55,7 @@ public class PreguntasActivity extends BaseActivity {
     private List<Pregunta> listaPreguntasNivel = new ArrayList<>();
     private Pregunta preguntaActual;
     private CountDownTimer reloj;
+    private String roomId;
 
     private int contadorFallos = 0;
     private int nivelActual = 1;
@@ -74,8 +75,14 @@ public class PreguntasActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preguntas);
 
+        if (getIntent().hasExtra("roomId")) {
+            roomId = getIntent().getStringExtra("roomId");
+        }
+
+
         initViews();       // Enlazamos XML con Java
         initFirestore();    // Inicializamos DB
+
 
         // El juego comienza con la cortina del Nivel 1
         mostrarTransicionYNivel();
@@ -459,6 +466,7 @@ public class PreguntasActivity extends BaseActivity {
     private void irAResultados(int nivel) {
         Intent intent = new Intent(this, ResultadoActivity.class);
         intent.putExtra("NIVEL_ALCANZADO", nivel);
+        intent.putExtra("roomId", this.roomId);
         startActivity(intent);
         finish();
     }
@@ -487,13 +495,13 @@ public class PreguntasActivity extends BaseActivity {
     }
     // Para hacer vibrar el móvil si la opción está activada en ajustes
     private void vibrarAlFallar() {
-                android.content.SharedPreferences prefs = getSharedPreferences(ConfiguracionActivity.PREFS_NAME, MODE_PRIVATE);
+        android.content.SharedPreferences prefs = getSharedPreferences(ConfiguracionActivity.PREFS_NAME, MODE_PRIVATE);
         boolean vibracionActivada = prefs.getBoolean(ConfiguracionActivity.KEY_VIBRATION, true);
 
         if (vibracionActivada) {
             android.os.Vibrator vibrator = (android.os.Vibrator) getSystemService(VIBRATOR_SERVICE);
             if (vibrator != null) {
-                                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     vibrator.vibrate(android.os.VibrationEffect.createOneShot(200, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
                 } else {
                     vibrator.vibrate(200);

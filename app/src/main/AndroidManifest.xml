@@ -27,6 +27,10 @@
         <activity
             android:name=".CreditosActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".PuntuacionesActivity"
+            android:exported="false" />
         <activity
             android:name=".ConfiguracionActivity"
             android:exported="false"
