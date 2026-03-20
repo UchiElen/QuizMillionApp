@@ -64,16 +64,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/logo" />
 
             <Button
-                android:id="@+id/jugarBtn"
+                android:id="@+id/jugarMultiBtn"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="65dp"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="50dp"
-                android:text="@string/jugar"
+                android:text="@string/jugarMulti"
                 android:textColor="@color/white"
-                android:textSize="34sp"
+                android:textSize="35sp"
                 android:backgroundTint="#50753192"
                 app:cornerRadius="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +82,24 @@
                 app:layout_constraintTop_toBottomOf="@+id/BienvenidaText"
                 app:strokeColor="@color/white" />
 
-
+            <Button
+                android:id="@+id/jugarSoloBtn"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="50dp"
+                android:text="@string/jugarSolo"
+                android:textColor="@color/white"
+                android:textSize="35sp"
+                android:backgroundTint="#50753192"
+                app:cornerRadius="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.496"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/jugarMultiBtn"
+                app:strokeColor="@color/white" />
 
             <Button
                 android:id="@+id/configBtn"
@@ -90,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="53dp"
                 android:layout_marginStart="70dp"
-                android:layout_marginTop="17dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginEnd="70dp"
                 android:text="Configuración"
                 android:textColor="@color/white"
@@ -99,7 +116,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.496"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/jugarBtn"
+                app:layout_constraintTop_toBottomOf="@+id/jugarSoloBtn"
                 app:strokeColor="@color/white" />
 
 
