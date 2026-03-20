@@ -462,11 +462,20 @@ public class PreguntasActivity extends BaseActivity {
 
     // Metodo intent para la ResultadoMultiActivity
     private void irAResultados(int nivel) {
-        Intent intent = new Intent(this, ResultadoMultiActivity.class);
-        intent.putExtra("NIVEL_ALCANZADO", nivel);
-        intent.putExtra("roomId", this.roomId);
-        startActivity(intent);
-        finish();
+        if (!roomId.isEmpty()) {
+            Intent intent = new Intent(this, ResultadoMultiActivity.class);
+            intent.putExtra("NIVEL_ALCANZADO", nivel);
+            intent.putExtra("roomId", this.roomId);
+            startActivity(intent);
+            finish();
+        }
+        else {
+            Intent intent = new Intent(this, ResultadoSolitarioActivity.class);
+            intent.putExtra("NIVEL_ALCANZADO", nivel);
+            startActivity(intent);
+            finish();
+        }
+
     }
 
     // Al pulsar "Plantarse" pedimos confirmación
