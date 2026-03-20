@@ -81,6 +81,10 @@
             android:name=".ResultadoMultiActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ResultadoSolitarioActivity"
+            android:exported="false" />
+
         <service
             android:name=".MusicService"
             android:enabled="true"
