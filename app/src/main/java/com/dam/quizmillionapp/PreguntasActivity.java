@@ -466,7 +466,10 @@ public class PreguntasActivity extends BaseActivity {
         v.setAlpha(0.3f);
     }
 
-    // Metodo intent para la Resultados
+    /* Metodo Intent para ir a Resultados
+    Se usa la variable modoSolitario y la cadena roomId
+    Para determinar si ir a ResultadosSolitario o ResultadosMultijugador
+    */
     private void irAResultados(int nivel) {
         if (!roomId.isEmpty()) {
             Intent intent = new Intent(this, ResultadoMultiActivity.class);
