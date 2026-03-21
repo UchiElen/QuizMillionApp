@@ -38,6 +38,9 @@ public class ResultadoSolitarioActivity extends BaseActivity {
     private ConstraintLayout layoutCarga;
     private String roomId;
 
+    private boolean modoSolitario = true;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +70,7 @@ public class ResultadoSolitarioActivity extends BaseActivity {
             startActivity(intent);
             finish();
         });
-        findViewById(R.id.btn_volver_jugar).setOnClickListener(v -> {
+        findViewById(R.id.btn_reintentar).setOnClickListener(v -> {
             SoundManager.getInstance(ResultadoSolitarioActivity.this).playClick();
             Intent intent = new Intent(ResultadoSolitarioActivity.this, PreguntasActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -163,7 +166,6 @@ public class ResultadoSolitarioActivity extends BaseActivity {
                     .start();
         }
     }
-
 
     private void actualizarScoreEnFirestore(Long puntuacionFinal) {
         String myUid = FirebaseAuth.getInstance().getUid();

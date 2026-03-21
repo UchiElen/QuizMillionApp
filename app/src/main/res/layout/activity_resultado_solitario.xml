@@ -139,7 +139,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_volver_jugar"
+            android:id="@+id/btn_reintentar"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
             android:layout_height="53dp"

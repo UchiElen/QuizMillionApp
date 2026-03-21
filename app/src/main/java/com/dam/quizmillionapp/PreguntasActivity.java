@@ -55,6 +55,8 @@ public class PreguntasActivity extends BaseActivity {
     private CountDownTimer reloj;
     private String roomId;
 
+    private boolean modoSolitario = false;
+
     private int contadorFallos = 0;
     private int nivelActual = 1;
     private int indicePregunta = 0;
@@ -75,6 +77,10 @@ public class PreguntasActivity extends BaseActivity {
 
         if (getIntent().hasExtra("roomId")) {
             roomId = getIntent().getStringExtra("roomId");
+        }
+        else {
+            roomId = "";
+            modoSolitario=true;
         }
 
 
@@ -460,7 +466,7 @@ public class PreguntasActivity extends BaseActivity {
         v.setAlpha(0.3f);
     }
 
-    // Metodo intent para la ResultadoMultiActivity
+    // Metodo intent para la Resultados
     private void irAResultados(int nivel) {
         if (!roomId.isEmpty()) {
             Intent intent = new Intent(this, ResultadoMultiActivity.class);
@@ -469,7 +475,7 @@ public class PreguntasActivity extends BaseActivity {
             startActivity(intent);
             finish();
         }
-        else {
+        else if (modoSolitario) {
             Intent intent = new Intent(this, ResultadoSolitarioActivity.class);
             intent.putExtra("NIVEL_ALCANZADO", nivel);
             startActivity(intent);
