@@ -139,7 +139,6 @@ public class ResultadoSolitarioActivity extends BaseActivity {
                             Log.d("DEBUG_PREMIO", "Valor recuperado de la DB: " + valorPremio);
 
                             if (valorPremio == null) valorPremio = 0L;
-                           // actualizarScoreEnFirestore(valorPremio);
 
                         }
                     } else {
@@ -147,7 +146,6 @@ public class ResultadoSolitarioActivity extends BaseActivity {
                         ocultarCargaConAnimacion();
                         tvBanner.setText("¡Nivel " + nivelAlcanzado + "!");
                         tvMensaje.setText("Aún no hay premio registrado para este nivel.");
-                        //actualizarScoreEnFirestore(0L);
                     }
                 })
                 .addOnFailureListener(e -> {
