@@ -44,7 +44,7 @@ public class ResultadoSolitarioActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_resultado_multi);
+        setContentView(R.layout.activity_resultado_solitario);
 
         // Inicializamos los objetos de la interfaz
         tvBanner = findViewById(R.id.tv_banner_mensaje);
@@ -139,7 +139,7 @@ public class ResultadoSolitarioActivity extends BaseActivity {
                             Log.d("DEBUG_PREMIO", "Valor recuperado de la DB: " + valorPremio);
 
                             if (valorPremio == null) valorPremio = 0L;
-                            actualizarScoreEnFirestore(valorPremio);
+                           // actualizarScoreEnFirestore(valorPremio);
 
                         }
                     } else {
@@ -147,7 +147,7 @@ public class ResultadoSolitarioActivity extends BaseActivity {
                         ocultarCargaConAnimacion();
                         tvBanner.setText("¡Nivel " + nivelAlcanzado + "!");
                         tvMensaje.setText("Aún no hay premio registrado para este nivel.");
-                        actualizarScoreEnFirestore(0L);
+                        //actualizarScoreEnFirestore(0L);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -164,31 +164,6 @@ public class ResultadoSolitarioActivity extends BaseActivity {
                     .setDuration(400) // 400ms es un tiempo natural para el ojo
                     .withEndAction(() -> layoutCarga.setVisibility(View.GONE))
                     .start();
-        }
-    }
-
-    private void actualizarScoreEnFirestore(Long puntuacionFinal) {
-        String myUid = FirebaseAuth.getInstance().getUid();
-
-        if (roomId != null && myUid != null) {
-            Map<String, Object> datosFinalizar = new HashMap<>();
-            datosFinalizar.put("score", puntuacionFinal);
-            datosFinalizar.put("terminado", true);
-
-            db.collection("rooms").document(roomId)
-                    .collection("members").document(myUid)
-                    .update(datosFinalizar)
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("SCORE_UPDATE", "Puntuación y estado 'terminado' guardados.");
-                        findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("SCORE_UPDATE", "Error al actualizar", e);
-                        findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
-                    });
-        } else {
-            Log.e("SCORE_UPDATE", "Error: roomId o UID es nulo.");
-            findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
         }
     }
 }
