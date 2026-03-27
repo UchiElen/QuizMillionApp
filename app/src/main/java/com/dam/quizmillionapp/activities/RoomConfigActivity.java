@@ -1,5 +1,6 @@
 package com.dam.quizmillionapp.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -33,7 +34,6 @@ import java.util.Locale;
 
 public class RoomConfigActivity extends BaseActivity {
 
-    // controles de la pantalla
     private EditText edtRoomName;
     private Button btnCreateRoom;
     private SwitchMaterial switchPublicRoom;
@@ -45,7 +45,6 @@ public class RoomConfigActivity extends BaseActivity {
     private ChipGroup chipGroupCategories;
     private ArrayList<String> selectedCategories;
 
-    // repositorio
     private RoomRepository roomRepository;
 
     @Override
@@ -55,7 +54,6 @@ public class RoomConfigActivity extends BaseActivity {
 
         roomRepository = new RoomRepository();
 
-        // inicializamos la lista para evitar null al trabajar con categorías
         selectedCategories = new ArrayList<>();
 
         initViews();
@@ -65,7 +63,6 @@ public class RoomConfigActivity extends BaseActivity {
         loadCategories();
     }
 
-    // enlazamos los controles xml
     private void initViews() {
 
         edtRoomName = findViewById(R.id.edtRoomName);
@@ -82,18 +79,14 @@ public class RoomConfigActivity extends BaseActivity {
         chipGroupCategories = findViewById(R.id.chipGroupCategories);
     }
 
-    // configuramos el switch de privacidad
     private void setupPrivacySwitch() {
-        // establecemos el estado inicial
         updatePrivacyUi(switchPublicRoom.isChecked());
 
-        // escuchamos cambios
         switchPublicRoom.setOnCheckedChangeListener((buttonView, isChecked) -> {
             updatePrivacyUi(isChecked);
         });
     }
 
-    // actualizamos el icono y los textos si la sala es pública o privada
     private void updatePrivacyUi(boolean isPublic) {
         if (isPublic) {
             imgPrivacyIcon.setImageResource(R.drawable.ic_unlock);
@@ -111,11 +104,9 @@ public class RoomConfigActivity extends BaseActivity {
     }
 
     private void setupMaxPlayersSlider() {
-        // establecemos el valor inicial
         int initialValue = (int) sliderMaxPlayers.getValue();
         txtMaxPlayersValue.setText("Jugadores máximos: " + initialValue);
 
-        // escuchamos los cambios del slider
         sliderMaxPlayers.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(Slider slider, float value, boolean fromUser) {
@@ -125,7 +116,6 @@ public class RoomConfigActivity extends BaseActivity {
         });
     }
 
-    // configuramos el boton para crear la sala
     private void setupListeners() {
         btnCreateRoom.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,29 +125,25 @@ public class RoomConfigActivity extends BaseActivity {
         });
     }
 
-    // creamos la sala
     private void createRoom() {
 
         String roomName = edtRoomName.getText().toString().trim();
         boolean isPublic = switchPublicRoom.isChecked();
         int maxPlayers = (int) sliderMaxPlayers.getValue();
 
-        // recuperamos las categorías marcadas antes de validar y crear la sala
+        // Recogemos las categorías marcadas antes de validar.
         selectedCategories = getSelectedCategories();
 
-        // validamos el nombre de la sala
         if (roomName.isEmpty()) {
             showToast("Introduce un nombre para la sala");
             return;
         }
-        // validamos el numero de jugadores
-        // ajustado a 30 porque ese es el máximo definido en el slider y en el requisito
+
         if (maxPlayers < 2 || maxPlayers > 30) {
             showToast("El número de jugadores debe estar entre 2 y 30");
             return;
         }
 
-        // validamos que el usuario haya elegido al menos una categoría
         if (selectedCategories.isEmpty()) {
             showToast("Selecciona al menos una categoría");
             return;
@@ -172,6 +158,7 @@ public class RoomConfigActivity extends BaseActivity {
 
         UserRepository userRepository = new UserRepository();
 
+        // Buscamos el nombre del usuario para guardarlo junto a la sala.
         userRepository.getUserNameByUid(uid, new UserRepository.OnUserNameLoadedCallback() {
             @Override
             public void onSuccess(String userName) {
@@ -187,33 +174,26 @@ public class RoomConfigActivity extends BaseActivity {
 
             @Override
             public void onError(String errorMessage) {
-
                 showToast(errorMessage);
             }
         });
     }
 
-    // llamamos al repositorio para guardar la sala en Firebase
     private void createRoomInRepository(RoomCreationData data, String uid, String userName) {
 
         roomRepository.createRoom(data, uid, userName, new CreateRoomCallback() {
             @Override
             public void onSuccess(String roomId) {
-
-                // enviamos las categorías seleccionadas a la sala de espera
                 openWaitingRoom(roomId, selectedCategories);
             }
 
             @Override
             public void onError(String errorMessage) {
-
                 showToast(errorMessage);
             }
         });
     }
 
-
-    // abrimos la sala de espera
     private void openWaitingRoom(String roomId, ArrayList<String> selectedCategories) {
         Intent intent = new Intent(RoomConfigActivity.this, WaitingActivity.class);
         intent.putExtra("roomId", roomId);
@@ -222,7 +202,6 @@ public class RoomConfigActivity extends BaseActivity {
         finish();
     }
 
-    // pedimos las categorias al repositorio
     private void loadCategories() {
         roomRepository.loadAvailableCategories(new LoadCategoriesCallback() {
             @Override
@@ -237,7 +216,7 @@ public class RoomConfigActivity extends BaseActivity {
         });
     }
 
-    // pintamos las categorías recuperadas
+    @SuppressLint("ResourceType")
     private void paintCategoryChips(List<String> categories) {
         chipGroupCategories.removeAllViews();
 
@@ -258,7 +237,6 @@ public class RoomConfigActivity extends BaseActivity {
         }
     }
 
-    // recuperamos todas las categorías seleccionadas por el usuario
     private ArrayList<String> getSelectedCategories() {
         ArrayList<String> categories = new ArrayList<>();
 
@@ -277,7 +255,6 @@ public class RoomConfigActivity extends BaseActivity {
         return categories;
     }
 
-    // le damos formato a las categorias
     private String formatCategoryName(String category) {
         if (category == null || category.trim().isEmpty()) {
             return "";

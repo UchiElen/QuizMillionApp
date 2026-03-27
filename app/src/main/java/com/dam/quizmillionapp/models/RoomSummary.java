@@ -1,18 +1,20 @@
 package com.dam.quizmillionapp.models;
 
+// Representa la información básica de una sala para mostrar en el lobby.
 public class RoomSummary {
     private String roomId;
     private String name;
     private String code;
     private String status;
-    private long playerCount;
-    private long maxPlayers;
+    private int playerCount;
+    private int maxPlayers;
     private String hostUid;
 
     public RoomSummary() {
     }
 
-    public RoomSummary(String roomId, String name, String code, String status, long playerCount, long maxPlayers, String hostUid) {
+    public RoomSummary(String roomId, String name, String code, String status,
+                       int playerCount, int maxPlayers, String hostUid) {
 
         this.roomId = roomId;
         this.name = name;
@@ -59,7 +61,7 @@ public class RoomSummary {
         return playerCount;
     }
 
-    public void setPlayerCount(long playerCount) {
+    public void setPlayerCount(int playerCount) {
         this.playerCount = playerCount;
     }
 
@@ -67,7 +69,7 @@ public class RoomSummary {
         return maxPlayers;
     }
 
-    public void setMaxPlayers(long maxPlayers) {
+    public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
     }
 

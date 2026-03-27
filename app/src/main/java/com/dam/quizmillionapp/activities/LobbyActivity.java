@@ -24,13 +24,11 @@ import java.util.List;
 
 public class LobbyActivity extends BaseActivity {
 
-    // Variables de la pantalla
     private EditText edtRoomCode;
     private Button btnJoinByCode;
     private Button btnCreateRoom;
     private RecyclerView rvRooms;
 
-    // Objetos de trabajo
     private RoomRepository roomRepository;
     private RoomsAdapter roomsAdapter;
     private ListenerRegistration roomsListener;
@@ -48,16 +46,12 @@ public class LobbyActivity extends BaseActivity {
         loadAvailableRooms();
     }
 
-     // Enlazamos los controles del XML
-
     private void initViews() {
         edtRoomCode = findViewById(R.id.edtRoomCode);
         btnJoinByCode = findViewById(R.id.btnJoinByCode);
         btnCreateRoom = findViewById(R.id.btnCreateRoom);
         rvRooms = findViewById(R.id.rvRooms);
     }
-
-     // Preparamos la lista de salas
 
     private void setupRecyclerView() {
         rvRooms.setLayoutManager(new LinearLayoutManager(this));
@@ -71,8 +65,6 @@ public class LobbyActivity extends BaseActivity {
 
         rvRooms.setAdapter(roomsAdapter);
     }
-
-     // Configura los botones de la pantalla
 
     private void setupButtons() {
 
@@ -93,8 +85,7 @@ public class LobbyActivity extends BaseActivity {
         });
     }
 
-     // Empieza a escuchar las salas públicas en tiempo real
-
+    // Escuchamos las salas públicas para que la lista se actualice sola.
     private void loadAvailableRooms() {
         roomsListener = roomRepository.listenAvailableRooms(new LoadRoomsCallback() {
             @Override
@@ -109,9 +100,6 @@ public class LobbyActivity extends BaseActivity {
         });
     }
 
-
-     // Une al usuario a una sala pulsando en la lista
-
     private void joinRoomByRoomId(String roomId) {
         String uid = UserSession.getCurrentUid(this);
 
@@ -122,6 +110,7 @@ public class LobbyActivity extends BaseActivity {
 
         UserRepository userRepository = new UserRepository();
 
+        // Antes de entrar en la sala, buscamos el nombre del usuario
         userRepository.getUserNameByUid(uid, new UserRepository.OnUserNameLoadedCallback() {
             @Override
             public void onSuccess(String userName) {
@@ -149,8 +138,6 @@ public class LobbyActivity extends BaseActivity {
         });
     }
 
-
-    // Une al usuario a una sala escribiendo el codigo
     private void joinRoomByCode(String roomCode) {
         String uid = UserSession.getCurrentUid(this);
 
@@ -188,15 +175,11 @@ public class LobbyActivity extends BaseActivity {
         });
     }
 
-    // Abre la sala de espera
     private void openWaitingRoom(String roomId) {
         Intent intent = new Intent(this, WaitingActivity.class);
         intent.putExtra("roomId", roomId);
         startActivity(intent);
     }
-
-
-     //Muestra un mensaje
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

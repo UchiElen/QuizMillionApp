@@ -32,7 +32,6 @@ import java.util.Random;
 
 public class RoomRepository {
 
-    // Firebase
     private final FirebaseFirestore db;
     private final CollectionReference roomsRef;
 
@@ -41,8 +40,6 @@ public class RoomRepository {
         roomsRef = db.collection("rooms");
     }
 
-
-     // Si el nombre del jugador es nulo entonces usamos uno genérico
     private String normalizeDisplayName(String displayName) {
         if (displayName == null || displayName.trim().isEmpty()) {
             return "Jugador";
@@ -50,7 +47,6 @@ public class RoomRepository {
         return displayName.trim();
     }
 
-     //Generamos un código para la sala
     private String generateRoomCode() {
         String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         Random random = new Random();
@@ -63,8 +59,6 @@ public class RoomRepository {
         return sb.toString().toUpperCase(Locale.ROOT);
     }
 
-
-     //Crea una nueva sala y asigna al primer miembro como afitrion
     public void createRoom(RoomCreationData config, String uid, String displayName, CreateRoomCallback callback) {
 
         if (config == null) {
@@ -77,18 +71,13 @@ public class RoomRepository {
             return;
         }
 
-        // nombre de la sala
         String roomName = config.getName();
         if (roomName == null || roomName.trim().isEmpty()) {
             roomName = "Room";
         }
 
-        // numero de jugadores
-        long maxPlayers = config.getMaxPlayers();
-        // sala publica o privada
+        int maxPlayers = (int) config.getMaxPlayers();
         boolean isPublic = config.isPublic();
-
-        // categorias de las preguntas
         List<String> categories = config.getCategories();
 
         if (categories == null || categories.isEmpty()) {
@@ -97,20 +86,18 @@ public class RoomRepository {
         }
 
         String safeDisplayName = normalizeDisplayName(displayName);
-        // codigo de la sala
         String roomCode = generateRoomCode();
 
         DocumentReference roomRef = roomsRef.document();
         String roomId = roomRef.getId();
         DocumentReference memberDoc = roomRef.collection("members").document(uid);
 
-        // datos de la sala
         Map<String, Object> roomData = new HashMap<>();
         roomData.put("name", roomName.trim());
         roomData.put("code", roomCode);
         roomData.put("hostUid", uid);
         roomData.put("maxPlayers", maxPlayers);
-        roomData.put("playerCount", 1L);
+        roomData.put("playerCount", 1);
         roomData.put("status", RoomStatus.OPEN);
         roomData.put("isPublic", isPublic);
         roomData.put("categories", categories);
@@ -118,7 +105,6 @@ public class RoomRepository {
         roomData.put("startedAt", null);
         roomData.put("closedAt", null);
 
-        // datos del miembro de la sala
         Map<String, Object> memberData = new HashMap<>();
         memberData.put("uid", uid);
         memberData.put("displayName", safeDisplayName);
@@ -127,7 +113,7 @@ public class RoomRepository {
         memberData.put("memberStatus", MemberStatus.ACTIVE);
         memberData.put("isHost", true);
         memberData.put("isReady", false);
-        memberData.put("score", 0L);
+        memberData.put("score", 0);
 
         WriteBatch batch = db.batch();
         batch.set(roomRef, roomData);
@@ -138,8 +124,6 @@ public class RoomRepository {
                 .addOnFailureListener(e -> callback.onError("Error al crear sala: " + e.getMessage()));
     }
 
-
-     // Busca una sala por su código
     public void joinRoomByCode(String roomCode, String currentUid, String displayName, JoinRoomCallback callback) {
 
         if (roomCode == null || roomCode.trim().isEmpty()) {
@@ -169,9 +153,6 @@ public class RoomRepository {
                 );
     }
 
-
-     // Unir a un jugador a una sala por su id
-
     public void joinRoomByRoomId(String roomId, String currentUid, String displayName, JoinRoomCallback callback) {
 
         if (roomId == null || roomId.trim().isEmpty()) {
@@ -189,6 +170,7 @@ public class RoomRepository {
         DocumentReference roomRef = roomsRef.document(roomId);
         DocumentReference memberRef = roomRef.collection("members").document(currentUid);
 
+        // La transacción evita que entren dos jugadores a la vez cuando solo queda una plaza libre.
         db.runTransaction((Transaction.Function<Boolean>) transaction -> {
 
                     DocumentSnapshot roomSnapshot = transaction.get(roomRef);
@@ -198,15 +180,21 @@ public class RoomRepository {
                     }
 
                     String status = roomSnapshot.getString("status");
-                    Long playerCount = roomSnapshot.getLong("playerCount");
-                    Long maxPlayers = roomSnapshot.getLong("maxPlayers");
+                    Long playerCountValue = roomSnapshot.getLong("playerCount");
+                    Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
 
-                    if (playerCount == null) {
-                        playerCount = 0L;
+                    int playerCount;
+                    if (playerCountValue != null) {
+                        playerCount = playerCountValue.intValue();
+                    } else {
+                        playerCount = 0;
                     }
 
-                    if (maxPlayers == null) {
-                        maxPlayers = 4L;
+                    int maxPlayers;
+                    if (maxPlayersValue != null) {
+                        maxPlayers = maxPlayersValue.intValue();
+                    } else {
+                        maxPlayers = 4;
                     }
 
                     if (!RoomStatus.OPEN.equals(status)) {
@@ -215,7 +203,7 @@ public class RoomRepository {
 
                     DocumentSnapshot memberSnapshot = transaction.get(memberRef);
 
-                    // Si el jugador ya estaba dentro de la sala, solo actualizamos su presencia
+                    // Si ya estaba dentro, solo actualizamos su presencia.
                     if (memberSnapshot.exists()) {
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("lastSeenAt", FieldValue.serverTimestamp());
@@ -236,24 +224,30 @@ public class RoomRepository {
                     memberData.put("memberStatus", MemberStatus.ACTIVE);
                     memberData.put("isHost", false);
                     memberData.put("isReady", false);
-                    memberData.put("score", 0L);
+                    memberData.put("score", 0);
 
                     transaction.set(memberRef, memberData);
-                    transaction.update(roomRef, "playerCount", playerCount + 1L);
+
+                    int newPlayerCount = playerCount + 1;
+                    transaction.update(roomRef, "playerCount", newPlayerCount);
+
+                    // Ajustamos el estado de la sala según el número de jugadores.
+                    if (newPlayerCount >= maxPlayers) {
+                        transaction.update(roomRef, "status", RoomStatus.FULL);
+                    } else {
+                        transaction.update(roomRef, "status", RoomStatus.OPEN);
+                    }
 
                     return false;
                 })
-                // si la operacion se completa ok, entonces devolvemos el resultado al activity través del callback
                 .addOnSuccessListener(alreadyJoined ->
                         callback.onSuccess(roomId, alreadyJoined)
                 )
-                // si hay algun error, entonces lo pasamo al activity a través del callback
                 .addOnFailureListener(e ->
                         callback.onError("Error al unirse: " + e.getMessage())
                 );
     }
 
-     //Escucha los miembros de una sala y recupera la lista
     public ListenerRegistration listenRoomMembers(String roomId, LoadMembersCallback callback) {
 
         DocumentReference roomRef = roomsRef.document(roomId);
@@ -303,8 +297,6 @@ public class RoomRepository {
         });
     }
 
-
-     //Recuperamos los dtos de la sala
     public ListenerRegistration listenRoomDetails(String roomId, LoadRoomDetailsCallback callback) {
 
         return roomsRef.document(roomId)
@@ -315,7 +307,6 @@ public class RoomRepository {
                         return;
                     }
 
-                    // la sala ya no está disponible
                     if (snapshot == null || !snapshot.exists()) {
                         callback.onRoomNotFound();
                         return;
@@ -340,13 +331,10 @@ public class RoomRepository {
                         maxPlayers = maxPlayersValue.intValue();
                     }
 
-                    // Devolvemos los datos al activity a través de callback, para que se actualice la pantalla
                     callback.onRoomLoaded(code, roomName, isPublic, status, hostUid, maxPlayers);
                 });
     }
 
-
-    //Solo el anfitrión puede iniciar la partida
     public void startGameIfHost(String roomId, String uid, StartGameCallback callback) {
 
         if (roomId == null || roomId.trim().isEmpty()) {
@@ -361,6 +349,7 @@ public class RoomRepository {
 
         DocumentReference roomRef = roomsRef.document(roomId);
 
+        // Solo el host puede iniciar la partida, y la sala debe estar OPEN o FULL con al menos 2 jugadores.
         db.runTransaction((Transaction.Function<Void>) transaction -> {
 
                     DocumentSnapshot roomSnapshot = transaction.get(roomRef);
@@ -371,17 +360,29 @@ public class RoomRepository {
 
                     String hostUid = roomSnapshot.getString("hostUid");
                     String status = roomSnapshot.getString("status");
-                    Long playerCount = roomSnapshot.getLong("playerCount");
+                    Long playerCountValue = roomSnapshot.getLong("playerCount");
 
-                    if (hostUid == null || !hostUid.equals(uid)) {
-                        throw new RuntimeException("Solo el host puede iniciar.");
+                    int playerCount;
+                    if (playerCountValue != null) {
+                        playerCount = playerCountValue.intValue();
+                    } else {
+                        playerCount = 0;
                     }
 
-                    if (!RoomStatus.OPEN.equals(status)) {
+                    if (hostUid == null || !hostUid.equals(uid)) {
+                        throw new RuntimeException("Solo el host puede iniciar la partida.");
+                    }
+
+                    boolean validStatus = false;
+                    if (RoomStatus.OPEN.equals(status) || RoomStatus.FULL.equals(status)) {
+                        validStatus = true;
+                    }
+
+                    if (!validStatus) {
                         throw new RuntimeException("La sala no está lista para iniciar.");
                     }
 
-                    if (playerCount == null || playerCount < 1L) {
+                    if (playerCount < 2) {
                         throw new RuntimeException("No hay jugadores suficientes.");
                     }
 
@@ -406,14 +407,11 @@ public class RoomRepository {
                 });
     }
 
-
-     //Escucha las salas públicas disponibles (isPublic=true)
-
     public ListenerRegistration listenAvailableRooms(LoadRoomsCallback callback) {
 
         return roomsRef
                 .whereEqualTo("status", RoomStatus.OPEN)
-                .whereEqualTo("isPublic",true)
+                .whereEqualTo("isPublic", true)
                 .addSnapshotListener((snapshot, error) -> {
 
                     if (error != null) {
@@ -434,18 +432,18 @@ public class RoomRepository {
                             Long playerCount = doc.getLong("playerCount");
                             Long maxPlayers = doc.getLong("maxPlayers");
 
-                            long safePlayerCount;
+                            int safePlayerCount;
                             if (playerCount != null) {
-                                safePlayerCount = playerCount;
+                                safePlayerCount = playerCount.intValue();
                             } else {
-                                safePlayerCount = 0L;
+                                safePlayerCount = 0;
                             }
 
-                            long safeMaxPlayers;
+                            int safeMaxPlayers;
                             if (maxPlayers != null) {
-                                safeMaxPlayers = maxPlayers;
+                                safeMaxPlayers = maxPlayers.intValue();
                             } else {
-                                safeMaxPlayers = 0L;
+                                safeMaxPlayers = 0;
                             }
 
                             String safeName;
@@ -491,9 +489,6 @@ public class RoomRepository {
                 });
     }
 
-
-     // El jugador deja la sala
-
     public void leaveRoom(String roomId, String uid, LeaveRoomCallback callback) {
 
         if (roomId == null || roomId.trim().isEmpty()) {
@@ -519,25 +514,25 @@ public class RoomRepository {
                     }
 
                     String hostUid = roomSnapshot.getString("hostUid");
-                    boolean leavingUserWasHost = false;
 
+                    boolean leavingUserWasHost = false;
                     if (hostUid != null && hostUid.equals(uid)) {
                         leavingUserWasHost = true;
                     }
 
                     Long countFromDb = roomSnapshot.getLong("playerCount");
-                    long currentPlayerCount;
 
-                    if (countFromDb == null || countFromDb < 1L) {
-                        currentPlayerCount = 1L;
+                    int currentPlayerCount;
+                    if (countFromDb != null && countFromDb >= 1L) {
+                        currentPlayerCount = countFromDb.intValue();
                     } else {
-                        currentPlayerCount = countFromDb;
+                        currentPlayerCount = 1;
                     }
 
-                    long remainingPlayers = currentPlayerCount - 1L;
+                    int remainingPlayers = currentPlayerCount - 1;
 
-                    if (remainingPlayers < 0L) {
-                        remainingPlayers = 0L;
+                    if (remainingPlayers < 0) {
+                        remainingPlayers = 0;
                     }
 
                     if (!leavingUserWasHost) {
@@ -545,77 +540,49 @@ public class RoomRepository {
                     } else {
                         leaveAsHost(roomRef, membersRef, leavingMemberRef, uid, remainingPlayers, callback);
                     }
+
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error leyendo la sala: " + e.getMessage())
                 );
     }
 
-
-     // Cuando el jugador que sale NO es el anfitrion
-
     private void leaveAsNormalPlayer(DocumentReference roomRef,
                                      DocumentReference leavingMemberRef,
-                                     long remainingPlayers,
+                                     int remainingPlayers,
                                      LeaveRoomCallback callback) {
 
-        WriteBatch batch = db.batch();
-        batch.delete(leavingMemberRef);
+        roomRef.get()
+                .addOnSuccessListener(roomSnapshot -> {
 
-        if (remainingPlayers == 0L) {
-            batch.delete(roomRef);
-        } else {
-            batch.update(roomRef, "playerCount", remainingPlayers);
-        }
+                    int maxPlayers;
 
-        batch.commit()
-                .addOnSuccessListener(unused -> callback.onSuccess())
-                .addOnFailureListener(e ->
-                        callback.onError("Error al salir de la sala: " + e.getMessage())
-                );
-    }
-
-
-     // Cuando el jugador que sale SI es el anfitrión
-    // si quedan jugadores, se asigna uno nuevo
-    private void leaveAsHost(DocumentReference roomRef,
-                             CollectionReference membersRef,
-                             DocumentReference leavingMemberRef,
-                             String leavingUid,
-                             long remainingPlayers,
-                             LeaveRoomCallback callback) {
-
-        membersRef.orderBy("joinedAt", Query.Direction.ASCENDING)
-                .get()
-                .addOnSuccessListener(memberSnapshots -> {
-
-                    String newHostUid = null;
-
-                    for (DocumentSnapshot doc : memberSnapshots.getDocuments()) {
-                        String candidateUid = doc.getId();
-
-                        if (!candidateUid.equals(leavingUid)) {
-                            newHostUid = candidateUid;
-                            break;
-                        }
+                    Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
+                    if (maxPlayersValue != null) {
+                        maxPlayers = maxPlayersValue.intValue();
+                    } else {
+                        maxPlayers = 4;
                     }
 
                     WriteBatch batch = db.batch();
                     batch.delete(leavingMemberRef);
 
-                    if (remainingPlayers == 0L) {
+                    // Si no queda nadie, borramos la sala completa.
+                    if (remainingPlayers == 0) {
                         batch.delete(roomRef);
                     } else {
-                        if (newHostUid == null || newHostUid.trim().isEmpty()) {
-                            callback.onError("No se pudo asignar nuevo anfitrión.");
-                            return;
+                        batch.update(roomRef, "playerCount", remainingPlayers);
+
+                        String newStatus;
+
+                        // Ajustamos el estado según los jugadores que quedan.
+                        if (remainingPlayers >= maxPlayers) {
+                            newStatus = RoomStatus.FULL;
+                        } else {
+                            newStatus = RoomStatus.OPEN;
                         }
 
-                        batch.update(roomRef, "playerCount", remainingPlayers);
-                        batch.update(roomRef, "hostUid", newHostUid);
-
-                        DocumentReference newHostRef = membersRef.document(newHostUid);
-                        batch.update(newHostRef, "isHost", true);
+                        batch.update(roomRef, "status", newStatus);
                     }
 
                     batch.commit()
@@ -623,14 +590,96 @@ public class RoomRepository {
                             .addOnFailureListener(e ->
                                     callback.onError("Error al salir de la sala: " + e.getMessage())
                             );
+
+                })
+                .addOnFailureListener(e ->
+                        callback.onError("Error leyendo sala: " + e.getMessage())
+                );
+    }
+
+    // Si sale el host, hay que elegir a otro jugador como nuevo anfitrión.
+    private void leaveAsHost(DocumentReference roomRef,
+                             CollectionReference membersRef,
+                             DocumentReference leavingMemberRef,
+                             String leavingUid,
+                             int remainingPlayers,
+                             LeaveRoomCallback callback) {
+
+        membersRef.orderBy("joinedAt", Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(memberSnapshots -> {
+
+                    String tempHostUid = null;
+
+                    // Elegimos como nuevo host al primer jugador que siga en la sala.
+                    for (DocumentSnapshot doc : memberSnapshots.getDocuments()) {
+                        String candidateUid = doc.getId();
+
+                        if (!candidateUid.equals(leavingUid)) {
+                            tempHostUid = candidateUid;
+                            break;
+                        }
+                    }
+
+                    final String newHostUid = tempHostUid;
+
+                    roomRef.get()
+                            .addOnSuccessListener(roomSnapshot -> {
+
+                                int maxPlayers;
+
+                                Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
+                                if (maxPlayersValue != null) {
+                                    maxPlayers = maxPlayersValue.intValue();
+                                } else {
+                                    maxPlayers = 4;
+                                }
+
+                                WriteBatch batch = db.batch();
+                                batch.delete(leavingMemberRef);
+
+                                if (remainingPlayers == 0) {
+                                    batch.delete(roomRef);
+                                } else {
+                                    if (newHostUid == null || newHostUid.trim().isEmpty()) {
+                                        callback.onError("No se pudo asignar nuevo anfitrión.");
+                                        return;
+                                    }
+
+                                    batch.update(roomRef, "playerCount", remainingPlayers);
+                                    batch.update(roomRef, "hostUid", newHostUid);
+
+                                    DocumentReference newHostRef = membersRef.document(newHostUid);
+                                    batch.update(newHostRef, "isHost", true);
+
+                                    String newStatus;
+
+                                    if (remainingPlayers >= maxPlayers) {
+                                        newStatus = RoomStatus.FULL;
+                                    } else {
+                                        newStatus = RoomStatus.OPEN;
+                                    }
+
+                                    batch.update(roomRef, "status", newStatus);
+                                }
+
+                                batch.commit()
+                                        .addOnSuccessListener(unused -> callback.onSuccess())
+                                        .addOnFailureListener(e ->
+                                                callback.onError("Error al salir de la sala: " + e.getMessage())
+                                        );
+
+                            })
+                            .addOnFailureListener(e ->
+                                    callback.onError("Error leyendo sala: " + e.getMessage())
+                            );
+
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error buscando nuevo anfitrión: " + e.getMessage())
                 );
     }
 
-
-    // comprobamos la presencia del jugador en la sala
     public void updatePresence(String roomId, String userId) {
         roomsRef.document(roomId)
                 .collection("members")
@@ -638,8 +687,103 @@ public class RoomRepository {
                 .update("lastSeenAt", FieldValue.serverTimestamp());
     }
 
+    // Recalculamos el contador y el estado de la sala según los miembros reales.
+    public void recalculateRoomState(String roomId) {
 
-    // leemos la  coleccion de preguntas, extraemos la categoria y quitamos los duplicados
+        if (roomId == null || roomId.trim().isEmpty()) {
+            return;
+        }
+
+        DocumentReference roomRef = roomsRef.document(roomId);
+
+        roomRef.get()
+                .addOnSuccessListener(roomSnapshot -> {
+
+                    if (roomSnapshot == null || !roomSnapshot.exists()) {
+                        return;
+                    }
+
+                    Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
+
+                    int maxPlayers;
+                    if (maxPlayersValue != null) {
+                        maxPlayers = maxPlayersValue.intValue();
+                    } else {
+                        maxPlayers = 4;
+                    }
+
+                    roomRef.collection("members")
+                            .get()
+                            .addOnSuccessListener(memberSnapshots -> {
+
+                                int realCount = memberSnapshots.size();
+
+                                if (realCount == 0) {
+                                    roomRef.delete();
+                                    return;
+                                }
+
+                                String newStatus;
+
+                                if (realCount >= maxPlayers) {
+                                    newStatus = RoomStatus.FULL;
+                                } else {
+                                    newStatus = RoomStatus.OPEN;
+                                }
+
+                                Map<String, Object> updates = new HashMap<>();
+                                updates.put("playerCount", realCount);
+                                updates.put("status", newStatus);
+
+                                roomRef.update(updates);
+                            });
+                });
+    }
+
+    // Eliminamos miembros que llevan demasiado tiempo sin actividad.
+    public void cleanupInactiveMembers(String roomId) {
+
+        if (roomId == null || roomId.trim().isEmpty()) {
+            return;
+        }
+
+        DocumentReference roomRef = roomsRef.document(roomId);
+
+        roomRef.collection("members")
+                .get()
+                .addOnSuccessListener(memberSnapshots -> {
+
+                    long now = System.currentTimeMillis();
+                    long timeoutMillis = 60000;
+
+                    WriteBatch batch = db.batch();
+                    boolean hasChanges = false;
+
+                    for (DocumentSnapshot doc : memberSnapshots.getDocuments()) {
+
+                        com.google.firebase.Timestamp lastSeenAt = doc.getTimestamp("lastSeenAt");
+
+                        if (lastSeenAt != null) {
+
+                            long lastSeenMillis = lastSeenAt.toDate().getTime();
+                            long diff = now - lastSeenMillis;
+
+                            // Si el usuario supera el tiempo máximo de inactividad, lo eliminamos.
+                            if (diff > timeoutMillis) {
+                                batch.delete(doc.getReference());
+                                hasChanges = true;
+                            }
+                        }
+                    }
+
+                    // Si hubo cambios, aplicamos y recalculamos la sala.
+                    if (hasChanges) {
+                        batch.commit()
+                                .addOnSuccessListener(unused -> recalculateRoomState(roomId));
+                    }
+                });
+    }
+
     public void loadAvailableCategories(LoadCategoriesCallback callback) {
 
         db.collection("preguntas")
@@ -649,39 +793,23 @@ public class RoomRepository {
                     List<String> categories = new ArrayList<>();
                     List<String> uniqueCategories = new ArrayList<>();
 
-                    // recorremos todas las preguntas
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-
-                        //leemos la categoria de cada pregunta
                         String category = doc.getString("categoria");
 
                         if (category != null && !category.trim().isEmpty()) {
-
                             String cleanCategory = category.trim().toLowerCase(Locale.ROOT);
 
-                            // quitamos los duplicados
                             if (!uniqueCategories.contains(cleanCategory)) {
-
                                 uniqueCategories.add(cleanCategory);
                             }
                         }
                     }
 
-                    // ordenamos la lista
                     uniqueCategories.sort(String::compareTo);
-
-                    // devolvemos los datos cuando Firebase termine
                     callback.onCategoriesLoaded(uniqueCategories);
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error cargando categorías: " + e.getMessage())
                 );
     }
-
-
-
-
-
-
-
 }

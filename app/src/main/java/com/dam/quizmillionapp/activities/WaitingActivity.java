@@ -30,7 +30,6 @@ import java.util.List;
 
 public class WaitingActivity extends BaseActivity {
 
-
     private String roomId;
     private ListenerRegistration roomListener;
     private ListenerRegistration membersListener;
@@ -44,6 +43,8 @@ public class WaitingActivity extends BaseActivity {
     private int maxPlayers = 0;
     private MembersAdapter membersAdapter;
     private RoomRepository roomRepository;
+    private android.os.Handler presenceHandler = new android.os.Handler();
+    private Runnable presenceRunnable;
 
     private ArrayList<String> selectedCategories;
 
@@ -58,7 +59,7 @@ public class WaitingActivity extends BaseActivity {
         // Inicializamos el repositorio
         roomRepository = new RoomRepository();
 
-        // Recuperamos el roomId
+        // recuperamos el roomId
         roomId = getIntent().getStringExtra("roomId");
 
         // Sin roomId salimos
@@ -67,6 +68,13 @@ public class WaitingActivity extends BaseActivity {
             finish();
             return;
         }
+
+        // actualizamos periodicamente la presencia del usuario
+        startPresenceUpdate();
+
+        // limpiamos miembros inactivos y corregimos el estado real de la sala
+        roomRepository.cleanupInactiveMembers(roomId);
+        roomRepository.recalculateRoomState(roomId);
 
         // guardamos las categorias seleccionadas
         selectedCategories = getIntent().getStringArrayListExtra("selectedCategories");
@@ -158,7 +166,8 @@ public class WaitingActivity extends BaseActivity {
                 boolean canStart = false;
 
                 if (isHost) {
-                    if (RoomStatus.OPEN.equals(status) || RoomStatus.FULL.equals(status)) {
+                    if (( RoomStatus.OPEN.equals(status) || RoomStatus.FULL.equals(status) ) &&
+                    currentPlayers >=2 ) {
                         canStart = true;
                     }
                 }
@@ -324,6 +333,29 @@ public class WaitingActivity extends BaseActivity {
         });
     }
 
+    // Enviamos una señal periódica para indicar que el usuario sigue activo en la sala
+    private void startPresenceUpdate() {
+
+        presenceRunnable = new Runnable() {
+            @Override
+            public void run() {
+                String uid = UserSession.getCurrentUid(WaitingActivity.this);
+
+                // Si tenemos usuario y sala válida, actualizamos su última actividad
+                if (uid != null && roomId != null) {
+                    roomRepository.updatePresence(roomId, uid);
+
+                    // Aprovechamos para limpiar miembros inactivos
+                    roomRepository.cleanupInactiveMembers(roomId);
+                }
+
+                // Repetimos cada 30 segundos
+                presenceHandler.postDelayed(this, 30000);
+            }
+        };
+        // Lanzamos la primera ejecución
+        presenceHandler.post(presenceRunnable);
+    }
 
     @Override
     protected void onDestroy() {
@@ -336,6 +368,11 @@ public class WaitingActivity extends BaseActivity {
 
         if (membersListener != null) {
             membersListener.remove();
+        }
+
+        // Eliminamos actualizaciones de presencia para no dejar procesos activos
+        if (presenceRunnable != null) {
+            presenceHandler.removeCallbacks(presenceRunnable);
         }
     }
 }

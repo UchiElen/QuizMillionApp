@@ -50,9 +50,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
         RoomSummary room = roomList.get(position);
 
-        // =========================
-        // NOMBRE
-        // =========================
         String roomName = room.getName();
         if (roomName == null || roomName.trim().isEmpty()) {
             roomName = "Sala sin nombre";
@@ -60,9 +57,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
         holder.txtRoomName.setText(roomName);
 
-        // =========================
-        // ESTADO
-        // =========================
         String status = room.getStatus();
         String statusText;
         int statusColor;
@@ -81,23 +75,16 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         holder.txtRoomStatus.setText(statusText);
         holder.txtRoomStatus.setTextColor(statusColor);
 
-        // =========================
-        // JUGADORES
-        // =========================
         holder.txtPlayers.setText(
                 "Jugadores: " + room.getPlayerCount() + " / " + room.getMaxPlayers()
         );
 
-        // =========================
-        // LÓGICA DE UNIÓN
-        // =========================
         boolean isOpen = RoomStatus.OPEN.equals(status);
         boolean hasSpace = room.getPlayerCount() < room.getMaxPlayers();
         boolean canJoin = isOpen && hasSpace;
 
+        // Solo dejamos unirse si la sala sigue abierta y todavía tiene hueco.
         if (canJoin) {
-
-            // Botón activo
             holder.btnJoinRoom.setEnabled(true);
             holder.btnJoinRoom.setAlpha(1.0f);
             holder.btnJoinRoom.setText("Unirse");
@@ -112,7 +99,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                     holder.itemView.getContext().getColor(R.color.white)
             );
 
-            // Click activo
             holder.itemView.setOnClickListener(view ->
                     clickListener.onRoomClicked(room)
             );
@@ -122,8 +108,6 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
             );
 
         } else {
-
-            // Botón desactivado
             holder.btnJoinRoom.setEnabled(false);
             holder.btnJoinRoom.setAlpha(0.6f);
 
@@ -143,7 +127,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                 holder.btnJoinRoom.setText("Llena");
             }
 
-            // Quitar clicks
+            // Si la sala no se puede usar, quitamos también los clicks.
             holder.itemView.setOnClickListener(null);
             holder.btnJoinRoom.setOnClickListener(null);
         }

@@ -2,6 +2,7 @@ package com.dam.quizmillionapp.models;
 
 import com.google.firebase.Timestamp;
 
+// Modelo que representa una sala en Firestore.
 public class Room {
 
     private String code;
