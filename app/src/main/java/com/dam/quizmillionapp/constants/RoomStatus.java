@@ -1,6 +1,7 @@
 package com.dam.quizmillionapp.constants;
 
-// Estados posibles de una sala durante su ciclo de vida.
+// Estados que definen el ciclo de vida de una sala
+// y controlan el acceso de jugadores y el inicio de la partida.
 public final class RoomStatus {
 
     public static final String OPEN = "OPEN";

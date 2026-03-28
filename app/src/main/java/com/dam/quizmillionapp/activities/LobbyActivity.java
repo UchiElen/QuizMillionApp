@@ -21,6 +21,7 @@ import com.dam.quizmillionapp.repositories.UserRepository;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.List;
+import java.util.Locale;
 
 public class LobbyActivity extends BaseActivity {
 
@@ -40,54 +41,52 @@ public class LobbyActivity extends BaseActivity {
 
         roomRepository = new RoomRepository();
 
-        initViews();
-        setupRecyclerView();
-        setupButtons();
-        loadAvailableRooms();
+        bindViews();
+        setupRoomsList();
+        setupActions();
+        observeOpenRooms();
     }
 
-    private void initViews() {
+    private void bindViews() {
         edtRoomCode = findViewById(R.id.edtRoomCode);
         btnJoinByCode = findViewById(R.id.btnJoinByCode);
         btnCreateRoom = findViewById(R.id.btnCreateRoom);
         rvRooms = findViewById(R.id.rvRooms);
     }
 
-    private void setupRecyclerView() {
+    private void setupRoomsList() {
         rvRooms.setLayoutManager(new LinearLayoutManager(this));
 
         roomsAdapter = new RoomsAdapter(new RoomsAdapter.OnRoomClickListener() {
             @Override
             public void onRoomClicked(RoomSummary room) {
-                joinRoomByRoomId(room.getRoomId());
+                tryJoinRoomById(room.getRoomId());
             }
         });
 
         rvRooms.setAdapter(roomsAdapter);
     }
 
-    private void setupButtons() {
+    private void setupActions() {
 
-        btnCreateRoom.setOnClickListener(view -> {
-            Intent intent = new Intent(LobbyActivity.this, RoomConfigActivity.class);
-            startActivity(intent);
-        });
+        btnCreateRoom.setOnClickListener(view -> openRoomConfig());
 
         btnJoinByCode.setOnClickListener(view -> {
-            String code = edtRoomCode.getText().toString().trim().toUpperCase();
+            String roomCode = edtRoomCode.getText().toString().trim().toUpperCase(Locale.ROOT);
 
-            if (code.length() != 6) {
+            if (roomCode.length() != 6) {
                 showToast("El código de la sala debe tener 6 caracteres.");
                 return;
             }
 
-            joinRoomByCode(code);
+            tryJoinRoomByCode(roomCode);
         });
     }
 
-    // Escuchamos las salas públicas para que la lista se actualice sola.
-    private void loadAvailableRooms() {
-        roomsListener = roomRepository.listenAvailableRooms(new LoadRoomsCallback() {
+    // El lobby escucha las salas públicas en tiempo real
+    // para que la lista se refresque sola.
+    private void observeOpenRooms() {
+        roomsListener = roomRepository.observeOpenRooms(new LoadRoomsCallback() {
             @Override
             public void onRoomsLoaded(List<RoomSummary> roomList) {
                 roomsAdapter.updateRooms(roomList);
@@ -100,28 +99,38 @@ public class LobbyActivity extends BaseActivity {
         });
     }
 
-    private void joinRoomByRoomId(String roomId) {
+    private void openRoomConfig() {
+        Intent intent = new Intent(LobbyActivity.this, RoomConfigActivity.class);
+        startActivity(intent);
+    }
+
+    private void tryJoinRoomById(String roomId) {
         String uid = UserSession.getCurrentUid(this);
 
-        if (uid == null || uid.isEmpty()) {
+        if (uid == null || uid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
             return;
         }
 
+        loadUserNameAndJoinById(roomId, uid);
+    }
+
+    private void loadUserNameAndJoinById(String roomId, String uid) {
         UserRepository userRepository = new UserRepository();
 
-        // Antes de entrar en la sala, buscamos el nombre del usuario
+        // Antes de entrar guardamos también el nombre del jugador
+        // para que la sala lo muestre correctamente en la lista de miembros.
         userRepository.getUserNameByUid(uid, new UserRepository.OnUserNameLoadedCallback() {
             @Override
             public void onSuccess(String userName) {
-                roomRepository.joinRoomByRoomId(roomId, uid, userName, new JoinRoomCallback() {
+                roomRepository.joinRoomDirectly(roomId, uid, userName, new JoinRoomCallback() {
                     @Override
-                    public void onSuccess(String roomId, boolean alreadyJoined) {
+                    public void onSuccess(String joinedRoomId, boolean alreadyJoined) {
                         if (alreadyJoined) {
                             showToast("Ya estás en esta sala.");
                         }
 
-                        openWaitingRoom(roomId);
+                        openWaitingRoom(joinedRoomId);
                     }
 
                     @Override
@@ -138,27 +147,31 @@ public class LobbyActivity extends BaseActivity {
         });
     }
 
-    private void joinRoomByCode(String roomCode) {
+    private void tryJoinRoomByCode(String roomCode) {
         String uid = UserSession.getCurrentUid(this);
 
-        if (uid == null || uid.isEmpty()) {
+        if (uid == null || uid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
             return;
         }
 
+        loadUserNameAndJoinByCode(roomCode, uid);
+    }
+
+    private void loadUserNameAndJoinByCode(String roomCode, String uid) {
         UserRepository userRepository = new UserRepository();
 
         userRepository.getUserNameByUid(uid, new UserRepository.OnUserNameLoadedCallback() {
             @Override
             public void onSuccess(String userName) {
-                roomRepository.joinRoomByCode(roomCode, uid, userName, new JoinRoomCallback() {
+                roomRepository.joinRoomUsingCode(roomCode, uid, userName, new JoinRoomCallback() {
                     @Override
-                    public void onSuccess(String roomId, boolean alreadyJoined) {
+                    public void onSuccess(String joinedRoomId, boolean alreadyJoined) {
                         if (alreadyJoined) {
                             showToast("Ya estás en esta sala.");
                         }
 
-                        openWaitingRoom(roomId);
+                        openWaitingRoom(joinedRoomId);
                     }
 
                     @Override
@@ -189,6 +202,8 @@ public class LobbyActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
 
+        // Al volver al lobby limpiamos el campo
+        // para que no se quede el código anterior escrito.
         if (edtRoomCode != null) {
             edtRoomCode.setText("");
         }

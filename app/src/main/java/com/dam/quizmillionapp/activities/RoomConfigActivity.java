@@ -3,13 +3,10 @@ package com.dam.quizmillionapp.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,15 +33,18 @@ public class RoomConfigActivity extends BaseActivity {
 
     private EditText edtRoomName;
     private Button btnCreateRoom;
+
     private SwitchMaterial switchPublicRoom;
     private ImageView imgPrivacyIcon;
     private TextView txtPrivacyState;
     private TextView txtPrivacyHelp;
+
     private Slider sliderMaxPlayers;
     private TextView txtMaxPlayersValue;
-    private ChipGroup chipGroupCategories;
-    private ArrayList<String> selectedCategories;
 
+    private ChipGroup chipGroupCategories;
+
+    private ArrayList<String> selectedCategories;
     private RoomRepository roomRepository;
 
     @Override
@@ -53,18 +53,16 @@ public class RoomConfigActivity extends BaseActivity {
         setContentView(R.layout.activity_room_config);
 
         roomRepository = new RoomRepository();
-
         selectedCategories = new ArrayList<>();
 
-        initViews();
+        bindViews();
         setupMaxPlayersSlider();
         setupPrivacySwitch();
-        setupListeners();
-        loadCategories();
+        setupActions();
+        loadAvailableCategories();
     }
 
-    private void initViews() {
-
+    private void bindViews() {
         edtRoomName = findViewById(R.id.edtRoomName);
         btnCreateRoom = findViewById(R.id.btnCreateRoom);
 
@@ -116,22 +114,21 @@ public class RoomConfigActivity extends BaseActivity {
         });
     }
 
-    private void setupListeners() {
+    private void setupActions() {
         btnCreateRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createRoom();
+                tryCreateRoom();
             }
         });
     }
 
-    private void createRoom() {
+    private void tryCreateRoom() {
 
         String roomName = edtRoomName.getText().toString().trim();
         boolean isPublic = switchPublicRoom.isChecked();
         int maxPlayers = (int) sliderMaxPlayers.getValue();
 
-        // Recogemos las categorías marcadas antes de validar.
         selectedCategories = getSelectedCategories();
 
         if (roomName.isEmpty()) {
@@ -150,18 +147,21 @@ public class RoomConfigActivity extends BaseActivity {
         }
 
         String uid = UserSession.getCurrentUid(this);
-
-        if (uid == null || uid.isEmpty()) {
+        if (uid == null || uid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario");
             return;
         }
 
+        loadUserNameAndCreateRoom(uid, roomName, maxPlayers, isPublic);
+    }
+
+    private void loadUserNameAndCreateRoom(String uid, String roomName, int maxPlayers, boolean isPublic) {
         UserRepository userRepository = new UserRepository();
 
-        // Buscamos el nombre del usuario para guardarlo junto a la sala.
         userRepository.getUserNameByUid(uid, new UserRepository.OnUserNameLoadedCallback() {
             @Override
             public void onSuccess(String userName) {
+
                 RoomCreationData data = new RoomCreationData(
                         roomName,
                         selectedCategories,
@@ -180,11 +180,10 @@ public class RoomConfigActivity extends BaseActivity {
     }
 
     private void createRoomInRepository(RoomCreationData data, String uid, String userName) {
-
-        roomRepository.createRoom(data, uid, userName, new CreateRoomCallback() {
+        roomRepository.createNewRoom(data, uid, userName, new CreateRoomCallback() {
             @Override
             public void onSuccess(String roomId) {
-                openWaitingRoom(roomId, selectedCategories);
+                openWaitingRoom(roomId);
             }
 
             @Override
@@ -194,7 +193,7 @@ public class RoomConfigActivity extends BaseActivity {
         });
     }
 
-    private void openWaitingRoom(String roomId, ArrayList<String> selectedCategories) {
+    private void openWaitingRoom(String roomId) {
         Intent intent = new Intent(RoomConfigActivity.this, WaitingActivity.class);
         intent.putExtra("roomId", roomId);
         intent.putStringArrayListExtra("selectedCategories", selectedCategories);
@@ -202,11 +201,11 @@ public class RoomConfigActivity extends BaseActivity {
         finish();
     }
 
-    private void loadCategories() {
-        roomRepository.loadAvailableCategories(new LoadCategoriesCallback() {
+    private void loadAvailableCategories() {
+        roomRepository.getAvailableCategories(new LoadCategoriesCallback() {
             @Override
             public void onCategoriesLoaded(List<String> categories) {
-                paintCategoryChips(categories);
+                drawCategoryChips(categories);
             }
 
             @Override
@@ -217,9 +216,11 @@ public class RoomConfigActivity extends BaseActivity {
     }
 
     @SuppressLint("ResourceType")
-    private void paintCategoryChips(List<String> categories) {
+    private void drawCategoryChips(List<String> categories) {
         chipGroupCategories.removeAllViews();
 
+        // Las categorías se cargan de forma dinámica para que la pantalla
+        // refleje siempre lo que haya disponible en la base de datos.
         for (String category : categories) {
             Chip chip = new Chip(this);
 
@@ -246,6 +247,8 @@ public class RoomConfigActivity extends BaseActivity {
             if (child instanceof Chip) {
                 Chip chip = (Chip) child;
 
+                // Guardamos solo las categorías marcadas para enviarlas
+                // luego a la sala y a la partida.
                 if (chip.isChecked()) {
                     categories.add(chip.getText().toString().trim().toLowerCase(Locale.ROOT));
                 }

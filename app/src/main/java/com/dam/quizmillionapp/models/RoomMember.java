@@ -2,7 +2,8 @@ package com.dam.quizmillionapp.models;
 
 import com.google.firebase.Timestamp;
 
-// Representa a un jugador dentro de una sala en Firestore.
+// Modelo que representa a un jugador dentro de una sala,
+// incluyendo su presencia, rol y estado básico.
 public class RoomMember {
 
     private String uid;

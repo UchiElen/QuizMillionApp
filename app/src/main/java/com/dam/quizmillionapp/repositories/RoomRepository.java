@@ -13,6 +13,7 @@ import com.dam.quizmillionapp.interfaces.StartGameCallback;
 import com.dam.quizmillionapp.models.MemberListItem;
 import com.dam.quizmillionapp.models.RoomCreationData;
 import com.dam.quizmillionapp.models.RoomSummary;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,33 +41,41 @@ public class RoomRepository {
         roomsRef = db.collection("rooms");
     }
 
-    private String normalizeDisplayName(String displayName) {
+    private String getDisplayNameOrDefault(String displayName) {
         if (displayName == null || displayName.trim().isEmpty()) {
             return "Jugador";
         }
         return displayName.trim();
     }
 
-    private String generateRoomCode() {
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        Random random = new Random();
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < 6; i++) {
-            sb.append(chars.charAt(random.nextInt(chars.length())));
-        }
-
-        return sb.toString().toUpperCase(Locale.ROOT);
+    private int getIntOrDefault(Long value, int defaultValue) {
+        return value != null ? value.intValue() : defaultValue;
     }
 
-    public void createRoom(RoomCreationData config, String uid, String displayName, CreateRoomCallback callback) {
+    private String getRoomStatusFromCount(int playerCount, int maxPlayers) {
+        return playerCount >= maxPlayers ? RoomStatus.FULL : RoomStatus.OPEN;
+    }
+
+    private String generateNewRoomCode() {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        Random random = new Random();
+        StringBuilder code = new StringBuilder();
+
+        for (int i = 0; i < 6; i++) {
+            code.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return code.toString().toUpperCase(Locale.ROOT);
+    }
+
+    public void createNewRoom(RoomCreationData config, String uid, String displayName, CreateRoomCallback callback) {
 
         if (config == null) {
             callback.onError("La configuración de la sala está vacía.");
             return;
         }
 
-        if (uid == null || uid.isEmpty()) {
+        if (uid == null || uid.trim().isEmpty()) {
             callback.onError("Usuario no válido.");
             return;
         }
@@ -85,12 +94,12 @@ public class RoomRepository {
             categories.add("general");
         }
 
-        String safeDisplayName = normalizeDisplayName(displayName);
-        String roomCode = generateRoomCode();
+        String playerName = getDisplayNameOrDefault(displayName);
+        String roomCode = generateNewRoomCode();
 
         DocumentReference roomRef = roomsRef.document();
         String roomId = roomRef.getId();
-        DocumentReference memberDoc = roomRef.collection("members").document(uid);
+        DocumentReference memberRef = roomRef.collection("members").document(uid);
 
         Map<String, Object> roomData = new HashMap<>();
         roomData.put("name", roomName.trim());
@@ -107,7 +116,7 @@ public class RoomRepository {
 
         Map<String, Object> memberData = new HashMap<>();
         memberData.put("uid", uid);
-        memberData.put("displayName", safeDisplayName);
+        memberData.put("displayName", playerName);
         memberData.put("joinedAt", FieldValue.serverTimestamp());
         memberData.put("lastSeenAt", FieldValue.serverTimestamp());
         memberData.put("memberStatus", MemberStatus.ACTIVE);
@@ -117,14 +126,14 @@ public class RoomRepository {
 
         WriteBatch batch = db.batch();
         batch.set(roomRef, roomData);
-        batch.set(memberDoc, memberData);
+        batch.set(memberRef, memberData);
 
         batch.commit()
                 .addOnSuccessListener(unused -> callback.onSuccess(roomId))
                 .addOnFailureListener(e -> callback.onError("Error al crear sala: " + e.getMessage()));
     }
 
-    public void joinRoomByCode(String roomCode, String currentUid, String displayName, JoinRoomCallback callback) {
+    public void joinRoomUsingCode(String roomCode, String currentUid, String displayName, JoinRoomCallback callback) {
 
         if (roomCode == null || roomCode.trim().isEmpty()) {
             callback.onError("Código vacío.");
@@ -146,14 +155,14 @@ public class RoomRepository {
                     }
 
                     DocumentSnapshot roomDoc = queryDocumentSnapshots.getDocuments().get(0);
-                    joinRoomByRoomId(roomDoc.getId(), currentUid, displayName, callback);
+                    joinRoomDirectly(roomDoc.getId(), currentUid, displayName, callback);
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error al buscar por código: " + e.getMessage())
                 );
     }
 
-    public void joinRoomByRoomId(String roomId, String currentUid, String displayName, JoinRoomCallback callback) {
+    public void joinRoomDirectly(String roomId, String currentUid, String displayName, JoinRoomCallback callback) {
 
         if (roomId == null || roomId.trim().isEmpty()) {
             callback.onError("RoomId vacío.");
@@ -165,12 +174,11 @@ public class RoomRepository {
             return;
         }
 
-        String safeDisplayName = normalizeDisplayName(displayName);
+        String playerName = getDisplayNameOrDefault(displayName);
 
         DocumentReference roomRef = roomsRef.document(roomId);
         DocumentReference memberRef = roomRef.collection("members").document(currentUid);
 
-        // La transacción evita que entren dos jugadores a la vez cuando solo queda una plaza libre.
         db.runTransaction((Transaction.Function<Boolean>) transaction -> {
 
                     DocumentSnapshot roomSnapshot = transaction.get(roomRef);
@@ -180,22 +188,8 @@ public class RoomRepository {
                     }
 
                     String status = roomSnapshot.getString("status");
-                    Long playerCountValue = roomSnapshot.getLong("playerCount");
-                    Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
-
-                    int playerCount;
-                    if (playerCountValue != null) {
-                        playerCount = playerCountValue.intValue();
-                    } else {
-                        playerCount = 0;
-                    }
-
-                    int maxPlayers;
-                    if (maxPlayersValue != null) {
-                        maxPlayers = maxPlayersValue.intValue();
-                    } else {
-                        maxPlayers = 4;
-                    }
+                    int playerCount = getIntOrDefault(roomSnapshot.getLong("playerCount"), 0);
+                    int maxPlayers = getIntOrDefault(roomSnapshot.getLong("maxPlayers"), 4);
 
                     if (!RoomStatus.OPEN.equals(status)) {
                         throw new RuntimeException("La sala no está disponible.");
@@ -203,7 +197,8 @@ public class RoomRepository {
 
                     DocumentSnapshot memberSnapshot = transaction.get(memberRef);
 
-                    // Si ya estaba dentro, solo actualizamos su presencia.
+                    // Si el jugador ya estaba dentro, no lo duplicamos.
+                    // Solo refrescamos su actividad para marcar que sigue en la sala.
                     if (memberSnapshot.exists()) {
                         Map<String, Object> updates = new HashMap<>();
                         updates.put("lastSeenAt", FieldValue.serverTimestamp());
@@ -212,13 +207,15 @@ public class RoomRepository {
                         return true;
                     }
 
+                    // La transacción evita que entren dos jugadores a la vez
+                    // cuando ya solo queda una plaza libre.
                     if (playerCount >= maxPlayers) {
                         throw new RuntimeException("La sala está llena.");
                     }
 
                     Map<String, Object> memberData = new HashMap<>();
                     memberData.put("uid", currentUid);
-                    memberData.put("displayName", safeDisplayName);
+                    memberData.put("displayName", playerName);
                     memberData.put("joinedAt", FieldValue.serverTimestamp());
                     memberData.put("lastSeenAt", FieldValue.serverTimestamp());
                     memberData.put("memberStatus", MemberStatus.ACTIVE);
@@ -226,17 +223,11 @@ public class RoomRepository {
                     memberData.put("isReady", false);
                     memberData.put("score", 0);
 
-                    transaction.set(memberRef, memberData);
-
                     int newPlayerCount = playerCount + 1;
-                    transaction.update(roomRef, "playerCount", newPlayerCount);
 
-                    // Ajustamos el estado de la sala según el número de jugadores.
-                    if (newPlayerCount >= maxPlayers) {
-                        transaction.update(roomRef, "status", RoomStatus.FULL);
-                    } else {
-                        transaction.update(roomRef, "status", RoomStatus.OPEN);
-                    }
+                    transaction.set(memberRef, memberData);
+                    transaction.update(roomRef, "playerCount", newPlayerCount);
+                    transaction.update(roomRef, "status", getRoomStatusFromCount(newPlayerCount, maxPlayers));
 
                     return false;
                 })
@@ -248,7 +239,7 @@ public class RoomRepository {
                 );
     }
 
-    public ListenerRegistration listenRoomMembers(String roomId, LoadMembersCallback callback) {
+    public ListenerRegistration observeRoomMembers(String roomId, LoadMembersCallback callback) {
 
         DocumentReference roomRef = roomsRef.document(roomId);
 
@@ -264,7 +255,7 @@ public class RoomRepository {
                 return;
             }
 
-            String currentHostUid = roomSnapshot.getString("hostUid");
+            String hostUid = roomSnapshot.getString("hostUid");
 
             roomRef.collection("members")
                     .orderBy("joinedAt", Query.Direction.ASCENDING)
@@ -275,18 +266,14 @@ public class RoomRepository {
 
                         for (DocumentSnapshot doc : snapshot.getDocuments()) {
                             String uid = doc.getId();
-                            String name = doc.getString("displayName");
+                            String displayName = doc.getString("displayName");
 
-                            if (name == null || name.trim().isEmpty()) {
-                                name = "Jugador";
+                            if (displayName == null || displayName.trim().isEmpty()) {
+                                displayName = "Jugador";
                             }
 
-                            boolean isHost = false;
-                            if (currentHostUid != null && currentHostUid.equals(uid)) {
-                                isHost = true;
-                            }
-
-                            members.add(new MemberListItem(name, isHost));
+                            boolean isHost = hostUid != null && hostUid.equals(uid);
+                            members.add(new MemberListItem(displayName, isHost));
                         }
 
                         callback.onMembersLoaded(members);
@@ -297,7 +284,7 @@ public class RoomRepository {
         });
     }
 
-    public ListenerRegistration listenRoomDetails(String roomId, LoadRoomDetailsCallback callback) {
+    public ListenerRegistration observeRoomInfo(String roomId, LoadRoomDetailsCallback callback) {
 
         return roomsRef.document(roomId)
                 .addSnapshotListener((snapshot, error) -> {
@@ -317,39 +304,29 @@ public class RoomRepository {
                     String status = snapshot.getString("status");
                     String hostUid = snapshot.getString("hostUid");
 
-                    Boolean isPublicValue = snapshot.getBoolean("isPublic");
-                    boolean isPublic = false;
+                    Boolean publicValue = snapshot.getBoolean("isPublic");
+                    boolean isPublic = publicValue != null && publicValue;
 
-                    if (isPublicValue != null) {
-                        isPublic = isPublicValue;
-                    }
-
-                    Long maxPlayersValue = snapshot.getLong("maxPlayers");
-                    int maxPlayers = 0;
-
-                    if (maxPlayersValue != null) {
-                        maxPlayers = maxPlayersValue.intValue();
-                    }
+                    int maxPlayers = getIntOrDefault(snapshot.getLong("maxPlayers"), 0);
 
                     callback.onRoomLoaded(code, roomName, isPublic, status, hostUid, maxPlayers);
                 });
     }
 
-    public void startGameIfHost(String roomId, String uid, StartGameCallback callback) {
+    public void tryStartGame(String roomId, String userId, StartGameCallback callback) {
 
         if (roomId == null || roomId.trim().isEmpty()) {
             callback.onError("RoomId vacío.");
             return;
         }
 
-        if (uid == null || uid.trim().isEmpty()) {
+        if (userId == null || userId.trim().isEmpty()) {
             callback.onError("UID vacío.");
             return;
         }
 
         DocumentReference roomRef = roomsRef.document(roomId);
 
-        // Solo el host puede iniciar la partida, y la sala debe estar OPEN o FULL con al menos 2 jugadores.
         db.runTransaction((Transaction.Function<Void>) transaction -> {
 
                     DocumentSnapshot roomSnapshot = transaction.get(roomRef);
@@ -360,54 +337,41 @@ public class RoomRepository {
 
                     String hostUid = roomSnapshot.getString("hostUid");
                     String status = roomSnapshot.getString("status");
-                    Long playerCountValue = roomSnapshot.getLong("playerCount");
+                    int playerCount = getIntOrDefault(roomSnapshot.getLong("playerCount"), 0);
 
-                    int playerCount;
-                    if (playerCountValue != null) {
-                        playerCount = playerCountValue.intValue();
-                    } else {
-                        playerCount = 0;
-                    }
-
-                    if (hostUid == null || !hostUid.equals(uid)) {
+                    if (hostUid == null || !hostUid.equals(userId)) {
                         throw new RuntimeException("Solo el host puede iniciar la partida.");
                     }
 
-                    boolean validStatus = false;
-                    if (RoomStatus.OPEN.equals(status) || RoomStatus.FULL.equals(status)) {
-                        validStatus = true;
-                    }
+                    boolean canStart = RoomStatus.OPEN.equals(status) || RoomStatus.FULL.equals(status);
 
-                    if (!validStatus) {
+                    if (!canStart) {
                         throw new RuntimeException("La sala no está lista para iniciar.");
                     }
 
+                    // No dejamos empezar una partida solo con una persona.
                     if (playerCount < 2) {
                         throw new RuntimeException("No hay jugadores suficientes.");
                     }
 
-                    Map<String, Object> roomUpdates = new HashMap<>();
-                    roomUpdates.put("status", RoomStatus.IN_GAME);
-                    roomUpdates.put("startedAt", FieldValue.serverTimestamp());
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("status", RoomStatus.IN_GAME);
+                    updates.put("startedAt", FieldValue.serverTimestamp());
 
-                    transaction.update(roomRef, roomUpdates);
+                    transaction.update(roomRef, updates);
                     return null;
                 })
                 .addOnSuccessListener(unused -> callback.onSuccess())
                 .addOnFailureListener(e -> {
-                    String errorMessage;
-
-                    if (e.getMessage() != null) {
-                        errorMessage = e.getMessage();
-                    } else {
-                        errorMessage = "Error al iniciar la partida.";
-                    }
+                    String errorMessage = e.getMessage() != null
+                            ? e.getMessage()
+                            : "Error al iniciar la partida.";
 
                     callback.onError(errorMessage);
                 });
     }
 
-    public ListenerRegistration listenAvailableRooms(LoadRoomsCallback callback) {
+    public ListenerRegistration observeOpenRooms(LoadRoomsCallback callback) {
 
         return roomsRef
                 .whereEqualTo("status", RoomStatus.OPEN)
@@ -429,59 +393,31 @@ public class RoomRepository {
                             String status = doc.getString("status");
                             String hostUid = doc.getString("hostUid");
 
-                            Long playerCount = doc.getLong("playerCount");
-                            Long maxPlayers = doc.getLong("maxPlayers");
+                            int playerCount = getIntOrDefault(doc.getLong("playerCount"), 0);
+                            int maxPlayers = getIntOrDefault(doc.getLong("maxPlayers"), 0);
 
-                            int safePlayerCount;
-                            if (playerCount != null) {
-                                safePlayerCount = playerCount.intValue();
-                            } else {
-                                safePlayerCount = 0;
-                            }
+                            String roomName = (name != null && !name.trim().isEmpty())
+                                    ? name.trim()
+                                    : "Sala sin nombre";
 
-                            int safeMaxPlayers;
-                            if (maxPlayers != null) {
-                                safeMaxPlayers = maxPlayers.intValue();
-                            } else {
-                                safeMaxPlayers = 0;
-                            }
+                            String roomCode = code != null ? code : "";
+                            String roomStatus = status != null ? status : "unknown";
 
-                            String safeName;
-                            if (name != null && !name.trim().isEmpty()) {
-                                safeName = name.trim();
-                            } else {
-                                safeName = "Sala sin nombre";
-                            }
-
-                            String safeCode;
-                            if (code != null) {
-                                safeCode = code;
-                            } else {
-                                safeCode = "";
-                            }
-
-                            String safeStatus;
-                            if (status != null) {
-                                safeStatus = status;
-                            } else {
-                                safeStatus = "unknown";
-                            }
-
-                            if (safeMaxPlayers > 0 && safePlayerCount >= safeMaxPlayers) {
+                            // Si por cualquier desfase una sala aparece llena,
+                            // la ocultamos del lobby para no mostrar algo que ya no admite jugadores.
+                            if (maxPlayers > 0 && playerCount >= maxPlayers) {
                                 continue;
                             }
 
-                            RoomSummary summary = new RoomSummary(
+                            rooms.add(new RoomSummary(
                                     doc.getId(),
-                                    safeName,
-                                    safeCode,
-                                    safeStatus,
-                                    safePlayerCount,
-                                    safeMaxPlayers,
+                                    roomName,
+                                    roomCode,
+                                    roomStatus,
+                                    playerCount,
+                                    maxPlayers,
                                     hostUid
-                            );
-
-                            rooms.add(summary);
+                            ));
                         }
                     }
 
@@ -514,75 +450,48 @@ public class RoomRepository {
                     }
 
                     String hostUid = roomSnapshot.getString("hostUid");
+                    boolean isLeavingHost = hostUid != null && hostUid.equals(uid);
 
-                    boolean leavingUserWasHost = false;
-                    if (hostUid != null && hostUid.equals(uid)) {
-                        leavingUserWasHost = true;
-                    }
-
-                    Long countFromDb = roomSnapshot.getLong("playerCount");
-
-                    int currentPlayerCount;
-                    if (countFromDb != null && countFromDb >= 1L) {
-                        currentPlayerCount = countFromDb.intValue();
-                    } else {
+                    int currentPlayerCount = getIntOrDefault(roomSnapshot.getLong("playerCount"), 1);
+                    if (currentPlayerCount < 1) {
                         currentPlayerCount = 1;
                     }
 
                     int remainingPlayers = currentPlayerCount - 1;
-
                     if (remainingPlayers < 0) {
                         remainingPlayers = 0;
                     }
 
-                    if (!leavingUserWasHost) {
-                        leaveAsNormalPlayer(roomRef, leavingMemberRef, remainingPlayers, callback);
+                    if (isLeavingHost) {
+                        leaveRoomAsHost(roomRef, membersRef, leavingMemberRef, uid, remainingPlayers, callback);
                     } else {
-                        leaveAsHost(roomRef, membersRef, leavingMemberRef, uid, remainingPlayers, callback);
+                        leaveRoomAsPlayer(roomRef, leavingMemberRef, remainingPlayers, callback);
                     }
-
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error leyendo la sala: " + e.getMessage())
                 );
     }
 
-    private void leaveAsNormalPlayer(DocumentReference roomRef,
-                                     DocumentReference leavingMemberRef,
-                                     int remainingPlayers,
-                                     LeaveRoomCallback callback) {
+    private void leaveRoomAsPlayer(DocumentReference roomRef,
+                                   DocumentReference leavingMemberRef,
+                                   int remainingPlayers,
+                                   LeaveRoomCallback callback) {
 
         roomRef.get()
                 .addOnSuccessListener(roomSnapshot -> {
 
-                    int maxPlayers;
-
-                    Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
-                    if (maxPlayersValue != null) {
-                        maxPlayers = maxPlayersValue.intValue();
-                    } else {
-                        maxPlayers = 4;
-                    }
+                    int maxPlayers = getIntOrDefault(roomSnapshot.getLong("maxPlayers"), 4);
 
                     WriteBatch batch = db.batch();
                     batch.delete(leavingMemberRef);
 
-                    // Si no queda nadie, borramos la sala completa.
+                    // Si era el último jugador, ya no tiene sentido mantener la sala.
                     if (remainingPlayers == 0) {
                         batch.delete(roomRef);
                     } else {
                         batch.update(roomRef, "playerCount", remainingPlayers);
-
-                        String newStatus;
-
-                        // Ajustamos el estado según los jugadores que quedan.
-                        if (remainingPlayers >= maxPlayers) {
-                            newStatus = RoomStatus.FULL;
-                        } else {
-                            newStatus = RoomStatus.OPEN;
-                        }
-
-                        batch.update(roomRef, "status", newStatus);
+                        batch.update(roomRef, "status", getRoomStatusFromCount(remainingPlayers, maxPlayers));
                     }
 
                     batch.commit()
@@ -590,50 +499,42 @@ public class RoomRepository {
                             .addOnFailureListener(e ->
                                     callback.onError("Error al salir de la sala: " + e.getMessage())
                             );
-
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error leyendo sala: " + e.getMessage())
                 );
     }
 
-    // Si sale el host, hay que elegir a otro jugador como nuevo anfitrión.
-    private void leaveAsHost(DocumentReference roomRef,
-                             CollectionReference membersRef,
-                             DocumentReference leavingMemberRef,
-                             String leavingUid,
-                             int remainingPlayers,
-                             LeaveRoomCallback callback) {
+    private void leaveRoomAsHost(DocumentReference roomRef,
+                                 CollectionReference membersRef,
+                                 DocumentReference leavingMemberRef,
+                                 String leavingUid,
+                                 int remainingPlayers,
+                                 LeaveRoomCallback callback) {
 
         membersRef.orderBy("joinedAt", Query.Direction.ASCENDING)
                 .get()
                 .addOnSuccessListener(memberSnapshots -> {
 
-                    String tempHostUid = null;
+                    String nextHostUid = null;
 
-                    // Elegimos como nuevo host al primer jugador que siga en la sala.
+                    // Si sale el host, le damos el control al siguiente jugador
+                    // que siga dentro de la sala.
                     for (DocumentSnapshot doc : memberSnapshots.getDocuments()) {
                         String candidateUid = doc.getId();
 
                         if (!candidateUid.equals(leavingUid)) {
-                            tempHostUid = candidateUid;
+                            nextHostUid = candidateUid;
                             break;
                         }
                     }
 
-                    final String newHostUid = tempHostUid;
+                    final String newHostUid = nextHostUid;
 
                     roomRef.get()
                             .addOnSuccessListener(roomSnapshot -> {
 
-                                int maxPlayers;
-
-                                Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
-                                if (maxPlayersValue != null) {
-                                    maxPlayers = maxPlayersValue.intValue();
-                                } else {
-                                    maxPlayers = 4;
-                                }
+                                int maxPlayers = getIntOrDefault(roomSnapshot.getLong("maxPlayers"), 4);
 
                                 WriteBatch batch = db.batch();
                                 batch.delete(leavingMemberRef);
@@ -648,19 +549,10 @@ public class RoomRepository {
 
                                     batch.update(roomRef, "playerCount", remainingPlayers);
                                     batch.update(roomRef, "hostUid", newHostUid);
+                                    batch.update(roomRef, "status", getRoomStatusFromCount(remainingPlayers, maxPlayers));
 
                                     DocumentReference newHostRef = membersRef.document(newHostUid);
                                     batch.update(newHostRef, "isHost", true);
-
-                                    String newStatus;
-
-                                    if (remainingPlayers >= maxPlayers) {
-                                        newStatus = RoomStatus.FULL;
-                                    } else {
-                                        newStatus = RoomStatus.OPEN;
-                                    }
-
-                                    batch.update(roomRef, "status", newStatus);
                                 }
 
                                 batch.commit()
@@ -668,27 +560,24 @@ public class RoomRepository {
                                         .addOnFailureListener(e ->
                                                 callback.onError("Error al salir de la sala: " + e.getMessage())
                                         );
-
                             })
                             .addOnFailureListener(e ->
                                     callback.onError("Error leyendo sala: " + e.getMessage())
                             );
-
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error buscando nuevo anfitrión: " + e.getMessage())
                 );
     }
 
-    public void updatePresence(String roomId, String userId) {
+    public void updateUserActivity(String roomId, String userId) {
         roomsRef.document(roomId)
                 .collection("members")
                 .document(userId)
                 .update("lastSeenAt", FieldValue.serverTimestamp());
     }
 
-    // Recalculamos el contador y el estado de la sala según los miembros reales.
-    public void recalculateRoomState(String roomId) {
+    public void fixRoomStateIfNeeded(String roomId) {
 
         if (roomId == null || roomId.trim().isEmpty()) {
             return;
@@ -703,14 +592,7 @@ public class RoomRepository {
                         return;
                     }
 
-                    Long maxPlayersValue = roomSnapshot.getLong("maxPlayers");
-
-                    int maxPlayers;
-                    if (maxPlayersValue != null) {
-                        maxPlayers = maxPlayersValue.intValue();
-                    } else {
-                        maxPlayers = 4;
-                    }
+                    int maxPlayers = getIntOrDefault(roomSnapshot.getLong("maxPlayers"), 4);
 
                     roomRef.collection("members")
                             .get()
@@ -718,30 +600,22 @@ public class RoomRepository {
 
                                 int realCount = memberSnapshots.size();
 
+                                // Si ya no queda nadie dentro, eliminamos la sala.
                                 if (realCount == 0) {
                                     roomRef.delete();
                                     return;
                                 }
 
-                                String newStatus;
-
-                                if (realCount >= maxPlayers) {
-                                    newStatus = RoomStatus.FULL;
-                                } else {
-                                    newStatus = RoomStatus.OPEN;
-                                }
-
                                 Map<String, Object> updates = new HashMap<>();
                                 updates.put("playerCount", realCount);
-                                updates.put("status", newStatus);
+                                updates.put("status", getRoomStatusFromCount(realCount, maxPlayers));
 
                                 roomRef.update(updates);
                             });
                 });
     }
 
-    // Eliminamos miembros que llevan demasiado tiempo sin actividad.
-    public void cleanupInactiveMembers(String roomId) {
+    public void removeInactivePlayers(String roomId) {
 
         if (roomId == null || roomId.trim().isEmpty()) {
             return;
@@ -761,14 +635,14 @@ public class RoomRepository {
 
                     for (DocumentSnapshot doc : memberSnapshots.getDocuments()) {
 
-                        com.google.firebase.Timestamp lastSeenAt = doc.getTimestamp("lastSeenAt");
+                        Timestamp lastSeenAt = doc.getTimestamp("lastSeenAt");
 
                         if (lastSeenAt != null) {
-
                             long lastSeenMillis = lastSeenAt.toDate().getTime();
                             long diff = now - lastSeenMillis;
 
-                            // Si el usuario supera el tiempo máximo de inactividad, lo eliminamos.
+                            // Si alguien lleva demasiado tiempo sin actividad,
+                            // lo quitamos para que la sala no se quede desfasada.
                             if (diff > timeoutMillis) {
                                 batch.delete(doc.getReference());
                                 hasChanges = true;
@@ -776,21 +650,20 @@ public class RoomRepository {
                         }
                     }
 
-                    // Si hubo cambios, aplicamos y recalculamos la sala.
+                    // Solo recalculamos la sala si realmente se borró alguien.
                     if (hasChanges) {
                         batch.commit()
-                                .addOnSuccessListener(unused -> recalculateRoomState(roomId));
+                                .addOnSuccessListener(unused -> fixRoomStateIfNeeded(roomId));
                     }
                 });
     }
 
-    public void loadAvailableCategories(LoadCategoriesCallback callback) {
+    public void getAvailableCategories(LoadCategoriesCallback callback) {
 
         db.collection("preguntas")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
 
-                    List<String> categories = new ArrayList<>();
                     List<String> uniqueCategories = new ArrayList<>();
 
                     for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {

@@ -3,7 +3,8 @@ package com.dam.quizmillionapp.models;
 
 import java.util.List;
 
-// Datos necesarios para crear una nueva sala.
+// Guarda la configuración elegida por el usuario
+// antes de crear una sala nueva.
 public class RoomCreationData {
     private String name;
     private long maxPlayers;
@@ -21,10 +22,12 @@ public class RoomCreationData {
     }
 
     public String getName() {
+
         return name;
     }
 
     public long getMaxPlayers() {
+
         return maxPlayers;
     }
 

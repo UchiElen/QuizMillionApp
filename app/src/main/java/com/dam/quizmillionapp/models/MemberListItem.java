@@ -1,6 +1,7 @@
 package com.dam.quizmillionapp.models;
 
-// Representa un jugador dentro de la lista de miembros de una sala.
+// Modelo simplificado de un jugador usado para mostrar
+// la lista de miembros en la sala (nombre y si es host).
 public class MemberListItem {
 
     private String displayName;

@@ -19,7 +19,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MemberVi
 
     private final List<MemberListItem> members = new ArrayList<>();
 
-    // Reemplaza la lista completa de miembros y refresca la vista.
+    // Actualiza la lista completa de jugadores que hay en la sala
     public void updateMembers(List<MemberListItem> newMembers) {
         members.clear();
 
@@ -45,7 +45,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MemberVi
 
         holder.txtMemberName.setText(member.getDisplayName());
 
-        // Mostramos un icono si el jugador es el host.
+        // Si el jugador es el host mostramos el icono
         if (member.isHost()) {
             holder.imgHost.setVisibility(View.VISIBLE);
         } else {

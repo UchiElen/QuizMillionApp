@@ -1,6 +1,7 @@
 package com.dam.quizmillionapp.interfaces;
 
-// Callback para saber si el usuario ha salido correctamente de la sala.
+// Se utiliza al abandonar una sala para controlar el resultado
+// después de actualizar miembros, contador y posible cambio de host.
 public interface LeaveRoomCallback {
     void onSuccess();
     void onError(String errorMessage);

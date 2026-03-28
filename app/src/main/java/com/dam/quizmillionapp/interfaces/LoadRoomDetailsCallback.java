@@ -1,7 +1,8 @@
 
 package com.dam.quizmillionapp.interfaces;
 
-// Callback para devolver los datos de una sala en tiempo real.
+// Se usa para escuchar los cambios de una sala en tiempo real
+// y actualizar su estado en la pantalla (nombre, estado, jugadores, etc.)
 public interface LoadRoomDetailsCallback {
 
     void onRoomLoaded(String code, String roomName, boolean isPublic,

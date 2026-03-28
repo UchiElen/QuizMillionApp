@@ -1,4 +1,3 @@
-
 package com.dam.quizmillionapp.repositories;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -7,7 +6,7 @@ public class UserRepository {
 
     private final FirebaseFirestore db;
 
-    // callback para devolver el nombre del usuario
+    // Este callback devuelve el nombre del usuario o un error si la consulta falla.
     public interface OnUserNameLoadedCallback {
         void onSuccess(String userName);
         void onError(String errorMessage);
@@ -17,28 +16,31 @@ public class UserRepository {
         db = FirebaseFirestore.getInstance();
     }
 
-    // busca el nombre del usuario por su uid
     public void getUserNameByUid(String uid, OnUserNameLoadedCallback callback) {
+
+        if (uid == null || uid.trim().isEmpty()) {
+            callback.onError("UID no válido");
+            return;
+        }
 
         db.collection("usuarios")
                 .document(uid)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
 
+                    String userName = "Jugador";
+
+                    // Si el usuario no tiene nombre guardado, usamos uno por defecto
+                    // para no dejar valores vacíos en la interfaz.
                     if (documentSnapshot.exists()) {
-                        String nombreUsuario = documentSnapshot.getString("nombreUsuario");
+                        String storedName = documentSnapshot.getString("nombreUsuario");
 
-                        // si no hay nombre, usamos uno por defecto
-                        if (nombreUsuario != null && !nombreUsuario.trim().isEmpty()) {
-                            callback.onSuccess(nombreUsuario.trim());
-                        } else {
-                            callback.onSuccess("Jugador");
+                        if (storedName != null && !storedName.trim().isEmpty()) {
+                            userName = storedName.trim();
                         }
-
-                    } else {
-                        callback.onSuccess("Jugador");
                     }
 
+                    callback.onSuccess(userName);
                 })
                 .addOnFailureListener(e ->
                         callback.onError("Error cargando usuario: " + e.getMessage())

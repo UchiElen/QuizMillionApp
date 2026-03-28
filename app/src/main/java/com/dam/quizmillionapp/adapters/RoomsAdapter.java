@@ -30,9 +30,14 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         this.clickListener = clickListener;
     }
 
+    // Actualiza la lista de salas visibles en el lobby
     public void updateRooms(List<RoomSummary> newRooms) {
         roomList.clear();
-        roomList.addAll(newRooms);
+
+        if (newRooms != null) {
+            roomList.addAll(newRooms);
+        }
+
         notifyDataSetChanged();
     }
 
@@ -83,7 +88,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         boolean hasSpace = room.getPlayerCount() < room.getMaxPlayers();
         boolean canJoin = isOpen && hasSpace;
 
-        // Solo dejamos unirse si la sala sigue abierta y todavía tiene hueco.
+        // Solo dejamos entrar si la sala sigue abierta y aún tiene hueco.
         if (canJoin) {
             holder.btnJoinRoom.setEnabled(true);
             holder.btnJoinRoom.setAlpha(1.0f);
@@ -127,7 +132,8 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
                 holder.btnJoinRoom.setText("Llena");
             }
 
-            // Si la sala no se puede usar, quitamos también los clicks.
+            // Si la sala no admite entrada, quitamos también los clicks
+            // para que la fila no parezca interactiva.
             holder.itemView.setOnClickListener(null);
             holder.btnJoinRoom.setOnClickListener(null);
         }
