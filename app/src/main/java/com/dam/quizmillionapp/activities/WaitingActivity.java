@@ -46,6 +46,9 @@ public class WaitingActivity extends BaseActivity {
     private int currentPlayers = 0;
     private int maxPlayers = 0;
 
+    private String currentRoomStatus;
+    private String currentHostUid;
+
     private MembersAdapter membersAdapter;
     private RoomRepository roomRepository;
 
@@ -125,15 +128,14 @@ public class WaitingActivity extends BaseActivity {
                                      int loadedMaxPlayers) {
 
                 maxPlayers = loadedMaxPlayers;
+                currentRoomStatus = status;
+                currentHostUid = hostUid;
 
                 updateRoomHeader(roomName, code, isPublic);
                 updatePlayersTitle();
                 txtRoomStatus.setText(getStatusText(status));
 
-                boolean isHost = isCurrentUserHost(hostUid);
-                boolean canStart = canCurrentUserStart(status, isHost);
-
-                btnStartGame.setEnabled(canStart);
+                updateStartButtonState();
 
                 // Cuando la sala pasa a IN_GAME, todos los jugadores
                 // deben avanzar automáticamente a la pantalla de preguntas.
@@ -167,6 +169,7 @@ public class WaitingActivity extends BaseActivity {
                 }
 
                 updatePlayersTitle();
+                updateStartButtonState();
             }
 
             @Override
@@ -176,8 +179,14 @@ public class WaitingActivity extends BaseActivity {
         });
     }
 
+    private void updateStartButtonState() {
+        boolean isHost = isCurrentUserHost(currentHostUid);
+        boolean canStart = canCurrentUserStart(currentRoomStatus, isHost);
+        btnStartGame.setEnabled(canStart);
+    }
+
     private boolean isCurrentUserHost(String hostUid) {
-        String myUid = UserSession.getCurrentUid(this);
+        String myUid = UserSession.getCurrentUid();
         return myUid != null && myUid.equals(hostUid);
     }
 
@@ -251,7 +260,7 @@ public class WaitingActivity extends BaseActivity {
     }
 
     private void tryStartGame() {
-        String myUid = UserSession.getCurrentUid(this);
+        String myUid = UserSession.getCurrentUid();
 
         if (myUid == null || myUid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
@@ -272,7 +281,7 @@ public class WaitingActivity extends BaseActivity {
     }
 
     private void leaveRoomAndExit() {
-        String uid = UserSession.getCurrentUid(this);
+        String uid = UserSession.getCurrentUid();
 
         if (uid == null || uid.trim().isEmpty()) {
             finish();
@@ -300,7 +309,7 @@ public class WaitingActivity extends BaseActivity {
         presenceRunnable = new Runnable() {
             @Override
             public void run() {
-                String uid = UserSession.getCurrentUid(WaitingActivity.this);
+                String uid = UserSession.getCurrentUid();
 
                 if (uid != null && roomId != null) {
                     roomRepository.updateUserActivity(roomId, uid);

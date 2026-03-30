@@ -146,7 +146,7 @@ public class RoomConfigActivity extends BaseActivity {
             return;
         }
 
-        String uid = UserSession.getCurrentUid(this);
+        String uid = UserSession.getCurrentUid();
         if (uid == null || uid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario");
             return;

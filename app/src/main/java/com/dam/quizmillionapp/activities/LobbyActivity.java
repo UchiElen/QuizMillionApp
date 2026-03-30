@@ -105,7 +105,7 @@ public class LobbyActivity extends BaseActivity {
     }
 
     private void tryJoinRoomById(String roomId) {
-        String uid = UserSession.getCurrentUid(this);
+        String uid = UserSession.getCurrentUid();
 
         if (uid == null || uid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
@@ -148,7 +148,7 @@ public class LobbyActivity extends BaseActivity {
     }
 
     private void tryJoinRoomByCode(String roomCode) {
-        String uid = UserSession.getCurrentUid(this);
+        String uid = UserSession.getCurrentUid();
 
         if (uid == null || uid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
