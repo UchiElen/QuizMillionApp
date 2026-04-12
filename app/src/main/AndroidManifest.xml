@@ -9,6 +9,7 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -24,8 +25,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuizMillionApp">
         <activity
-            android:name=".activities.RoomConfigActivity"
+            android:name=".CreditosActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".PuntuacionesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ConfiguracionActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".LaunchActivity"
             android:exported="true"
@@ -69,7 +78,11 @@
             android:name=".PreguntasActivity"
             android:exported="false" />
         <activity
-            android:name=".ResultadoActivity"
+            android:name=".ResultadoMultiActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ResultadoSolitarioActivity"
             android:exported="false" />
 
         <service

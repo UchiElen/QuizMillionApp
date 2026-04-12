@@ -69,6 +69,7 @@ dependencies {
     implementation("com.google.firebase:firebase-storage:22.0.1")
     implementation ("com.github.bumptech.glide:glide:5.0.5")
     annotationProcessor ("com.github.bumptech.glide:compiler:5.0.5")
+    implementation("androidx.preference:preference:1.2.1")
 
     // When using the BoM, don't specify versions in Firebase dependencies
     // https://firebase.google.com/docs/android/setup#available-libraries

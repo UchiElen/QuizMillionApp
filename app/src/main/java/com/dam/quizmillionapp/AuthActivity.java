@@ -62,17 +62,17 @@ public class AuthActivity extends BaseActivity {
                 String contrasena = contraTI.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
-                    emailTI.setError("Se requiere un email.");
+                    emailTI.setError("Se requiere un email");
                     return;
                 }
 
                 if (TextUtils.isEmpty(contrasena)) {
-                    contraTI.setError("Se requiere una contraseña.");
+                    contraTI.setError("Se requiere una contraseña");
                     return;
                 }
 
                 if (contrasena.length() < 6) {
-                    contraTI.setError("La contraseña debe tener al menos 6 caracteres.");
+                    contraTI.setError("La contraseña debe tener al menos 6 caracteres");
                     return;
                 }
 
@@ -83,7 +83,7 @@ public class AuthActivity extends BaseActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(AuthActivity.this, "Sesión iniciada correctamente.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AuthActivity.this, "Sesión iniciada correctamente", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
 
@@ -93,10 +93,10 @@ public class AuthActivity extends BaseActivity {
                             try {
                                 throw task.getException();
                             } catch (com.google.firebase.auth.FirebaseAuthInvalidUserException e) {
-                                Toast.makeText(AuthActivity.this, "El email no está registrado.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AuthActivity.this, "El email no está registrado", Toast.LENGTH_SHORT).show();
                             } catch (
                                     com.google.firebase.auth.FirebaseAuthInvalidCredentialsException e) {
-                                Toast.makeText(AuthActivity.this, "Contraseña o email incorrectos.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(AuthActivity.this, "Contraseña o email incorrecto.", Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
 
                                 Toast.makeText(AuthActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -110,6 +110,7 @@ public class AuthActivity extends BaseActivity {
         recupTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(AuthActivity.this).playClick();
                 Intent intent = new Intent(AuthActivity.this,ResetActivity.class);
                 startActivity(intent);
             }

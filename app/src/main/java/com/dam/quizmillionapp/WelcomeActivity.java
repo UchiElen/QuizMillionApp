@@ -43,6 +43,7 @@ public class WelcomeActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(WelcomeActivity.this).playClick();
                 Intent intent = new Intent(WelcomeActivity.this,RegisActivity.class);
                 startActivity(intent);
             }
@@ -52,6 +53,7 @@ public class WelcomeActivity extends BaseActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(WelcomeActivity.this).playClick();
                 Intent intent = new Intent(WelcomeActivity.this,AuthActivity.class);
                 startActivity(intent);
             }

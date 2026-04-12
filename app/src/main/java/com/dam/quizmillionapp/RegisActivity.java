@@ -114,6 +114,7 @@ public class RegisActivity extends BaseActivity {
         fotoIB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(RegisActivity.this).playClick();
                 String[] opciones = {"Hacer foto", "Elegir de galería", "Cancelar"};
 
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(RegisActivity.this);
@@ -137,6 +138,7 @@ public class RegisActivity extends BaseActivity {
         AuthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(RegisActivity.this).playClick();
                 String email = emailTI.getText().toString().trim();
                 String contrasena = contraTI.getText().toString().trim();
                 String nombre = nombreTI.getText().toString().trim();

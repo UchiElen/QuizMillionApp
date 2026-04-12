@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
@@ -20,30 +19,39 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Clase que gestiona la pantalla final de premios.
+ * Clase que gestiona la pantalla final de premios del modo individual.
  * Se encarga de mostrar el premio obtenido consultando a Firestore según el nivel.
  */
-public class ResultadoActivity extends AppCompatActivity {
+public class ResultadoSolitarioActivity extends BaseActivity {
 
     private FirebaseFirestore db;
     private TextView tvBanner, tvMensaje;
     private ImageView imgPremio;
     private ConstraintLayout layoutCarga;
+    private String roomId;
+
+    private boolean modoSolitario = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_resultado);
+        setContentView(R.layout.activity_resultado_solitario);
 
         // Inicializamos los objetos de la interfaz
         tvBanner = findViewById(R.id.tv_banner_mensaje);
         tvMensaje = findViewById(R.id.tv_frase_graciosa);
         imgPremio = findViewById(R.id.img_premio);
         layoutCarga = findViewById(R.id.layout_carga);
+        roomId = getIntent().getStringExtra("roomId");
 
         db = FirebaseFirestore.getInstance();
 
@@ -56,10 +64,17 @@ public class ResultadoActivity extends AppCompatActivity {
 
         // Listener para volver al inicio y cerrar esta activity
         findViewById(R.id.btn_menu_principal).setOnClickListener(v -> {
-            Intent intent = new Intent(ResultadoActivity.this, MainActivity.class);
+            SoundManager.getInstance(ResultadoSolitarioActivity.this).playClick();
+            Intent intent = new Intent(ResultadoSolitarioActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
+        });
+        findViewById(R.id.btn_reintentar).setOnClickListener(v -> {
+            SoundManager.getInstance(ResultadoSolitarioActivity.this).playClick();
+            Intent intent = new Intent(ResultadoSolitarioActivity.this, PreguntasActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
     }
 
@@ -72,6 +87,7 @@ public class ResultadoActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
+                        SoundManager.getInstance(ResultadoSolitarioActivity.this).playMoney();
                         // Aunque sea un for, solo debería venir un premio por nivel
                         for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
@@ -118,6 +134,12 @@ public class ResultadoActivity extends AppCompatActivity {
                                 // Si no hay URL definida, quitamos el loader para que no se quede infinitamente
                                 ocultarCargaConAnimacion();
                             }
+                            Long valorPremio = doc.getLong("cantidad");
+                            Log.d("DEBUG_PREMIO", "Documento encontrado: " + doc.getId());
+                            Log.d("DEBUG_PREMIO", "Valor recuperado de la DB: " + valorPremio);
+
+                            if (valorPremio == null) valorPremio = 0L;
+
                         }
                     } else {
                         // Caso de error: nivel no registrado en la base de datos, aunque no es probable pero cubre fallo humano al alimentar la bbdd
@@ -132,10 +154,6 @@ public class ResultadoActivity extends AppCompatActivity {
                     Toast.makeText(this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
                 });
     }
-
-    /**
-     * Animación suave para ocultar la pantalla de carga porque las imagenes a veces tardan
-     */
 
     private void ocultarCargaConAnimacion() {
         if (layoutCarga != null && layoutCarga.getVisibility() == View.VISIBLE) {
