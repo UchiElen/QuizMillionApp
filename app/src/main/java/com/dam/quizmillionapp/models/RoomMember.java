@@ -2,6 +2,8 @@ package com.dam.quizmillionapp.models;
 
 import com.google.firebase.Timestamp;
 
+// Modelo que representa a un jugador dentro de una sala,
+// incluyendo su presencia, rol y estado básico.
 public class RoomMember {
 
     private String uid;
@@ -9,14 +11,15 @@ public class RoomMember {
     private Timestamp joinedAt;
     private Timestamp lastSeenAt;
     private String memberStatus;
-    private Boolean isHost;
-    private Boolean isReady;
+    private boolean isHost;
+    private boolean isReady;
 
     public RoomMember() {
     }
 
     public RoomMember(String uid, String displayName, Timestamp joinedAt, Timestamp lastSeenAt,
-                      String memberStatus, Boolean isHost, Boolean isReady) {
+                      String memberStatus, boolean isHost, boolean isReady) {
+
         this.uid = uid;
         this.displayName = displayName;
         this.joinedAt = joinedAt;
@@ -66,19 +69,19 @@ public class RoomMember {
         this.memberStatus = memberStatus;
     }
 
-    public Boolean getIsHost() {
+    public boolean getIsHost() {
         return isHost;
     }
 
-    public void setIsHost(Boolean host) {
+    public void setIsHost(boolean host) {
         isHost = host;
     }
 
-    public Boolean getIsReady() {
+    public boolean getIsReady() {
         return isReady;
     }
 
-    public void setIsReady(Boolean ready) {
+    public void setIsReady(boolean ready) {
         isReady = ready;
     }
 }

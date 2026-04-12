@@ -74,6 +74,10 @@
         <activity
             android:name=".activities.LobbyActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".activities.RoomConfigActivity"
+            android:exported="false" />
         <activity
             android:name=".PreguntasActivity"
             android:exported="false" />

@@ -2,6 +2,8 @@ package com.dam.quizmillionapp.models;
 
 import com.google.firebase.Timestamp;
 
+// Modelo que representa una sala de juego almacenada en Firestore,
+// incluyendo su estado, jugadores y datos necesarios para gestionar la partida.
 public class Room {
 
     private String code;

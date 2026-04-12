@@ -1,5 +1,6 @@
 package com.dam.quizmillionapp.adapters;
 
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dam.quizmillionapp.R;
+import com.dam.quizmillionapp.constants.RoomStatus;
 import com.dam.quizmillionapp.models.RoomSummary;
 import com.google.android.material.button.MaterialButton;
 
@@ -28,9 +30,14 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
         this.clickListener = clickListener;
     }
 
+    // Actualiza la lista de salas visibles en el lobby
     public void updateRooms(List<RoomSummary> newRooms) {
         roomList.clear();
-        roomList.addAll(newRooms);
+
+        if (newRooms != null) {
+            roomList.addAll(newRooms);
+        }
+
         notifyDataSetChanged();
     }
 
@@ -45,32 +52,91 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
 
     @Override
     public void onBindViewHolder(@NonNull RoomViewHolder holder, int position) {
+
         RoomSummary room = roomList.get(position);
 
-        holder.txtRoomName.setText("Room " + room.getCode());
+        String roomName = room.getName();
+        if (roomName == null || roomName.trim().isEmpty()) {
+            roomName = "Sala sin nombre";
+        }
 
-        holder.txtRoomCode.setText(
-                holder.itemView.getContext().getString(R.string.room_code_prefix) + " " + room.getCode()
-        );
+        holder.txtRoomName.setText(roomName);
+
+        String status = room.getStatus();
+        String statusText;
+        int statusColor;
+
+        if (RoomStatus.OPEN.equals(status)) {
+            statusText = "Esperando";
+            statusColor = holder.itemView.getContext().getColor(R.color.green);
+        } else if (RoomStatus.IN_GAME.equals(status)) {
+            statusText = "En partida";
+            statusColor = holder.itemView.getContext().getColor(R.color.orange);
+        } else {
+            statusText = "Finalizada";
+            statusColor = holder.itemView.getContext().getColor(R.color.red);
+        }
+
+        holder.txtRoomStatus.setText(statusText);
+        holder.txtRoomStatus.setTextColor(statusColor);
 
         holder.txtPlayers.setText(
-                holder.itemView.getContext().getString(R.string.players_prefix) + " "
-                        + room.getPlayerCount() + " / " + room.getMaxPlayers()
+                "Jugadores: " + room.getPlayerCount() + " / " + room.getMaxPlayers()
         );
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickListener.onRoomClicked(room);
-            }
-        });
+        boolean isOpen = RoomStatus.OPEN.equals(status);
+        boolean hasSpace = room.getPlayerCount() < room.getMaxPlayers();
+        boolean canJoin = isOpen && hasSpace;
 
-        holder.btnJoinRoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                clickListener.onRoomClicked(room);
+        // Solo dejamos entrar si la sala sigue abierta y aún tiene hueco.
+        if (canJoin) {
+            holder.btnJoinRoom.setEnabled(true);
+            holder.btnJoinRoom.setAlpha(1.0f);
+            holder.btnJoinRoom.setText("Unirse");
+
+            holder.btnJoinRoom.setBackgroundTintList(
+                    ColorStateList.valueOf(
+                            holder.itemView.getContext().getColor(R.color.green)
+                    )
+            );
+
+            holder.btnJoinRoom.setTextColor(
+                    holder.itemView.getContext().getColor(R.color.white)
+            );
+
+            holder.itemView.setOnClickListener(view ->
+                    clickListener.onRoomClicked(room)
+            );
+
+            holder.btnJoinRoom.setOnClickListener(view ->
+                    clickListener.onRoomClicked(room)
+            );
+
+        } else {
+            holder.btnJoinRoom.setEnabled(false);
+            holder.btnJoinRoom.setAlpha(0.6f);
+
+            holder.btnJoinRoom.setBackgroundTintList(
+                    ColorStateList.valueOf(
+                            holder.itemView.getContext().getColor(R.color.gray)
+                    )
+            );
+
+            holder.btnJoinRoom.setTextColor(
+                    holder.itemView.getContext().getColor(R.color.white)
+            );
+
+            if (!isOpen) {
+                holder.btnJoinRoom.setText("No disponible");
+            } else {
+                holder.btnJoinRoom.setText("Llena");
             }
-        });
+
+            // Si la sala no admite entrada, quitamos también los clicks
+            // para que la fila no parezca interactiva.
+            holder.itemView.setOnClickListener(null);
+            holder.btnJoinRoom.setOnClickListener(null);
+        }
     }
 
     @Override
@@ -79,15 +145,17 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.RoomViewHold
     }
 
     public static class RoomViewHolder extends RecyclerView.ViewHolder {
+
         TextView txtRoomName;
-        TextView txtRoomCode;
+        TextView txtRoomStatus;
         TextView txtPlayers;
         MaterialButton btnJoinRoom;
 
         public RoomViewHolder(@NonNull View itemView) {
             super(itemView);
+
             txtRoomName = itemView.findViewById(R.id.txtRoomName);
-            txtRoomCode = itemView.findViewById(R.id.txtRoomCode);
+            txtRoomStatus = itemView.findViewById(R.id.txtRoomStatus);
             txtPlayers = itemView.findViewById(R.id.txtPlayers);
             btnJoinRoom = itemView.findViewById(R.id.btnJoinRoom);
         }
