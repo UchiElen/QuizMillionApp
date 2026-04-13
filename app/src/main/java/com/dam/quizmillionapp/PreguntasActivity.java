@@ -44,6 +44,8 @@ public class PreguntasActivity extends BaseActivity {
     private ImageButton btn50, btnPublico, btnLlamada, btnMusica, btnAbandonar;
     private MaterialButton btnPlantarse;
 
+    private Handler handlerGlobal = new Handler() ;
+
     // --- Layouts de Transición (Cortinas) ---
     private androidx.constraintlayout.widget.ConstraintLayout layoutTransicion;
     private TextView tvTransicionTitulo, tvTransicionMensajeLinea1,tvTransicionMensajeLinea2, tvTransicionPremio;
@@ -233,7 +235,7 @@ public class PreguntasActivity extends BaseActivity {
             btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
 
             if (nivelActual == 15) { // ¡Ha ganado el millón!
-                new Handler().postDelayed(() -> irAResultados(15), 1500);
+                handlerGlobal.postDelayed(() -> irAResultados(15), 1500);
                 return;
             }
 
@@ -242,7 +244,7 @@ public class PreguntasActivity extends BaseActivity {
             tvPremioActual.setText("NIVEL " + nivelActual + " > " + escalaPremios[nivelActual] + " €");
 
             nivelActual++;
-            new Handler().postDelayed(this::mostrarTransicionYNivel, 1500);
+            handlerGlobal.postDelayed(this::mostrarTransicionYNivel, 1500);
         } else {
             // Fallo: Color Rojo y sumamos un fallo
             SoundManager.getInstance(PreguntasActivity.this).playError();
@@ -276,7 +278,7 @@ public class PreguntasActivity extends BaseActivity {
         cargarNivelCompleto(); // Recargamos preguntas del nuevo nivel
 
         // Animación de salida de la cortina (ocultar)
-        new Handler().postDelayed(() -> {
+        handlerGlobal.postDelayed(() -> {
             layoutTransicion.animate().alpha(0.0f).setDuration(500).withEndAction(() -> {
                 layoutTransicion.setVisibility(View.GONE);
                 mostrarSiguientePregunta();
@@ -297,7 +299,7 @@ public class PreguntasActivity extends BaseActivity {
             public void onFinish() {
                 actualizarFallos();
                 if (contadorFallos < 3) {
-                    new Handler().postDelayed(() -> {
+                    handlerGlobal.postDelayed(() -> {
                         indicePregunta++;
                         prepararDatosPregunta();
                         mostrarSiguientePregunta();
@@ -372,7 +374,7 @@ public class PreguntasActivity extends BaseActivity {
 
         Toast.makeText(this, "Consultando al público...", Toast.LENGTH_SHORT).show();
 
-        new Handler().postDelayed(() -> {
+        handlerGlobal.postDelayed(() -> {
             for (int i = 0; i < 4; i++) {
                 btnOpciones[i].setText(preguntaActual.opciones.get(i));
                 if (btnOpciones[i].isEnabled()) {
@@ -505,7 +507,15 @@ public class PreguntasActivity extends BaseActivity {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Salir")
                 .setMessage("Si sales ahora, se perderá todo el progreso.")
-                .setPositiveButton("Salir", (d, w) -> finish())
+                .setPositiveButton("Salir", (d, w) -> {
+                    // parar el reloj
+                    if (reloj != null) {
+                        reloj.cancel();
+                    }
+                    // limpiar el handler
+                    handlerGlobal.removeCallbacksAndMessages(null);
+                    finish();
+                })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
@@ -524,5 +534,16 @@ public class PreguntasActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    private void cancelarTodo() {
+        if (reloj != null) reloj.cancel();
+        handlerGlobal.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    protected void onDestroy() {
+        cancelarTodo();
+        super.onDestroy();
     }
 }
