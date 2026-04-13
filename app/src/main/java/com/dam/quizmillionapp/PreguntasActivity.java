@@ -300,6 +300,7 @@ public class PreguntasActivity extends BaseActivity {
             }
 
             public void onFinish() {
+                reloj = null;
                 actualizarFallos();
                 if (contadorFallos < 3) {
                     handlerGlobal.postDelayed(() -> {
