@@ -496,7 +496,16 @@ public class PreguntasActivity extends BaseActivity {
         new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("¿Te plantas?")
                 .setMessage("Te llevarías " + dinero + " € a casa.")
-                .setPositiveButton("Sí, me planto", (d, w) -> irAResultados(nivelActual - 1))
+                .setPositiveButton("Sí, me planto", (d, w) -> {
+                    // para el reloj
+                    if (reloj != null) {
+                        reloj.cancel();
+                    }
+                    // limpiar el handler
+                    handlerGlobal.removeCallbacksAndMessages(null);
+                    // pantalla Resultados
+                    irAResultados(nivelActual - 1);
+                })
                 .setNegativeButton("Seguir jugando", null)
                 .show();
     }
