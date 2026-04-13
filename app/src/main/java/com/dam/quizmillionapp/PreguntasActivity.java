@@ -288,7 +288,10 @@ public class PreguntasActivity extends BaseActivity {
 
     // Metodo que controla el crono de cuenta atrás (30s)
     private void iniciarReloj() {
-        if (reloj != null) reloj.cancel();
+        if (reloj != null) {
+            reloj.cancel();
+            reloj = null;
+        }
         reloj = new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 tvCronometro.setText("" + millisUntilFinished / 1000);
