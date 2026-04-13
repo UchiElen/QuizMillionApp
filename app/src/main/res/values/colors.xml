@@ -12,6 +12,7 @@
     <color name="colorGradient">#2600ba</color>
     <color name="transparent"> #00000000</color>
     <color name="input_bg">#33FFFFFF</color>
+    <color name="gray_disabled_button">#B0B0B0</color>
 
     <!--Room Status -->
     <color name="green">#4CAF50</color>

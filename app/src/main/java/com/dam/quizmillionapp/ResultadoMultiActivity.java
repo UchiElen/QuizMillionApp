@@ -26,6 +26,10 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dam.quizmillionapp.models.MatchHistoryItem;
+import com.dam.quizmillionapp.repositories.HistoryRepository;
+import com.google.firebase.Timestamp;
+
 /**
  * Clase que gestiona la pantalla final de premios del modo multijugador.
  * Se encarga de mostrar el premio obtenido consultando a Firestore según el nivel.
@@ -181,6 +185,9 @@ public class ResultadoMultiActivity extends BaseActivity {
                     .update(datosFinalizar)
                     .addOnSuccessListener(aVoid -> {
                         Log.d("SCORE_UPDATE", "Puntuación y estado 'terminado' guardados.");
+
+                        guardarHistorialPartida(puntuacionFinal); // Guardamos la partida en el historial del jugador
+
                         findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
                     })
                     .addOnFailureListener(e -> {
@@ -192,4 +199,43 @@ public class ResultadoMultiActivity extends BaseActivity {
             findViewById(R.id.btn_ver_puntuaciones).setEnabled(true);
         }
     }
+
+    // Guarda la puntuación final de una partida multijugador en el historial del usuario en Firebase.
+    private void guardarHistorialPartida(Long puntuacionFinal) {
+        String myUid = FirebaseAuth.getInstance().getUid();
+
+        if (myUid == null || roomId == null) {
+            return;
+        }
+
+        db.collection("usuarios").document(myUid).get().addOnSuccessListener(documentSnapshot -> {
+            String playerName = "Jugador";
+
+            if (documentSnapshot.exists()) {
+                String nombreFirestore = documentSnapshot.getString("nombreUsuario");
+                if (nombreFirestore != null && !nombreFirestore.trim().isEmpty()) {
+                    playerName = nombreFirestore;
+                }
+            }
+
+            int nivelAlcanzado = getIntent().getIntExtra("NIVEL_ALCANZADO", 0);
+            String matchId = roomId + "_" + myUid;
+
+            MatchHistoryItem item = new MatchHistoryItem(
+                    matchId,
+                    roomId,
+                    myUid,
+                    playerName,
+                    puntuacionFinal,
+                    Timestamp.now(),
+                    "MULTI",
+                    nivelAlcanzado
+            );
+
+            HistoryRepository historyRepository = new HistoryRepository();
+            historyRepository.saveMatchHistory(myUid, item);
+        });
+    }
+
+
 }

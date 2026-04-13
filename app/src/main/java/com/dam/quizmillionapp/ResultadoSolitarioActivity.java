@@ -26,6 +26,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dam.quizmillionapp.models.MatchHistoryItem;
+import com.dam.quizmillionapp.repositories.HistoryRepository;
+import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * Clase que gestiona la pantalla final de premios del modo individual.
  * Se encarga de mostrar el premio obtenido consultando a Firestore según el nivel.
@@ -40,6 +45,7 @@ public class ResultadoSolitarioActivity extends BaseActivity {
 
     private boolean modoSolitario = true;
 
+    private boolean historialGuardado = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,12 +146,15 @@ public class ResultadoSolitarioActivity extends BaseActivity {
 
                             if (valorPremio == null) valorPremio = 0L;
 
+                            guardarHistorialSolitario(valorPremio); // Guardamos la puntuación en el historial
+
                         }
                     } else {
                         // Caso de error: nivel no registrado en la base de datos, aunque no es probable pero cubre fallo humano al alimentar la bbdd
                         ocultarCargaConAnimacion();
                         tvBanner.setText("¡Nivel " + nivelAlcanzado + "!");
                         tvMensaje.setText("Aún no hay premio registrado para este nivel.");
+                        guardarHistorialSolitario(0L); // Guardamos el resultado en el historial
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -153,6 +162,50 @@ public class ResultadoSolitarioActivity extends BaseActivity {
                     ocultarCargaConAnimacion();
                     Toast.makeText(this, "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    // Guarda el resultado de una partida en modo solitario en el historial del usuario.
+    // Evita duplicados, obtiene los datos del jugador y guarda la puntuación final en Firebase.
+    private void guardarHistorialSolitario(Long puntuacionFinal) {
+        if (historialGuardado) {
+            return;
+        }
+
+        String myUid = FirebaseAuth.getInstance().getUid();
+
+        if (myUid == null) {
+            return;
+        }
+
+        db.collection("usuarios").document(myUid).get().addOnSuccessListener(documentSnapshot -> {
+            String playerName = "Jugador";
+
+            if (documentSnapshot.exists()) {
+                String nombreFirestore = documentSnapshot.getString("nombreUsuario");
+                if (nombreFirestore != null && !nombreFirestore.trim().isEmpty()) {
+                    playerName = nombreFirestore;
+                }
+            }
+
+            int nivelAlcanzado = getIntent().getIntExtra("NIVEL_ALCANZADO", 0);
+            String matchId = "SOLO_" + myUid + "_" + System.currentTimeMillis();
+
+            MatchHistoryItem item = new MatchHistoryItem(
+                    matchId,
+                    "SINGLE_PLAYER",
+                    myUid,
+                    playerName,
+                    puntuacionFinal,
+                    Timestamp.now(),
+                    "SOLO",
+                    nivelAlcanzado
+            );
+
+            HistoryRepository historyRepository = new HistoryRepository();
+            historyRepository.saveMatchHistory(myUid, item);
+
+            historialGuardado = true;
+        });
     }
 
     private void ocultarCargaConAnimacion() {

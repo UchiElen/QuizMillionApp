@@ -181,8 +181,18 @@ public class WaitingActivity extends BaseActivity {
 
     private void updateStartButtonState() {
         boolean isHost = isCurrentUserHost(currentHostUid);
-        boolean canStart = canCurrentUserStart(currentRoomStatus, isHost);
+        boolean canStart = isHost
+                && currentPlayers >= 2
+                && (RoomStatus.OPEN.equals(currentRoomStatus) || RoomStatus.FULL.equals(currentRoomStatus));
+
+        // Activamos o desactivamos el botón
         btnStartGame.setEnabled(canStart);
+        // Cambiamos el color según el estado
+        if (canStart) {
+            btnStartGame.setBackgroundColor(getColor(R.color.colorAccent));
+        } else {
+            btnStartGame.setBackgroundColor(getColor(R.color.gray_disabled_button));
+        }
     }
 
     private boolean isCurrentUserHost(String hostUid) {
