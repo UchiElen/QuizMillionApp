@@ -48,8 +48,8 @@ public class MainActivity extends BaseActivity {
             return insets;
         });
 
-        Button button = findViewById(R.id.jugarMultiBtn);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button buttonMulti = findViewById(R.id.jugarMultiBtn);
+        buttonMulti.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(MainActivity.this).playClick();
@@ -58,12 +58,22 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        Button button1 = findViewById(R.id.jugarSoloBtn);
-        button1.setOnClickListener(new View.OnClickListener() {
+        Button buttonSolitario = findViewById(R.id.jugarSoloBtn);
+        buttonSolitario.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(MainActivity.this).playClick();
                 Intent intent = new Intent(MainActivity.this, PreguntasActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button buttonRecords = findViewById(R.id.recordsBtn);
+        buttonRecords.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SoundManager.getInstance(MainActivity.this).playClick();
+                Intent intent = new Intent(MainActivity.this, RecordsUsuarioActivity.class);
                 startActivity(intent);
             }
         });

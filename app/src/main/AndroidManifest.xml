@@ -28,9 +28,6 @@
             android:name=".RecordsUsuarioActivity"
             android:exported="false" />
         <activity
-            android:name=".repositories.RecordsUsuarioActivity"
-            android:exported="false" />
-        <activity
             android:name=".CreditosActivity"
             android:exported="false" />
         <activity
