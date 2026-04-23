@@ -1,4 +1,5 @@
 package com.dam.quizmillionapp;
+
 import android.content.ContentValues;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -66,26 +67,31 @@ public class RecordsUsuarioActivity extends BaseActivity {
             return;
         }
 
+        // CONFIRMACIÓN: Si ves este Toast, el botón funciona
+        Toast.makeText(this, "Generando reporte...", Toast.LENGTH_SHORT).show();
+
         PdfDocument pdf = new PdfDocument();
         PdfDocument.PageInfo info = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
         PdfDocument.Page pagina = pdf.startPage(info);
         Canvas canvas = pagina.getCanvas();
         Paint paint = new Paint();
 
-        // Cabecera
-        paint.setTextSize(18f);
+        // Título con vuestro color
+        paint.setColor(android.graphics.Color.parseColor("#753192"));
+        paint.setTextSize(22f);
         paint.setFakeBoldText(true);
-        canvas.drawText("HISTORIAL DE PUNTUACIONES - QUIZ APP", 50, 50, paint);
+        canvas.drawText("QUIZ MILLION - HISTORIAL", 50, 50, paint);
 
+        // Tabla
+        paint.setColor(android.graphics.Color.BLACK); // Color para el texto de la tabla
         paint.setTextSize(12f);
         paint.setFakeBoldText(false);
         int y = 100;
 
-        // Tabla sencilla
         canvas.drawText("FECHA", 50, y, paint);
         canvas.drawText("PUNTOS", 200, y, paint);
         canvas.drawText("NIVEL", 350, y, paint);
-        y += 20;
+        y += 15;
         canvas.drawLine(50, y, 500, y, paint);
         y += 30;
 
@@ -94,38 +100,32 @@ public class RecordsUsuarioActivity extends BaseActivity {
             canvas.drawText(m.getScore() + " €", 200, y, paint);
             canvas.drawText("Pregunta " + m.getLevelReached(), 350, y, paint);
             y += 25;
-            if (y > 800) break; // Límite de página simple
+            if (y > 800) break;
         }
 
         pdf.finishPage(pagina);
-        guardarPdf(pdf);
+        guardarPdf(pdf); // Llamamos a guardar el PDF que ya tiene los datos
     }
 
     private void guardarPdf(PdfDocument pdf) {
-        // Crear el documento
-        pdf = new PdfDocument();
-
-        // Configurar la página
-        android.graphics.pdf.PdfDocument.PageInfo info = new android.graphics.pdf.PdfDocument.PageInfo.Builder(595, 842, 1).create();
-        android.graphics.pdf.PdfDocument.Page pagina = pdf.startPage(info);
-
-        // btener el Canvas de la página y crear el Paint
-        android.graphics.Canvas canvas = pagina.getCanvas();
-        android.graphics.Paint paint = new android.graphics.Paint();
-
         ContentValues cv = new ContentValues();
-        paint.setColor(android.graphics.Color.parseColor("#753192")); // Tu colorPrimary
-        canvas.drawText("QUIZ MILLION - HISTORIAL", 50, 50, paint);
-        cv.put(MediaStore.MediaColumns.DISPLAY_NAME, "MisPuntuaciones.pdf");
+        // Nombre único para que no choque con archivos anteriores
+        String nombreArchivo = "Historial_Quiz_" + System.currentTimeMillis() + ".pdf";
+
+        cv.put(MediaStore.MediaColumns.DISPLAY_NAME, nombreArchivo);
         cv.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
         cv.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/QuizApp");
 
         Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv);
+
         try (OutputStream out = getContentResolver().openOutputStream(uri)) {
-            pdf.writeTo(out);
-            Toast.makeText(this, "PDF guardado en Descargas/QuizApp", Toast.LENGTH_LONG).show();
+            if (out != null) {
+                pdf.writeTo(out);
+                Toast.makeText(this, "✅ PDF guardado en Descargas/QuizApp", Toast.LENGTH_LONG).show();
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "❌ Error al guardar PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
         } finally {
             pdf.close();
         }
