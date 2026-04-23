@@ -66,9 +66,16 @@ public class RecordsUsuarioActivity extends BaseActivity {
             Toast.makeText(this, "No hay partidas para exportar", Toast.LENGTH_SHORT).show();
             return;
         }
+        String nombreUsuario = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
 
+        // Si el nombre es nulo (a veces pasa si no se registró con Google/Nombre),
+        // podemos usar el email o un nombre por defecto:
+
+        if (nombreUsuario == null || nombreUsuario.isEmpty()) {
+            nombreUsuario = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        }
         // CONFIRMACIÓN: Si ves este Toast, el botón funciona
-        Toast.makeText(this, "Generando reporte...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Generando informe...", Toast.LENGTH_SHORT).show();
 
         PdfDocument pdf = new PdfDocument();
         PdfDocument.PageInfo info = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
@@ -76,21 +83,39 @@ public class RecordsUsuarioActivity extends BaseActivity {
         Canvas canvas = pagina.getCanvas();
         Paint paint = new Paint();
 
-        // Título con vuestro color
-        paint.setColor(android.graphics.Color.parseColor("#753192"));
+        // --- CABECERA ---
+        paint.setColor(android.graphics.Color.parseColor("#753192")); // Tu color morado
         paint.setTextSize(22f);
         paint.setFakeBoldText(true);
-        canvas.drawText("QUIZ MILLION - HISTORIAL", 50, 50, paint);
+        canvas.drawText("QUIZMILLIONAPP - HISTORIAL PUNTUACIONES", 50, 50, paint);
+
+        // Datos del jugador
+        paint.setColor(android.graphics.Color.BLACK);
+        paint.setTextSize(14f);
+        paint.setFakeBoldText(false);
+        canvas.drawText("Jugador: " + nombreUsuario, 50, 80, paint);
+
+        // Fecha de creación del informe
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+        String fechaHoy = sdf.format(new java.util.Date());
+        canvas.drawText("Fecha generación: " + fechaHoy, 350, 80, paint);
+
+        // Línea decorativa
+        paint.setStrokeWidth(2f);
+        canvas.drawLine(50, 95, 550, 95, paint);
+
+        // Ajustamos el inicio de la tabla para que no pise el nombre
+        int y = 130;
 
         // Tabla
         paint.setColor(android.graphics.Color.BLACK); // Color para el texto de la tabla
         paint.setTextSize(12f);
         paint.setFakeBoldText(false);
-        int y = 100;
+        y = 100;
 
         canvas.drawText("FECHA", 50, y, paint);
-        canvas.drawText("PUNTOS", 200, y, paint);
-        canvas.drawText("NIVEL", 350, y, paint);
+        canvas.drawText("PREMIO", 200, y, paint);
+        canvas.drawText("NIVEL ALCANZADO", 350, y, paint);
         y += 15;
         canvas.drawLine(50, y, 500, y, paint);
         y += 30;
@@ -108,24 +133,36 @@ public class RecordsUsuarioActivity extends BaseActivity {
     }
 
     private void guardarPdf(PdfDocument pdf) {
-        ContentValues cv = new ContentValues();
-        // Nombre único para que no choque con archivos anteriores
-        String nombreArchivo = "Historial_Quiz_" + System.currentTimeMillis() + ".pdf";
+        String nombreArchivo = "Historial_QuizMillionApp_" + System.currentTimeMillis() + ".pdf";
 
+        ContentValues cv = new ContentValues();
         cv.put(MediaStore.MediaColumns.DISPLAY_NAME, nombreArchivo);
         cv.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
-        cv.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/QuizApp");
+        cv.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/QuizMillionApp");
+        // Esta línea es clave para que el sistema lo registre formalmente
+        cv.put(MediaStore.Downloads.IS_PENDING, 1);
 
         Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv);
 
         try (OutputStream out = getContentResolver().openOutputStream(uri)) {
             if (out != null) {
                 pdf.writeTo(out);
-                Toast.makeText(this, "✅ PDF guardado en Descargas/QuizApp", Toast.LENGTH_LONG).show();
+
+                // Liberamos el archivo para que el sistema lo vea terminado
+                cv.clear();
+                cv.put(MediaStore.Downloads.IS_PENDING, 0);
+                getContentResolver().update(uri, cv, null, null);
+
+                Toast.makeText(this, "✅ PDF guardado en Descargas", Toast.LENGTH_LONG).show();
+
+                // OPCIONAL: Escanear el archivo para que aparezca la notificación de "Descarga completada"
+                android.media.MediaScannerConnection.scanFile(this,
+                        new String[]{ android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS) + "/QuizMillionApp/" + nombreArchivo },
+                        new String[]{"application/pdf"}, null);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "❌ Error al guardar PDF: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "❌ Error al guardar: " + e.getMessage(), Toast.LENGTH_LONG).show();
         } finally {
             pdf.close();
         }
