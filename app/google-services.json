@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "575375227477",
+    "project_id": "quizmillion-app",
+    "storage_bucket": "quizmillion-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575375227477:android:dd9eef16d232479035f2dc",
+        "android_client_info": {
+          "package_name": "com.dam.quizmillionapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTr_yvKeZDgySKG2HCf2haq0XN5G7Ph9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    app:cardBackgroundColor="#14FFFFFF"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- INFO SALA -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Nombre -->
+            <TextView
+                android:id="@+id/txtRoomName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinsbold"
+                android:text="Sala de ejemplo"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+
+            <!-- Status de la sala -->
+            <TextView
+                android:id="@+id/txtRoomStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="Esperando"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:background="@drawable/bg_status_badge"
+                android:fontFamily="@font/poppinsbold" />
+
+            <!-- Jugadores -->
+            <TextView
+                android:id="@+id/txtPlayers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/poppinsregular"
+                android:text="Jugadores: 1 / 50"
+                android:textColor="#CCFFFFFF"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <!-- BOTÓN -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnJoinRoom"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="92dp"
+            android:layout_height="52dp"
+            android:text="Unirse"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:cornerRadius="12dp"
+            app:strokeColor="@color/white" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
