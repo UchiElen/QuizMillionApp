@@ -25,9 +25,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuizMillionApp">
         <activity
+            android:name=".RecordsUsuarioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".repositories.RecordsUsuarioActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreditosActivity"
             android:exported="false" />
-
         <activity
             android:name=".PuntuacionesActivity"
             android:exported="false" />
@@ -74,7 +79,6 @@
         <activity
             android:name=".activities.LobbyActivity"
             android:exported="false" />
-
         <activity
             android:name=".activities.RoomConfigActivity"
             android:exported="false" />
@@ -84,7 +88,6 @@
         <activity
             android:name=".ResultadoMultiActivity"
             android:exported="false" />
-
         <activity
             android:name=".ResultadoSolitarioActivity"
             android:exported="false" />
