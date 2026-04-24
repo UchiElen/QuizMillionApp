@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+// esta clase sirve para mapear los datos de la subcoleccion Match_history de Firestore
 public class Match {
     private String playerName;
     private int score;
@@ -14,7 +15,7 @@ public class Match {
     private String roomName;
     private Timestamp playedAt;
 
-    public Match() {} // Necesario para Firebase
+    public Match() {} // constructor vacio necesario para Firebase, como en otros activities
 
     // Getters
     public String getPlayerName() { return playerName; }

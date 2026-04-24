@@ -21,6 +21,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * genera un documento en pdf con el historial de puntuaciones del jugador
+ * incluye logo, datos del jugador y una tabla detallada de resultados
+ */
+
 public class RecordsUsuarioActivity extends BaseActivity {
 
     private RecyclerView rv;
@@ -48,7 +53,7 @@ public class RecordsUsuarioActivity extends BaseActivity {
     }
 
     private void obtenerDatosDeFirebase() {
-        // Acceso a la subcolección
+        // acceso a la subcolección match_history de Firestore para traer los datos clave
         db.collection("usuarios").document(currentUserId)
                 .collection("match_history")
                 .orderBy("playedAt", Query.Direction.DESCENDING)
@@ -63,26 +68,26 @@ public class RecordsUsuarioActivity extends BaseActivity {
 
     private void generarPdfCompleto() {
         if (matchHistory.isEmpty()) {
-            Toast.makeText(this, "No hay partidas para exportar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No hay puntuaciones para mostrar", Toast.LENGTH_SHORT).show();
             return;
         }
-        // 1. Cargar el logo desde los recursos y escalarlo
+        // cargar el logo de la app para pintarlo en el informe
         android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeResource(getResources(), R.drawable.padded_logo_quizmillion);
-        // Lo escalamos para que no ocupe toda la página (por ejemplo, 80x80 dp)
+        // ajustar tamaño
         android.graphics.Bitmap logoEscalado = android.graphics.Bitmap.createScaledBitmap(bitmap, 80, 80, false);
-
+        // mostrar informacion del proceso
         Toast.makeText(this, "Generando informe...", Toast.LENGTH_SHORT).show();
 
-        // 1. Obtener datos necesarios que faltaban
+        // identificar al jugador
         String nombreUsuario = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         if (nombreUsuario == null || nombreUsuario.isEmpty()) {
             nombreUsuario = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         }
-
+        // generar y formatear fecha de manera legible para mostrar en el informe
         java.text.SimpleDateFormat sdfHoy = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
         String fechaHoy = sdfHoy.format(new java.util.Date());
 
-        // 2. Inicializar PDF y herramientas de dibujo
+        // inicializar PDF y herramientas de dibujo (canvas y paint)
         PdfDocument pdf = new PdfDocument();
         PdfDocument.PageInfo info = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
         PdfDocument.Page pagina = pdf.startPage(info);
@@ -90,10 +95,10 @@ public class RecordsUsuarioActivity extends BaseActivity {
         Paint paint = new Paint();
 
         // --- CABECERA CON LOGO ---
-        // Dibujamos el logo en la posición X=50, Y=20
+        // Dibujar el logo
         canvas.drawBitmap(logoEscalado, 50, 20, paint);
 
-        // Ajustamos el título para que aparezca al lado del logo (X=150)
+        // Ajustar el título y subtitulo para que aparezcan al lado del logo
         paint.setColor(android.graphics.Color.parseColor("#753192"));
         paint.setTextSize(22f);
         paint.setFakeBoldText(true);
@@ -102,7 +107,7 @@ public class RecordsUsuarioActivity extends BaseActivity {
         paint.setFakeBoldText(false);
         canvas.drawText("HISTORIAL DE PUNTUACIONES", 150, 85, paint);
 
-        // Los datos del jugador los bajamos un poco para que no choquen con el logo grande
+        // bajar los datos del jugador para que no invadan los demas datos
         paint.setColor(android.graphics.Color.BLACK);
         paint.setTextSize(14f);
         paint.setFakeBoldText(false);
@@ -110,30 +115,32 @@ public class RecordsUsuarioActivity extends BaseActivity {
         canvas.drawText("Jugador: " + nombreUsuario, 50, yCabecera, paint);
         canvas.drawText("Fecha generación: " + fechaHoy, 350, yCabecera, paint);
 
-        // La tabla empezará ahora en 170
+        // posicionar el comienzo de la tabla
         int yActual = 170;
 
-        // --- TABLA (Encabezados) ---
-        yActual = 150; // Variable de control vertical
+        // --- CABECERAS (campos de firestore) ---
+        yActual = 150; // variable de control vertical
         paint.setTextSize(12f);
         paint.setFakeBoldText(true);
         canvas.drawText("FECHA", 40, yActual, paint);
-        canvas.drawText("SALA", 150, yActual, paint);      // Nueva columna para roomName
-        canvas.drawText("MODO", 280, yActual, paint);      // Nueva columna para mode
+        canvas.drawText("SALA", 150, yActual, paint);
+        canvas.drawText("MODO", 280, yActual, paint);
         canvas.drawText("PREMIO", 380, yActual, paint);
         canvas.drawText("NIVEL", 480, yActual, paint);
 
+        // linea de separacion
         paint.setStrokeWidth(1f);
         canvas.drawLine(40, yActual + 10, 560, yActual + 10, paint);
 
         // --- LISTADO DE PARTIDAS ---
+        // iterador de resultados
         paint.setFakeBoldText(false);
         yActual += 40;
 
         for (Match m : matchHistory) {
             canvas.drawText(m.getFechaFormateada(), 40, yActual, paint);
 
-            // Controlar que el nombre de la sala no sea demasiado largo
+            // controlar que el nombre de la sala no sea demasiado largo
             String sala = m.getRoomName();
             if (sala.length() > 18) sala = sala.substring(0, 15) + "...";
             canvas.drawText(sala, 150, yActual, paint);
@@ -146,12 +153,13 @@ public class RecordsUsuarioActivity extends BaseActivity {
             if (yActual > 800) break;
         }
 
-        // 3. Finalizar y Guardar
+        // finalizar, guardar y limpiar
         pdf.finishPage(pagina);
         guardarPdf(pdf);
         logoEscalado.recycle();
     }
 
+    // en el siguiente metodo se hace uso de MediaStore por motivos de compatibilidad
     private void guardarPdf(PdfDocument pdf) {
         java.text.SimpleDateFormat sdfNombre = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault());
         String timestamp = sdfNombre.format(new java.util.Date());
@@ -176,7 +184,7 @@ public class RecordsUsuarioActivity extends BaseActivity {
 
                 Toast.makeText(this, "✅ Informe disponible en Descargas/QuizMillionApp", Toast.LENGTH_LONG).show();
 
-                // OPCIONAL: Escanear el archivo para que aparezca la notificación de "Descarga completada"
+                // escanear el archivo para que aparezca la notificación de "Descarga completada"
                 android.media.MediaScannerConnection.scanFile(this,
                         new String[]{ android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS) + "/QuizMillionApp/" + nombreArchivo },
                         new String[]{"application/pdf"}, null);
