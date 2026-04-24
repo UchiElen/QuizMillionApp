@@ -42,11 +42,14 @@ public class RecordsUsuarioActivity extends BaseActivity {
 
         rv = findViewById(R.id.rvRecords);
         rv.setLayoutManager(new LinearLayoutManager(this));
+
+        // Inicializar el adapter con la lista vacía
         adapter = new MatchAdapter(matchHistory);
         rv.setAdapter(adapter);
 
         findViewById(R.id.btnDownloadPdf).setOnClickListener(v -> generarPdfCompleto());
 
+        // Llamar al metodo que trae los datos reales de Firestore
         obtenerDatosDeFirebase();
     }
 
@@ -59,7 +62,11 @@ public class RecordsUsuarioActivity extends BaseActivity {
                     if (value != null) {
                         matchHistory.clear();
                         matchHistory.addAll(value.toObjects(Match.class));
-                        adapter.notifyDataSetChanged();
+
+                        // ACTUALIZACIÓN DE LA ESTRELLA:
+                        // Usamos el nuevo metodo del adapter para que recalcule el maxScore
+                        // y pinte la estrella correctamente en la tarjeta adecuada
+                        adapter.setMatches(matchHistory);
                     }
                 });
     }
@@ -113,11 +120,8 @@ public class RecordsUsuarioActivity extends BaseActivity {
         canvas.drawText("Jugador: " + nombreUsuario, 50, yCabecera, paint);
         canvas.drawText("Fecha generación: " + fechaHoy, 350, yCabecera, paint);
 
-        // posicionar el comienzo de la tabla
-        int yActual = 170;
-
         // --- CABECERAS (campos de firestore) ---
-        yActual = 150; // variable de control vertical
+        int yActual = 150; // variable de control vertical
         paint.setTextSize(12f);
         paint.setFakeBoldText(true);
         canvas.drawText("FECHA", 40, yActual, paint);
