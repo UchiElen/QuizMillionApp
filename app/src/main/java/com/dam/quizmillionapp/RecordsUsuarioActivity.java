@@ -155,7 +155,7 @@ public class RecordsUsuarioActivity extends BaseActivity {
     private void guardarPdf(PdfDocument pdf) {
         java.text.SimpleDateFormat sdfNombre = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault());
         String timestamp = sdfNombre.format(new java.util.Date());
-        String nombreArchivo = "Historial_QuizMillionApp_" + timestamp + ".pdf";
+        String nombreArchivo = "Hist_Records_" + timestamp + ".pdf";
 
         ContentValues cv = new ContentValues();
         cv.put(MediaStore.MediaColumns.DISPLAY_NAME, nombreArchivo);
