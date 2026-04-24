@@ -31,7 +31,7 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="40dp"
-        android:text="EXPORTAR HISTORIAL PDF"
+        android:text="EXPORTAR HISTORIAL"
         android:fontFamily="@font/poppinsbold"
         android:backgroundTint="@color/colorAccent"
         android:textColor="@color/colorPrimaryDark"
