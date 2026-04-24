@@ -11,6 +11,7 @@ public class Match {
     private int score;
     private int levelReached;
     private String mode;
+    private String roomName;
     private Timestamp playedAt;
 
     public Match() {} // Necesario para Firebase
@@ -19,12 +20,19 @@ public class Match {
     public String getPlayerName() { return playerName; }
     public int getScore() { return score; }
     public int getLevelReached() { return levelReached; }
+
     public String getMode() { return mode; }
     public Timestamp getPlayedAt() { return playedAt; }
+    public String getRoomName() {
+        return (roomName != null) ? roomName : "---";
+    }
 
     public String getFechaFormateada() {
         if (playedAt == null) return "Sin fecha";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
         return sdf.format(playedAt.toDate());
     }
+    //Setters
+    public void setRoomName(String roomName) { this.roomName = roomName; }
+    public void setMode(String mode) { this.mode = mode; }
 }

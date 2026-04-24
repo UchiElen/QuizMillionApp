@@ -117,24 +117,33 @@ public class RecordsUsuarioActivity extends BaseActivity {
         yActual = 150; // Variable de control vertical
         paint.setTextSize(12f);
         paint.setFakeBoldText(true);
-        canvas.drawText("FECHA", 50, yActual, paint);
-        canvas.drawText("PREMIO", 200, yActual, paint);
-        canvas.drawText("NIVEL ALCANZADO", 350, yActual, paint);
+        canvas.drawText("FECHA", 40, yActual, paint);
+        canvas.drawText("SALA", 150, yActual, paint);      // Nueva columna para roomName
+        canvas.drawText("MODO", 280, yActual, paint);      // Nueva columna para mode
+        canvas.drawText("PREMIO", 380, yActual, paint);
+        canvas.drawText("NIVEL", 480, yActual, paint);
 
         paint.setStrokeWidth(1f);
-        canvas.drawLine(50, yActual + 10, 550, yActual + 10, paint);
+        canvas.drawLine(40, yActual + 10, 560, yActual + 10, paint);
 
         // --- LISTADO DE PARTIDAS ---
         paint.setFakeBoldText(false);
         yActual += 40;
 
         for (Match m : matchHistory) {
-            canvas.drawText(m.getFechaFormateada(), 50, yActual, paint);
-            canvas.drawText(m.getScore() + " €", 200, yActual, paint);
-            canvas.drawText("Nivel " + m.getLevelReached(), 350, yActual, paint);
+            canvas.drawText(m.getFechaFormateada(), 40, yActual, paint);
+
+            // Controlar que el nombre de la sala no sea demasiado largo
+            String sala = m.getRoomName();
+            if (sala.length() > 18) sala = sala.substring(0, 15) + "...";
+            canvas.drawText(sala, 150, yActual, paint);
+
+            canvas.drawText(m.getMode(), 280, yActual, paint);
+            canvas.drawText(m.getScore() + " €", 380, yActual, paint);
+            canvas.drawText("Nivel " + m.getLevelReached(), 480, yActual, paint);
 
             yActual += 25;
-            if (yActual > 800) break; // Evita salirte de la hoja
+            if (yActual > 800) break;
         }
 
         // 3. Finalizar y Guardar
