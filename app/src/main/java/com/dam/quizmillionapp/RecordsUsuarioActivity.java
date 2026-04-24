@@ -66,74 +66,87 @@ public class RecordsUsuarioActivity extends BaseActivity {
             Toast.makeText(this, "No hay partidas para exportar", Toast.LENGTH_SHORT).show();
             return;
         }
+        // 1. Cargar el logo desde los recursos y escalarlo
+        android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeResource(getResources(), R.drawable.padded_logo_quizmillion);
+        // Lo escalamos para que no ocupe toda la página (por ejemplo, 80x80 dp)
+        android.graphics.Bitmap logoEscalado = android.graphics.Bitmap.createScaledBitmap(bitmap, 80, 80, false);
+
+        Toast.makeText(this, "Generando reporte...", Toast.LENGTH_SHORT).show();
+
+        // 1. Obtener datos necesarios que faltaban
         String nombreUsuario = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
-        // Si el nombre es nulo (a veces pasa si no se registró con Google/Nombre),
-        // podemos usar el email o un nombre por defecto:
-
         if (nombreUsuario == null || nombreUsuario.isEmpty()) {
             nombreUsuario = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         }
-        // CONFIRMACIÓN: Si ves este Toast, el botón funciona
-        Toast.makeText(this, "Generando informe...", Toast.LENGTH_SHORT).show();
 
+        java.text.SimpleDateFormat sdfHoy = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+        String fechaHoy = sdfHoy.format(new java.util.Date());
+
+        // 2. Inicializar PDF y herramientas de dibujo
         PdfDocument pdf = new PdfDocument();
         PdfDocument.PageInfo info = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
         PdfDocument.Page pagina = pdf.startPage(info);
         Canvas canvas = pagina.getCanvas();
         Paint paint = new Paint();
 
-        // --- CABECERA ---
-        paint.setColor(android.graphics.Color.parseColor("#753192")); // Tu color morado
+        // --- CABECERA CON LOGO ---
+        // Dibujamos el logo en la posición X=50, Y=20
+        canvas.drawBitmap(logoEscalado, 50, 20, paint);
+
+        // Ajustamos el título para que aparezca al lado del logo (X=150)
+        paint.setColor(android.graphics.Color.parseColor("#753192"));
         paint.setTextSize(22f);
         paint.setFakeBoldText(true);
-        canvas.drawText("QUIZMILLIONAPP - HISTORIAL PUNTUACIONES", 50, 50, paint);
+        canvas.drawText("QUIZMILLIONAPP", 150, 60, paint);
+        paint.setTextSize(15f);
+        paint.setFakeBoldText(false);
+        canvas.drawText("HISTORIAL DE PUNTUACIONES", 150, 85, paint);
 
-        // Datos del jugador
+        // Los datos del jugador los bajamos un poco para que no choquen con el logo grande
         paint.setColor(android.graphics.Color.BLACK);
         paint.setTextSize(14f);
         paint.setFakeBoldText(false);
-        canvas.drawText("Jugador: " + nombreUsuario, 50, 80, paint);
+        int yCabecera = 120;
+        canvas.drawText("Jugador: " + nombreUsuario, 50, yCabecera, paint);
+        canvas.drawText("Fecha generación: " + fechaHoy, 350, yCabecera, paint);
 
-        // Fecha de creación del informe
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
-        String fechaHoy = sdf.format(new java.util.Date());
-        canvas.drawText("Fecha generación: " + fechaHoy, 350, 80, paint);
+        // La tabla empezará ahora en 170
+        int yActual = 170;
 
-        // Línea decorativa
-        paint.setStrokeWidth(2f);
-        canvas.drawLine(50, 95, 550, 95, paint);
-
-        // Ajustamos el inicio de la tabla para que no pise el nombre
-        int y = 130;
-
-        // Tabla
-        paint.setColor(android.graphics.Color.BLACK); // Color para el texto de la tabla
+        // --- TABLA (Encabezados) ---
+        yActual = 150; // Variable de control vertical
         paint.setTextSize(12f);
-        paint.setFakeBoldText(false);
-        y = 100;
+        paint.setFakeBoldText(true);
+        canvas.drawText("FECHA", 50, yActual, paint);
+        canvas.drawText("PREMIO", 200, yActual, paint);
+        canvas.drawText("NIVEL ALCANZADO", 350, yActual, paint);
 
-        canvas.drawText("FECHA", 50, y, paint);
-        canvas.drawText("PREMIO", 200, y, paint);
-        canvas.drawText("NIVEL ALCANZADO", 350, y, paint);
-        y += 15;
-        canvas.drawLine(50, y, 500, y, paint);
-        y += 30;
+        paint.setStrokeWidth(1f);
+        canvas.drawLine(50, yActual + 10, 550, yActual + 10, paint);
+
+        // --- LISTADO DE PARTIDAS ---
+        paint.setFakeBoldText(false);
+        yActual += 40;
 
         for (Match m : matchHistory) {
-            canvas.drawText(m.getFechaFormateada(), 50, y, paint);
-            canvas.drawText(m.getScore() + " €", 200, y, paint);
-            canvas.drawText("Pregunta " + m.getLevelReached(), 350, y, paint);
-            y += 25;
-            if (y > 800) break;
+            canvas.drawText(m.getFechaFormateada(), 50, yActual, paint);
+            canvas.drawText(m.getScore() + " €", 200, yActual, paint);
+            canvas.drawText("Nivel " + m.getLevelReached(), 350, yActual, paint);
+
+            yActual += 25;
+            if (yActual > 800) break; // Evita salirte de la hoja
         }
 
+        // 3. Finalizar y Guardar
         pdf.finishPage(pagina);
-        guardarPdf(pdf); // Llamamos a guardar el PDF que ya tiene los datos
+        guardarPdf(pdf);
+        logoEscalado.recycle();
     }
 
     private void guardarPdf(PdfDocument pdf) {
-        String nombreArchivo = "Historial_QuizMillionApp_" + System.currentTimeMillis() + ".pdf";
+        java.text.SimpleDateFormat sdfNombre = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault());
+        String timestamp = sdfNombre.format(new java.util.Date());
+        String nombreArchivo = "Historial_QuizMillionApp_" + timestamp + ".pdf";
 
         ContentValues cv = new ContentValues();
         cv.put(MediaStore.MediaColumns.DISPLAY_NAME, nombreArchivo);
@@ -153,7 +166,7 @@ public class RecordsUsuarioActivity extends BaseActivity {
                 cv.put(MediaStore.Downloads.IS_PENDING, 0);
                 getContentResolver().update(uri, cv, null, null);
 
-                Toast.makeText(this, "✅ PDF guardado en Descargas", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "✅ Informe disponible en Descargas/QuizMillionApp", Toast.LENGTH_LONG).show();
 
                 // OPCIONAL: Escanear el archivo para que aparezca la notificación de "Descarga completada"
                 android.media.MediaScannerConnection.scanFile(this,
