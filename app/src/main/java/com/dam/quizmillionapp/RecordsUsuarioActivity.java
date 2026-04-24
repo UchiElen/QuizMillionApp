@@ -193,14 +193,17 @@ public class RecordsUsuarioActivity extends BaseActivity {
                 runOnUiThread(() -> {
                     if (uri != null) {
                         android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
-                        // usamos el uri de MediaStore para abrir el archivo
+
+                        // setear los datos
                         intent.setDataAndType(uri, "application/pdf");
 
-                        // permisos necesarios para que la app visor de pdf pueda ver nuestro archivo
+                        // permite a la otra app leer el archivo
                         intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NO_HISTORY);
 
-                        // si no hay lector pdf instalado en el dispositivo, capturar el error
+                        // si ya hay un visor abierto, lo limpia para mostrar este
+                        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                        // por si no hay visor de pdf instalado en el dispositivo
                         try {
                             startActivity(intent);
                         } catch (android.content.ActivityNotFoundException e) {
