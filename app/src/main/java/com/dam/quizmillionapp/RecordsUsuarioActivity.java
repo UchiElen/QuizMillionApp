@@ -71,7 +71,7 @@ public class RecordsUsuarioActivity extends BaseActivity {
         // Lo escalamos para que no ocupe toda la página (por ejemplo, 80x80 dp)
         android.graphics.Bitmap logoEscalado = android.graphics.Bitmap.createScaledBitmap(bitmap, 80, 80, false);
 
-        Toast.makeText(this, "Generando reporte...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Generando informe...", Toast.LENGTH_SHORT).show();
 
         // 1. Obtener datos necesarios que faltaban
         String nombreUsuario = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
@@ -161,7 +161,6 @@ public class RecordsUsuarioActivity extends BaseActivity {
         cv.put(MediaStore.MediaColumns.DISPLAY_NAME, nombreArchivo);
         cv.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
         cv.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/QuizMillionApp");
-        // Esta línea es clave para que el sistema lo registre formalmente
         cv.put(MediaStore.Downloads.IS_PENDING, 1);
 
         Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv);
