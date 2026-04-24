@@ -32,6 +32,13 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         holder.tvFecha.setText(m.getFechaFormateada());
         holder.tvPuntos.setText(m.getScore() + " €");
         holder.tvDetalles.setText("Nivel Alcanzado: " + m.getLevelReached() + " | Modo de Juego: " + m.getMode());
+
+        // destacar con una estrella la puntuación mas alta:
+        if (position == 0) {
+            holder.imgStar.setVisibility(View.VISIBLE);
+        } else {
+            holder.imgStar.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -39,11 +46,14 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
 
     static class MatchViewHolder extends RecyclerView.ViewHolder {
         TextView tvFecha, tvPuntos, tvDetalles;
+        android.widget.ImageView imgStar;
+
         public MatchViewHolder(@NonNull View itemView) {
             super(itemView);
             tvFecha = itemView.findViewById(R.id.tvFecha);
             tvPuntos = itemView.findViewById(R.id.tvPuntos);
             tvDetalles = itemView.findViewById(R.id.tvDetalles);
+            imgStar = itemView.findViewById(R.id.imgStar);
         }
     }
 }
