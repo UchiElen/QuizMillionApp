@@ -161,14 +161,18 @@ public class RecordsUsuarioActivity extends BaseActivity {
 
     // en el siguiente metodo se hace uso de MediaStore por motivos de compatibilidad
     private void guardarPdf(PdfDocument pdf) {
+        // generar nombre de archivo con formato de fecha y hora: yyyyMMdd_HHmmss
         java.text.SimpleDateFormat sdfNombre = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault());
         String timestamp = sdfNombre.format(new java.util.Date());
         String nombreArchivo = "Hist_Records_" + timestamp + ".pdf";
 
+        // definir la carpeta de destino una sola vez para evitar errores de ruta
+        String carpetaDestino = "Download/QuizMillionApp";
+
         ContentValues cv = new ContentValues();
         cv.put(MediaStore.MediaColumns.DISPLAY_NAME, nombreArchivo);
         cv.put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf");
-        cv.put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/QuizMillionApp");
+        cv.put(MediaStore.MediaColumns.RELATIVE_PATH, carpetaDestino);
         cv.put(MediaStore.Downloads.IS_PENDING, 1);
 
         Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv);
@@ -177,22 +181,46 @@ public class RecordsUsuarioActivity extends BaseActivity {
             if (out != null) {
                 pdf.writeTo(out);
 
-                // Liberamos el archivo para que el sistema lo vea terminado
+                // confirmar que el archivo ya no está pendiente
                 cv.clear();
                 cv.put(MediaStore.Downloads.IS_PENDING, 0);
                 getContentResolver().update(uri, cv, null, null);
 
-                Toast.makeText(this, "✅ Informe disponible en Descargas/QuizMillionApp", Toast.LENGTH_LONG).show();
+                // mostrar resultado de la generacion
+                Toast.makeText(this, "✅ Informe guardado en Descargas/QuizMillionApp", Toast.LENGTH_SHORT).show();
 
-                // escanear el archivo para que aparezca la notificación de "Descarga completada"
+                // para abrir el visor de PDF hay que volver al hilo principal
+                runOnUiThread(() -> {
+                    if (uri != null) {
+                        android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_VIEW);
+                        // usamos el uri de MediaStore para abrir el archivo
+                        intent.setDataAndType(uri, "application/pdf");
+
+                        // permisos necesarios para que la app visor de pdf pueda ver nuestro archivo
+                        intent.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NO_HISTORY);
+
+                        // si no hay lector pdf instalado en el dispositivo, capturar el error
+                        try {
+                            startActivity(intent);
+                        } catch (android.content.ActivityNotFoundException e) {
+                            Toast.makeText(RecordsUsuarioActivity.this,
+                                    "No hay visor de pdf instalado",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+                // notificar al sistema para que el archivo aparezca en la carpeta de Descargas
                 android.media.MediaScannerConnection.scanFile(this,
-                        new String[]{ android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS) + "/QuizMillionApp/" + nombreArchivo },
+                        new String[]{android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).toString() + "/QuizMillionApp/" + nombreArchivo},
                         new String[]{"application/pdf"}, null);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "❌ Error al guardar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "❌ Error al guardar el informe", Toast.LENGTH_SHORT).show();
         } finally {
+            // cerrar el documento para liberar recursos de memoria
             pdf.close();
         }
     }
