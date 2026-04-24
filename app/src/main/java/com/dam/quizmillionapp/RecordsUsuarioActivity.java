@@ -48,7 +48,7 @@ public class RecordsUsuarioActivity extends BaseActivity {
     }
 
     private void obtenerDatosDeFirebase() {
-        // Acceso a la subcolección de Rubén
+        // Acceso a la subcolección
         db.collection("usuarios").document(currentUserId)
                 .collection("match_history")
                 .orderBy("playedAt", Query.Direction.DESCENDING)

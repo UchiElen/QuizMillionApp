@@ -31,7 +31,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
         Match m = matches.get(position);
         holder.tvFecha.setText(m.getFechaFormateada());
         holder.tvPuntos.setText(m.getScore() + " €");
-        holder.tvDetalles.setText("Nivel: " + m.getLevelReached() + " | Modo: " + m.getMode());
+        holder.tvDetalles.setText("Nivel Alcanzado: " + m.getLevelReached() + " | Modo Juego: " + m.getMode());
     }
 
     @Override
