@@ -181,24 +181,40 @@ public class WaitingActivity extends BaseActivity {
 
     private void updateStartButtonState() {
         boolean isHost = isCurrentUserHost(currentHostUid);
-        boolean canStart = isHost
-                && currentPlayers >= 2
-                && (RoomStatus.OPEN.equals(currentRoomStatus) || RoomStatus.FULL.equals(currentRoomStatus));
 
-        // Activamos o desactivamos el botón
+        boolean validStatus = RoomStatus.OPEN.equals(currentRoomStatus)
+                || RoomStatus.FULL.equals(currentRoomStatus);
+
+        boolean canStart = isHost && currentPlayers >= 2 && validStatus;
+
         btnStartGame.setEnabled(canStart);
-        // Cambiamos el color según el estado
+
         if (canStart) {
+            btnStartGame.setAlpha(1.0f);
+            btnStartGame.setText("Iniciar partida");
             btnStartGame.setBackgroundColor(getColor(R.color.colorAccent));
+
+        } else if (!isHost) {
+            btnStartGame.setAlpha(0.4f);
+            btnStartGame.setText("Esperando al host...");
+            btnStartGame.setBackgroundColor(getColor(R.color.gray_disabled_button));
+
+        } else if (currentPlayers < 2) {
+            btnStartGame.setAlpha(0.6f);
+            btnStartGame.setText("Esperando jugadores...");
+            btnStartGame.setBackgroundColor(getColor(R.color.gray_disabled_button));
+
         } else {
+            btnStartGame.setAlpha(0.5f);
+            btnStartGame.setText("No disponible");
             btnStartGame.setBackgroundColor(getColor(R.color.gray_disabled_button));
         }
     }
-
     private boolean isCurrentUserHost(String hostUid) {
         String myUid = UserSession.getCurrentUid();
         return myUid != null && myUid.equals(hostUid);
     }
+
 
     private boolean canCurrentUserStart(String status, boolean isHost) {
         if (!isHost) {
@@ -274,6 +290,13 @@ public class WaitingActivity extends BaseActivity {
 
         if (myUid == null || myUid.trim().isEmpty()) {
             showToast("No se pudo obtener el usuario actual.");
+            return;
+        }
+
+        boolean isHost = isCurrentUserHost(currentHostUid);
+
+        if (!canCurrentUserStart(currentRoomStatus, isHost)) {
+            showToast("Solo el host puede iniciar la partida cuando haya al menos 2 jugadores.");
             return;
         }
 
