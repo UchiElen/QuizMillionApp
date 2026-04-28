@@ -13,7 +13,10 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 
 import com.dam.quizmillionapp.BaseActivity;
+import com.dam.quizmillionapp.ConfiguracionActivity;
 import com.dam.quizmillionapp.R;
+import com.dam.quizmillionapp.SoundManager;
+import com.dam.quizmillionapp.WelcomeActivity;
 import com.dam.quizmillionapp.auth.UserSession;
 import com.dam.quizmillionapp.interfaces.CreateRoomCallback;
 import com.dam.quizmillionapp.interfaces.LoadCategoriesCallback;
@@ -81,6 +84,8 @@ public class RoomConfigActivity extends BaseActivity {
         updatePrivacyUi(switchPublicRoom.isChecked());
 
         switchPublicRoom.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SoundManager.getInstance(RoomConfigActivity.this).playClick();
+            vibrar();
             updatePrivacyUi(isChecked);
         });
     }
@@ -108,6 +113,10 @@ public class RoomConfigActivity extends BaseActivity {
         sliderMaxPlayers.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(Slider slider, float value, boolean fromUser) {
+                if (fromUser) {
+                    vibrar();
+                }
+
                 int selectedValue = (int) value;
                 txtMaxPlayersValue.setText("Jugadores máximos: " + selectedValue);
             }
@@ -118,6 +127,7 @@ public class RoomConfigActivity extends BaseActivity {
         btnCreateRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SoundManager.getInstance(RoomConfigActivity.this).playClick();
                 tryCreateRoom();
             }
         });
@@ -229,6 +239,10 @@ public class RoomConfigActivity extends BaseActivity {
             chip.setClickable(true);
             chip.setCheckedIconVisible(false);
 
+            chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                SoundManager.getInstance(RoomConfigActivity.this).playClick();
+            });
+
             chip.setTextColor(ContextCompat.getColorStateList(this, R.drawable.chip_category_text_selector));
             chip.setChipBackgroundColorResource(R.drawable.chip_category_bg_selector);
             chip.setChipStrokeWidth(1f);
@@ -269,5 +283,21 @@ public class RoomConfigActivity extends BaseActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void vibrar() {
+        android.content.SharedPreferences prefs = getSharedPreferences(ConfiguracionActivity.PREFS_NAME, MODE_PRIVATE);
+        boolean vibracionActivada = prefs.getBoolean(ConfiguracionActivity.KEY_VIBRATION, true);
+
+        if (vibracionActivada) {
+            android.os.Vibrator vibrator = (android.os.Vibrator) getSystemService(VIBRATOR_SERVICE);
+            if (vibrator != null) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    vibrator.vibrate(android.os.VibrationEffect.createOneShot(200, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    vibrator.vibrate(15);
+                }
+            }
+        }
     }
 }

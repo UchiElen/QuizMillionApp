@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dam.quizmillionapp.BaseActivity;
 import com.dam.quizmillionapp.PreguntasActivity;
 import com.dam.quizmillionapp.R;
+import com.dam.quizmillionapp.SoundManager;
 import com.dam.quizmillionapp.adapters.MembersAdapter;
 import com.dam.quizmillionapp.auth.UserSession;
 import com.dam.quizmillionapp.constants.RoomStatus;
@@ -112,8 +113,15 @@ public class WaitingActivity extends BaseActivity {
     }
 
     private void setupActions() {
-        btnStartGame.setOnClickListener(view -> tryStartGame());
-        btnLeaveRoom.setOnClickListener(view -> leaveRoomAndExit());
+        btnStartGame.setOnClickListener(view ->
+        {
+            SoundManager.getInstance(WaitingActivity.this).playClick();
+            tryStartGame();
+        });
+        btnLeaveRoom.setOnClickListener(view -> {
+            SoundManager.getInstance(WaitingActivity.this).playClick();
+            leaveRoomAndExit();
+        });
     }
 
     private void startRealtimeListeners() {
