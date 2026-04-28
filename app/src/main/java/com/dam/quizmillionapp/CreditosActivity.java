@@ -20,7 +20,7 @@ public class CreditosActivity extends BaseActivity {
     private Button btnVolverMenu;
 
     private Handler handler = new Handler();
-    private int velocidad = 5;
+    private int velocidad = 6;
 
     private Runnable scrollRunnable = new Runnable() {
         @Override
@@ -32,7 +32,7 @@ public class CreditosActivity extends BaseActivity {
                 scrollView.scrollBy(0, velocidad);
                 handler.postDelayed(this, 30);
             } else {
-                handler.postDelayed(() -> mostrarBoton(), 1000);
+                handler.postDelayed(() -> mostrarBoton(), 1500);
             }
         }
     };
@@ -63,7 +63,7 @@ public class CreditosActivity extends BaseActivity {
                int screenHeight = scrollView.getHeight();
         layoutCreditos.setPadding(0, screenHeight, 0, screenHeight);
 
-        handler.postDelayed(scrollRunnable, 1000);
+        handler.postDelayed(scrollRunnable, 1500);
     }
 
     private void mostrarBoton() {

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dam.quizmillionapp.activities.WaitingActivity;
 import com.dam.quizmillionapp.adapters.MatchAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -47,7 +48,10 @@ public class RecordsUsuarioActivity extends BaseActivity {
         adapter = new MatchAdapter(matchHistory);
         rv.setAdapter(adapter);
 
-        findViewById(R.id.btnDownloadPdf).setOnClickListener(v -> generarPdfCompleto());
+        findViewById(R.id.btnDownloadPdf).setOnClickListener(v -> {
+            SoundManager.getInstance(RecordsUsuarioActivity.this).playClick();
+            generarPdfCompleto();
+        });
 
         // Llamar al metodo que trae los datos reales de Firestore
         obtenerDatosDeFirebase();

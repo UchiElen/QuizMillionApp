@@ -16,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.dam.quizmillionapp.activities.WaitingActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -58,6 +59,7 @@ public class AuthActivity extends BaseActivity {
         AuthBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SoundManager.getInstance(AuthActivity.this).playClick();
                 String email = emailTI.getText().toString().trim();
                 String contrasena = contraTI.getText().toString().trim();
 
