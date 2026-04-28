@@ -68,8 +68,6 @@ public class PreguntasActivity extends BaseActivity {
 
     // --- Constantes de Diseño ---
     private final int[] escalaPremios = {0, 100, 250, 500, 750, 1500, 2500, 5000, 10000, 15000, 20000, 30000, 50000, 100000, 300000, 1000000};
-    private final int COLOR_AMBAR = Color.parseColor("#FFC107");
-    private static final int COLOR_CYAN = Color.parseColor("#00FFFF");
 
 
     @Override
@@ -180,9 +178,9 @@ public class PreguntasActivity extends BaseActivity {
             btnOpciones[i].setEnabled(true);
             btnOpciones[i].setAlpha(1.0f);
             btnOpciones[i].setText(preguntaActual.opciones.get(i));
-            btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
-            btnOpciones[i].setStrokeColor(ColorStateList.valueOf(Color.WHITE));
-            btnOpciones[i].setTextColor(Color.WHITE);
+            btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(R.color.transparent));
+            btnOpciones[i].setStrokeColor(ColorStateList.valueOf(R.color.white));
+            btnOpciones[i].setTextColor(R.color.white);
         }
     }
 
@@ -232,7 +230,7 @@ public class PreguntasActivity extends BaseActivity {
         if (seleccionado == preguntaActual.correcta) {
             // Acierto: Color Verde
             SoundManager.getInstance(PreguntasActivity.this).playSuccess();
-            btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4CAF50")));
+            btnOpciones[seleccionado].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.green));
 
             if (nivelActual == 15) { // ¡Ha ganado el millón!
                 handlerGlobal.postDelayed(() -> irAResultados(15), 1500);
@@ -248,7 +246,7 @@ public class PreguntasActivity extends BaseActivity {
         } else {
             // Fallo: Color Rojo y sumamos un fallo
             SoundManager.getInstance(PreguntasActivity.this).playError();
-            btnOpciones[seleccionado].setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F44336")));
+            btnOpciones[seleccionado].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.red));
             actualizarFallos();
         }
     }
@@ -262,13 +260,13 @@ public class PreguntasActivity extends BaseActivity {
         tvTransicionPremio.setText(escalaPremios[nivelActual] + "€");
 
         if (nivelActual == 6 || nivelActual == 11) {
-            tvTransicionMensajeLinea1.setTextColor(COLOR_AMBAR);
+            tvTransicionMensajeLinea1.setTextColor(R.color.ambar_transition);
             tvTransicionMensajeLinea1.setText("¡ZONA SEGURA LOGRADA!");
-            tvTransicionMensajeLinea2.setTextColor(Color.WHITE);
+            tvTransicionMensajeLinea2.setTextColor(R.color.white);
             tvTransicionMensajeLinea2.setText("Juegas por:");
         } else {
             tvTransicionMensajeLinea1.setText("Juegas por:");
-            tvTransicionMensajeLinea1.setTextColor(Color.WHITE);
+            tvTransicionMensajeLinea1.setTextColor(R.color.white);
             tvTransicionMensajeLinea2.setVisibility(View.GONE);
         }
 
@@ -295,8 +293,8 @@ public class PreguntasActivity extends BaseActivity {
         reloj = new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 tvCronometro.setText("" + millisUntilFinished / 1000);
-                if (millisUntilFinished < 6000) tvCronometro.setTextColor(Color.RED);
-                else tvCronometro.setTextColor(Color.WHITE);
+                if (millisUntilFinished < 6000) tvCronometro.setTextColor(R.color.red);
+                else tvCronometro.setTextColor(R.color.white);
             }
 
             public void onFinish() {
@@ -341,8 +339,8 @@ public class PreguntasActivity extends BaseActivity {
 
         for (int i = 0; i < 4; i++) {
             if (preguntaActual.comodin_50.contains(i)) {
-                btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(COLOR_AMBAR));
-                btnOpciones[i].setTextColor(Color.BLACK);
+                btnOpciones[i].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.comodin_50));
+                btnOpciones[i].setTextColor(R.color.black);
             } else {
                 btnOpciones[i].setEnabled(false);
                 btnOpciones[i].setAlpha(0.3f);
@@ -372,7 +370,7 @@ public class PreguntasActivity extends BaseActivity {
                 String enunciadoOriginal = preguntaActual.opciones.get(i);
                 btnOpciones[i].setText(enunciadoOriginal + " (" + porcentajes[i] + "%)");
                 btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(obtenerColor(porcentajes[i])));
-                btnOpciones[i].setTextColor(Color.WHITE); // Aseguramos legibilidad
+                btnOpciones[i].setTextColor(R.color.white); // Aseguramos legibilidad
             }
         }
 
@@ -382,7 +380,7 @@ public class PreguntasActivity extends BaseActivity {
             for (int i = 0; i < 4; i++) {
                 btnOpciones[i].setText(preguntaActual.opciones.get(i));
                 if (btnOpciones[i].isEnabled()) {
-                    btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+                    btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(R.color.transparent));
                 }
             }
             efectoActivo = false;
@@ -441,11 +439,11 @@ public class PreguntasActivity extends BaseActivity {
      * Escala de colores para el resultado visual
      */
     private int obtenerColor(int porcentaje) {
-        if (porcentaje >= 75) return Color.parseColor("#880E4F"); // Magenta muy oscuro
-        if (porcentaje >= 50) return Color.parseColor("#C2185B"); // Magenta intenso
-        if (porcentaje >= 25) return Color.parseColor("#E91E63"); // Magenta medio
-        if (porcentaje >= 10) return Color.parseColor("#F06292"); // Magenta suave
-        return Color.parseColor("#BDBDBD"); // Gris para opciones casi sin votos
+        if (porcentaje >= 75) return androidx.core.content.ContextCompat.getColor(this, R.color.comodin_publico_1); // Magenta muy oscuro
+        if (porcentaje >= 50) return androidx.core.content.ContextCompat.getColor(this, R.color.comodin_publico_2); // Magenta intenso
+        if (porcentaje >= 25) return androidx.core.content.ContextCompat.getColor(this, R.color.comodin_publico_3); // Magenta medio
+        if (porcentaje >= 10) return androidx.core.content.ContextCompat.getColor(this, R.color.comodin_publico_4); // Magenta suave
+        return androidx.core.content.ContextCompat.getColor(this, R.color.gray); // Gris para opciones casi sin votos
     }
 
     /* Metodo del comodin de la llamada
@@ -460,8 +458,8 @@ public class PreguntasActivity extends BaseActivity {
         desactivaBotonComodin(btnLlamada);
 
         int sug = preguntaActual.comodin_llamada;
-        btnOpciones[sug].setBackgroundTintList(ColorStateList.valueOf(COLOR_CYAN));
-        Toast.makeText(this, "Tu contacto cree que es la " + (sug + 1), Toast.LENGTH_SHORT).show();
+        btnOpciones[sug].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.comodin_llamada));
+        Toast.makeText(this, "Tu contacto ha decidido ", Toast.LENGTH_SHORT).show();
     }
 
     // --- MÉTODOS AUXILIARES ---
