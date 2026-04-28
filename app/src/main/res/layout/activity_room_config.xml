@@ -46,7 +46,7 @@
             android:layout_marginTop="2dp"
             android:fontFamily="@font/poppinsbold"
             android:gravity="center"
-            android:text="Configurar sala"
+            android:text="@string/configure_room"
             android:textColor="@color/white"
             android:textSize="24sp" />
 
@@ -57,7 +57,7 @@
             android:layout_marginTop="4dp"
             android:fontFamily="@font/poppinsregular"
             android:gravity="center"
-            android:text="Define los ajustes antes de crear la sala"
+            android:text="@string/configure_room_subtitle"
             android:textColor="#CCFFFFFF"
             android:textSize="12sp" />
 
@@ -83,7 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppinsbold"
-                    android:text="Nombre de la sala"
+                    android:text="@string/room_name_label"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -93,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/poppinsregular"
-                    android:text="Escribe un nombre para identificar la sala"
+                    android:text="@string/room_name_hint"
                     android:textColor="#CCFFFFFF"
                     android:textSize="11sp" />
 
@@ -104,7 +104,7 @@
                     android:layout_marginTop="6dp"
                     android:background="@android:color/transparent"
                     android:fontFamily="@font/poppinsregular"
-                    android:hint="Ej. Sala de Cultura General"
+                    android:hint="@string/room_name_example"
                     android:inputType="textCapSentences"
                     android:maxLength="30"
                     android:paddingStart="10dp"
@@ -136,7 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppinsbold"
-                    android:text="Categorías"
+                    android:text="@string/categories_label"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -146,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/poppinsregular"
-                    android:text="Elige al menos una temática para la partida"
+                    android:text="@string/categories_hint"
                     android:textColor="#CCFFFFFF"
                     android:textSize="12sp" />
 
@@ -183,7 +183,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppinsbold"
-                    android:text="Número máximo de jugadores"
+                    android:text="@string/max_players_label"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -193,7 +193,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
                     android:fontFamily="@font/poppinsregular"
-                    android:text="Selecciona cuántos jugadores podrán entrar en la sala"
+                    android:text="@string/max_players_hint"
                     android:textColor="#CCFFFFFF"
                     android:textSize="12sp" />
 
@@ -245,7 +245,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppinsbold"
-                    android:text="Visibilidad"
+                    android:text="@string/visibility_label"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -255,7 +255,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:fontFamily="@font/poppinsregular"
-                    android:text="Decide si la sala aparece en la lista o solo se accede con código"
+                    android:text="@string/visibility_hint"
                     android:textColor="#CCFFFFFF"
                     android:textSize="11sp" />
 
@@ -318,7 +318,7 @@
             android:paddingTop="0dp"
             android:paddingBottom="0dp"
             android:singleLine="true"
-            android:text="Crear sala"
+            android:text="@string/create_room"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="15sp"
