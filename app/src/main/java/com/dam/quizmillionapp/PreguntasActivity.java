@@ -531,6 +531,11 @@ public class PreguntasActivity extends BaseActivity {
                     }
                     // limpiar el handler
                     handlerGlobal.removeCallbacksAndMessages(null);
+                   // volver al menu principal
+                    Intent intent = new Intent(PreguntasActivity.this, MainActivity.class); // <-- Cambia MainActivity por el nombre de tu clase de menú
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(intent);
+
                     finish();
                 })
                 .setNegativeButton("Cancelar", null)
