@@ -178,9 +178,13 @@ public class PreguntasActivity extends BaseActivity {
             btnOpciones[i].setEnabled(true);
             btnOpciones[i].setAlpha(1.0f);
             btnOpciones[i].setText(preguntaActual.opciones.get(i));
-            btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(R.color.transparent));
-            btnOpciones[i].setStrokeColor(ColorStateList.valueOf(R.color.white));
-            btnOpciones[i].setTextColor(R.color.white);
+
+            int colorTransparente = androidx.core.content.ContextCompat.getColor(this, R.color.transparent);
+            int colorBlanco = androidx.core.content.ContextCompat.getColor(this, R.color.white);
+
+            btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(colorTransparente));
+            btnOpciones[i].setStrokeColor(ColorStateList.valueOf(colorBlanco));
+            btnOpciones[i].setTextColor(colorBlanco);
         }
     }
 
@@ -239,7 +243,7 @@ public class PreguntasActivity extends BaseActivity {
 
             // Actualizamos progreso visual
             pbProgreso.setProgress(nivelActual);
-            tvPremioActual.setText("NIVEL " + nivelActual + " > " + escalaPremios[nivelActual] + " €");
+            tvPremioActual.setText("NIVEL " + nivelActual + " : " + escalaPremios[nivelActual] + " €");
 
             nivelActual++;
             handlerGlobal.postDelayed(this::mostrarTransicionYNivel, 1500);
@@ -260,13 +264,13 @@ public class PreguntasActivity extends BaseActivity {
         tvTransicionPremio.setText(escalaPremios[nivelActual] + "€");
 
         if (nivelActual == 6 || nivelActual == 11) {
-            tvTransicionMensajeLinea1.setTextColor(R.color.ambar_transition);
+            tvTransicionMensajeLinea1.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.ambar_transition));
             tvTransicionMensajeLinea1.setText("¡ZONA SEGURA LOGRADA!");
-            tvTransicionMensajeLinea2.setTextColor(R.color.white);
+            tvTransicionMensajeLinea2.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.white));
             tvTransicionMensajeLinea2.setText("Juegas por:");
         } else {
-            tvTransicionMensajeLinea1.setText("Juegas por:");
             tvTransicionMensajeLinea1.setTextColor(R.color.white);
+            tvTransicionMensajeLinea1.setText("Juegas por:");
             tvTransicionMensajeLinea2.setVisibility(View.GONE);
         }
 
@@ -293,9 +297,10 @@ public class PreguntasActivity extends BaseActivity {
         reloj = new CountDownTimer(30000, 1000) {
             public void onTick(long millisUntilFinished) {
                 tvCronometro.setText("" + millisUntilFinished / 1000);
-                if (millisUntilFinished < 6000) tvCronometro.setTextColor(R.color.red);
-                else tvCronometro.setTextColor(R.color.white);
-            }
+                if (millisUntilFinished < 6000)
+                    tvCronometro.setTextColor(androidx.core.content.ContextCompat.getColor(PreguntasActivity.this, R.color.red));
+                else
+                    tvCronometro.setTextColor(androidx.core.content.ContextCompat.getColor(PreguntasActivity.this, R.color.white));            }
 
             public void onFinish() {
                 reloj = null;
@@ -340,7 +345,7 @@ public class PreguntasActivity extends BaseActivity {
         for (int i = 0; i < 4; i++) {
             if (preguntaActual.comodin_50.contains(i)) {
                 btnOpciones[i].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.comodin_50));
-                btnOpciones[i].setTextColor(R.color.black);
+                btnOpciones[i].setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.black));
             } else {
                 btnOpciones[i].setEnabled(false);
                 btnOpciones[i].setAlpha(0.3f);
@@ -370,7 +375,7 @@ public class PreguntasActivity extends BaseActivity {
                 String enunciadoOriginal = preguntaActual.opciones.get(i);
                 btnOpciones[i].setText(enunciadoOriginal + " (" + porcentajes[i] + "%)");
                 btnOpciones[i].setBackgroundTintList(ColorStateList.valueOf(obtenerColor(porcentajes[i])));
-                btnOpciones[i].setTextColor(R.color.white); // Aseguramos legibilidad
+                btnOpciones[i].setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.white)); // Aseguramos legibilidad
             }
         }
 
@@ -459,6 +464,7 @@ public class PreguntasActivity extends BaseActivity {
 
         int sug = preguntaActual.comodin_llamada;
         btnOpciones[sug].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.comodin_llamada));
+        btnOpciones[sug].setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.white));
         Toast.makeText(this, "Tu contacto ha decidido ", Toast.LENGTH_SHORT).show();
     }
 
