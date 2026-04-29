@@ -171,6 +171,8 @@ public class PreguntasActivity extends BaseActivity {
         // Limpieza visual de los elementos para la nueva pregunta
         tvEnunciado.setVisibility(View.VISIBLE);
         btnPlantarse.setVisibility(View.VISIBLE);
+        btnPlantarse.setAlpha(1.0f);
+        btnPlantarse.setEnabled(true);
         tvEnunciado.setText(preguntaActual.enunciado);
 
         for (int i = 0; i < 4; i++) {
@@ -186,6 +188,10 @@ public class PreguntasActivity extends BaseActivity {
             btnOpciones[i].setStrokeColor(ColorStateList.valueOf(colorBlanco));
             btnOpciones[i].setTextColor(colorBlanco);
         }
+        if (!usado50) { btn50.setEnabled(true); btn50.setAlpha(1.0f); }
+        if (!usadoPublico) { btnPublico.setEnabled(true); btnPublico.setAlpha(1.0f); }
+        if (!usadoLlamada) { btnLlamada.setEnabled(true); btnLlamada.setAlpha(1.0f); }
+        btnPlantarse.setEnabled(true);
     }
 
     private void mostrarSiguientePregunta() {
@@ -233,6 +239,7 @@ public class PreguntasActivity extends BaseActivity {
 
         if (seleccionado == preguntaActual.correcta) {
             // Acierto: Color Verde
+            desactivarTodo();
             SoundManager.getInstance(PreguntasActivity.this).playSuccess();
             btnOpciones[seleccionado].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.green));
 
@@ -251,8 +258,20 @@ public class PreguntasActivity extends BaseActivity {
             // Fallo: Color Rojo y sumamos un fallo
             SoundManager.getInstance(PreguntasActivity.this).playError();
             btnOpciones[seleccionado].setBackgroundTintList(androidx.core.content.ContextCompat.getColorStateList(this, R.color.red));
+            // deshabilitar SOLO el botón pulsado para que no se vuelva a marcar
+            btnOpciones[seleccionado].setEnabled(false);
+            btnOpciones[seleccionado].setAlpha(0.5f);
             actualizarFallos();
         }
+        // Si despues de actualizar fallos aún le quedan intentos
+        if (contadorFallos < 3) {
+            // Devolver el botón de plantarse
+            btnPlantarse.setVisibility(View.VISIBLE);
+        } else {
+            // si ya ha perdido (3 fallos), entonces si bloquear
+            desactivarTodo();
+        }
+
     }
 
     /* Metodo tipo cortina para ganar tiempo en la carga de imagen de la siguiente pregunta
@@ -555,6 +574,26 @@ public class PreguntasActivity extends BaseActivity {
                     vibrator.vibrate(200);
                 }
             }
+        }
+    }
+
+    private void desactivarTodo() {
+        //Bloquear las opciones
+        for (MaterialButton btn : btnOpciones) {
+            btn.setEnabled(false);
+        }
+
+        // Bloquear comodines
+        btn50.setEnabled(false);
+        btnPublico.setEnabled(false);
+        btnLlamada.setEnabled(false);
+
+        // Ocultar boton de plantarse
+        if (btnPlantarse != null) {
+            btnPlantarse.clearAnimation();
+            btnPlantarse.setEnabled(false);
+            btnPlantarse.setVisibility(View.GONE);
+            btnPlantarse.setAlpha(0f);
         }
     }
 
