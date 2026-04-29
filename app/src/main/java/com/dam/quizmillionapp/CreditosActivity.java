@@ -43,7 +43,7 @@ public class CreditosActivity extends BaseActivity {
         setContentView(R.layout.activity_creditos);
 
         scrollView = findViewById(R.id.scrollCreditos);
-        layoutCreditos = findViewById(R.id.layoutCreditos); // Necesitamos el layout para el truco del padding
+        layoutCreditos = findViewById(R.id.layoutCreditos);
         btnVolverMenu = findViewById(R.id.btnVolverMenu);
 
         gestionarMusica();

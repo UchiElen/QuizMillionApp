@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Configuración"
+            android:text="@string/tvTituloConfiguracion"
             android:textColor="@color/white"
             android:textSize="40sp"
             android:textStyle="bold"
@@ -84,7 +84,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Música"
+                    android:text="@string/cardMusica"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 
@@ -123,7 +123,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Efectos de sonido"
+                    android:text="@string/cardSonido"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 
@@ -162,7 +162,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Vibración"
+                    android:text="@string/cardVibracion"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
 
