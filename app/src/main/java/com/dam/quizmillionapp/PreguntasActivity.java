@@ -282,13 +282,16 @@ public class PreguntasActivity extends BaseActivity {
         tvTransicionTitulo.setText("NIVEL " + nivelActual);
         tvTransicionPremio.setText(escalaPremios[nivelActual] + "€");
 
+        int colorBlanco = androidx.core.content.ContextCompat.getColor(this, R.color.white);
+        int colorAmbar = androidx.core.content.ContextCompat.getColor(this, R.color.ambar_transition);
+
         if (nivelActual == 6 || nivelActual == 11) {
-            tvTransicionMensajeLinea1.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.ambar_transition));
+            tvTransicionMensajeLinea1.setTextColor(colorAmbar);
             tvTransicionMensajeLinea1.setText("¡ZONA SEGURA LOGRADA!");
-            tvTransicionMensajeLinea2.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.white));
+            tvTransicionMensajeLinea2.setTextColor(colorBlanco);
             tvTransicionMensajeLinea2.setText("Juegas por:");
         } else {
-            tvTransicionMensajeLinea1.setTextColor(R.color.white);
+            tvTransicionMensajeLinea1.setTextColor(colorBlanco);
             tvTransicionMensajeLinea1.setText("Juegas por:");
             tvTransicionMensajeLinea2.setVisibility(View.GONE);
         }
