@@ -1,9 +1,14 @@
 <resources>
+    <!-- Inicio -->
+
     <string name="app_name">QuizMillion</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="convertirse">¿Tienes lo necesario para convertirte en millonario?</string>
     <string name="averiguarlo">¡Quiero averiguarlo!</string>
+
+
+    <!-- Autenticación -->
     <string name="quien_millonario">¿Quién es nuestro próximo millonario?</string>
     <string name="resgistrarse">Registrarse</string>
     <string name="iniciar_sesion">Iniciar sesión</string>
@@ -16,6 +21,12 @@
     <string name="contrasena_hint">*********</string>
     <string name="foto_perfil">FOTO DE PERFIL</string>
     <string name="foto_perfil_description">foto de perfil</string>
+    <string name="recordar_contrasena">He olvidado mi contraseña</string>
+    <string name="recuperar_contrasena">Recuperar contraseña</string>
+    <string name="intro_email">Introduce tu email:</string>
+
+
+    <!-- Menú -->
     <string name="bienvenida">Te damos la bienvenida</string>
     <string name="jugarSolo">Jugar solo</string>
     <string name="jugarMulti">Jugar en grupo</string>
@@ -25,9 +36,13 @@
     <string name="editar_perfil">Editar perfil</string>
     <string name="guardar">Guardar</string>
     <string name="cerrar_sesion">Cerrar sesión</string>
-    <string name="recordar_contrasena">He olvidado mi contraseña</string>
-    <string name="recuperar_contrasena">Recuperar contraseña</string>
-    <string name="intro_email">Introduce tu email:</string>
+    <string name="recordsBtn">Mis Puntuaciones</string>
+
+    <!-- Configuración -->
+    <string name="tvTituloConfiguracion">Configuración</string>
+    <string name="cardMusica">Música</string>
+    <string name="cardSonido">Efectos de sonido</string>
+    <string name="cardVibracion">Vibración</string>
 
     <!-- Lobby titles -->
     <string name="lobby_title">Elige una opción</string>
@@ -90,25 +105,28 @@
     <string name="status_waiting_short">Esperando</string>
     <string name="players_example">Jugadores: 1 / 50</string>
 
+
+    <!-- Puntuaciones -->
     <string name="ver_puntuaciones">Ver puntuaciones</string>
-    <string name="creditos_texto">
-        CRÉDITOS
+    <string name="tv_titulo_puntuaciones">Puntuaciones</string>
+    <string name="tv_contador_finalizados">Finalizados: 0/0</string>
+    <string name="btn_volver_jugar">Volver a jugar</string>
+    <string name="btn_menu_principal">Menú principal</string>
 
-        Desarrollado por
-        Elena G.
 
-        Equipo
-        Alejandro
-        Iván
-
-        Tutor
-        Alejandro
-
-        Inspirado en
-        Who Wants to Be a Millionaire?
-
-        Proyecto educativo
-        2026
-    </string>
+    <!-- Créditos -->
+    <string name="creditos_texto">CRÉDITOS</string>
+    <string name="txtCreditos1_1">Desarrollado por:</string>
+    <string name="txtCreditos1_2">Elena Gualix Vidal\nIván Pascual García\nRubén Franscisco Seijo Vilaboy</string>
+    <string name="txtCreditos2_1">\nTutor:</string>
+    <string name="txtCreditos2_2">Alejandro de Acuña Jimenez</string>
+    <string name="txtCreditos3_1">\nInspirado en:</string>
+    <string name="txtCreditos3_2">Who Wants to Be a Millionaire?</string>
+    <string name="txtCreditos4_1">\nMúsica:</string>
+    <string name="txtCreditos4_2">SigmaMusicArt\nIHateTuesdays</string>
+    <string name="txtCreditos5_1">\nEfectos de sonido:</string>
+    <string name="txtCreditos5_2">kauasilbershlachparodes\nfreesound_community</string>
+    <string name="txtCreditos6_1">\nCurso educativo:</string>
+    <string name="txtCreditos6_2">2025–2026</string>
 
 </resources>
