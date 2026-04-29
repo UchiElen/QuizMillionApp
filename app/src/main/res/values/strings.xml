@@ -37,6 +37,7 @@
     <string name="guardar">Guardar</string>
     <string name="cerrar_sesion">Cerrar sesión</string>
     <string name="recordsBtn">Mis Puntuaciones</string>
+    <string name="creditosBtn">Créditos</string>
 
     <!-- Configuración -->
     <string name="tvTituloConfiguracion">Configuración</string>
@@ -128,5 +129,6 @@
     <string name="txtCreditos5_2">kauasilbershlachparodes\nfreesound_community</string>
     <string name="txtCreditos6_1">\nCurso educativo:</string>
     <string name="txtCreditos6_2">2025–2026</string>
+    <string name="volverBtn">Volver al menú</string>
 
 </resources>
