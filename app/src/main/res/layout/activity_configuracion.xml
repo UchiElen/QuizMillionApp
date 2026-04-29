@@ -92,10 +92,11 @@
                     android:id="@+id/switchMusica"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:thumbTint="@color/white"
-                    app:trackTint="#bcafbd"
+                    android:contentDescription="@string/cardMusica"
                     android:switchPadding="25dp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    app:thumbTint="@color/white"
+                    app:trackTint="#bcafbd" />
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
@@ -131,9 +132,10 @@
                     android:id="@+id/switchSonido"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/cardSonido"
+                    android:textColor="@color/white"
                     app:thumbTint="@color/white"
-                    app:trackTint="#bcafbd"
-                    android:textColor="@color/white" />
+                    app:trackTint="#bcafbd" />
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
@@ -170,9 +172,10 @@
                     android:id="@+id/switchVibracion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/cardVibracion"
                     android:textColor="@color/white"
                     app:thumbTint="@color/white"
-                    app:trackTint="#bcafbd"/>
+                    app:trackTint="#bcafbd" />
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>

@@ -106,6 +106,7 @@
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="50dp"
+                android:contentDescription="@string/recuperar_contrasena"
                 android:text="@string/recuperar_contrasena"
                 android:textColor="@color/white"
                 android:textSize="16sp"

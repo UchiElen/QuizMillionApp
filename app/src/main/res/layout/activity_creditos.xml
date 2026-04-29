@@ -170,7 +170,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginEnd="50dp"
         android:layout_marginBottom="40dp"
-        android:text="Volver al menú"
+        android:text="@string/volverBtn"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:visibility="gone"
