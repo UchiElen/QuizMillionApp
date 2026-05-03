@@ -1,0 +1,267 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_gradient"
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    tools:context=".PreguntasActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#00000000"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageButton
+            android:id="@+id/btn_abandonar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/twotone_arrow_back_24"
+            app:tint="@color/white" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/tv_cronometro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="30"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar" />
+
+    <TextView
+        android:id="@+id/tv_fallos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="Fallos: 0/3"
+        android:textColor="@color/colorError"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_cronometro"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_cronometro" />
+
+    <LinearLayout
+        android:id="@+id/layout_comodines"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/tv_cronometro">
+        <ImageButton android:id="@+id/btn_50" android:layout_width="45dp" android:layout_height="45dp" android:layout_marginHorizontal="15dp" android:background="@drawable/circle_push" android:src="@drawable/cincuenta" android:padding="8dp" android:scaleType="fitCenter"/>
+        <ImageButton android:id="@+id/btn_publico" android:layout_width="45dp" android:layout_height="45dp" android:layout_marginHorizontal="15dp" android:background="@drawable/circle_push" android:src="@drawable/publico" android:padding="8dp" android:scaleType="fitCenter"/>
+        <ImageButton android:id="@+id/btn_llamada" android:layout_width="45dp" android:layout_height="45dp" android:layout_marginHorizontal="15dp" android:background="@drawable/circle_push" android:src="@drawable/llamada" android:padding="8dp" android:scaleType="fitCenter"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_progreso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_comodines">
+        <TextView
+            android:id="@+id/tv_premio_actual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="NIVEL 1 : 0€"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <ProgressBar
+            android:id="@+id/pb_progreso_juego"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_marginHorizontal="60dp"
+            android:progressTint="@color/colorAccent" />
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_plantarse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Plantarse"
+        android:paddingHorizontal="30dp"
+        app:backgroundTint="@color/colorError"
+        app:cornerRadius="15dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_progreso"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:weightSum="10"
+        app:layout_constraintTop_toBottomOf="@id/btn_plantarse"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/img_pregunta"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3.5"
+            android:layout_marginHorizontal="60dp"
+            android:layout_marginTop="5dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_imagen_redondeada"
+            android:clipToOutline="true"
+            android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/tv_enunciado"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginHorizontal="25dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppinsbold"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="14sp"
+            app:autoSizeMaxTextSize="20sp"
+            android:visibility="invisible"
+            tools:text="¿Cuántos años tiene un lustro?" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4.5"
+            android:orientation="vertical"
+            android:paddingHorizontal="40dp"
+            android:paddingBottom="5dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_opcion_1"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:cornerRadius="15dp"
+                app:strokeColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_opcion_2"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:cornerRadius="15dp"
+                app:strokeColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_opcion_3"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:cornerRadius="15dp"
+                app:strokeColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_opcion_4"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="6dp"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:cornerRadius="15dp"
+                app:strokeColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_loader"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:indeterminateTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_transicion_nivel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_gradient"
+        android:elevation="10dp"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/tv_texto_transicion_titulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NIVEL"
+            android:textColor="#FFD700"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_texto_transicion_mensaje_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <TextView
+            android:id="@+id/tv_texto_transicion_mensaje_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Juegas por"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_texto_transicion_mensaje_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_texto_transicion_titulo" />
+        <TextView
+            android:id="@+id/tv_texto_transicion_mensaje_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_texto_transicion_premio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_texto_transicion_mensaje_1" />
+
+        <TextView
+            android:id="@+id/tv_texto_transicion_premio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="0€"
+            android:textColor="#FFD700"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_texto_transicion_mensaje_2" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

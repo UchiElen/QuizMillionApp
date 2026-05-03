@@ -1,0 +1,134 @@
+<resources>
+    <!-- Inicio -->
+
+    <string name="app_name">QuizMillion</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="convertirse">¿Tienes lo necesario para convertirte en millonario?</string>
+    <string name="averiguarlo">¡Quiero averiguarlo!</string>
+
+
+    <!-- Autenticación -->
+    <string name="quien_millonario">¿Quién es nuestro próximo millonario?</string>
+    <string name="resgistrarse">Registrarse</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="crear_cuenta">Crear cuenta</string>
+    <string name="nombre_usuario">NOMBRE DE USUARIO</string>
+    <string name="nombre_usuario_hint">Nombre Usuario</string>
+    <string name="email">EMAIL</string>
+    <string name="email_hint">email@email.com</string>
+    <string name="contrasena">CONTRASEÑA</string>
+    <string name="contrasena_hint">*********</string>
+    <string name="foto_perfil">FOTO DE PERFIL</string>
+    <string name="foto_perfil_description">foto de perfil</string>
+    <string name="recordar_contrasena">He olvidado mi contraseña</string>
+    <string name="recuperar_contrasena">Recuperar contraseña</string>
+    <string name="intro_email">Introduce tu email:</string>
+
+
+    <!-- Menú -->
+    <string name="bienvenida">Te damos la bienvenida</string>
+    <string name="jugarSolo">Jugar solo</string>
+    <string name="jugarMulti">Jugar en grupo</string>
+    <string name="config">Jugar</string>
+    <string name="perfil">Perfil</string>
+    <string name="records">Top de records</string>
+    <string name="editar_perfil">Editar perfil</string>
+    <string name="guardar">Guardar</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="recordsBtn">Mis Puntuaciones</string>
+    <string name="creditosBtn">Créditos</string>
+
+    <!-- Configuración -->
+    <string name="tvTituloConfiguracion">Configuración</string>
+    <string name="cardMusica">Música</string>
+    <string name="cardSonido">Efectos de sonido</string>
+    <string name="cardVibracion">Vibración</string>
+
+    <!-- Lobby titles -->
+    <string name="lobby_title">Elige una opción</string>
+    <string name="lobby_subtitle">Crea una sala o únete con un código</string>
+    <!-- Room code -->
+    <string name="room_code">Código</string>
+    <string name="room_code_hint">Introduce el código</string>
+
+    <string name="room_name_placeholder">Sala</string>
+    <string name="room_code_placeholder">Código</string>
+    <string name="players_placeholder">Jugadores</string>
+
+    <!-- Buttons -->
+    <string name="join_room">Unirse</string>
+    <string name="create_room">Crear sala</string>
+
+    <!-- Open rooms -->
+    <string name="available_rooms">Salas abiertas</string>
+    <string name="available_rooms_hint">Salas esperando jugadores</string>
+
+    <!-- Room item -->
+    <string name="room_code_prefix">Código:</string>
+    <string name="players_prefix">Jugadores:</string>
+
+    <!-- Waiting room -->
+    <string name="waiting_room_title">Sala de espera</string>
+    <string name="room_code_label">Código de sala</string>
+    <string name="room_code_value">Código: %1$s</string>
+    <string name="room_status_label">Estado</string>
+    <string name="room_status_waiting">Esperando jugadores</string>
+    <string name="room_status_ready">Lista para comenzar</string>
+    <string name="players_title">Jugadores</string>
+    <string name="start_game">Iniciar partida</string>
+    <string name="leave_room">Salir de la sala</string>
+    <string name="host_only">Solo el anfitrión puede iniciar la partida</string>
+
+
+    <!-- Room config -->
+    <string name="configure_room">Configurar sala</string>
+    <string name="configure_room_subtitle">Define los ajustes antes de crear la sala</string>
+    <string name="room_name_label">Nombre de la sala</string>
+    <string name="room_name_hint">Escribe un nombre para identificar la sala</string>
+    <string name="room_name_example">Ej. Sala de Cultura General</string>
+
+    <string name="categories_label">Categorías</string>
+    <string name="categories_hint">Elige al menos una temática para la partida</string>
+
+    <string name="max_players_label">Número máximo de jugadores</string>
+    <string name="max_players_hint">Selecciona cuántos jugadores podrán entrar en la sala</string>
+    <string name="max_players_value">Jugadores máximos: %1$d</string>
+
+    <string name="visibility_label">Visibilidad</string>
+    <string name="visibility_hint">Decide si la sala aparece en la lista o solo se accede con código</string>
+    <string name="privacy_icon_description">Estado de privacidad</string>
+    <string name="privacy_state_public">Visible en la lista de salas</string>
+    <string name="privacy_help_public">Otros jugadores podrán encontrar esta sala desde el lobby</string>
+
+    <!-- Room item examples -->
+    <string name="room_example_name">Sala de ejemplo</string>
+    <string name="status_waiting_short">Esperando</string>
+    <string name="players_example">Jugadores: 1 / 50</string>
+
+
+    <!-- Puntuaciones -->
+    <string name="ver_puntuaciones">Ver puntuaciones</string>
+    <string name="tv_titulo_puntuaciones">Puntuaciones</string>
+    <string name="tv_contador_finalizados">Finalizados: 0/0</string>
+    <string name="btn_volver_jugar">Volver a jugar</string>
+    <string name="btn_menu_principal">Menú principal</string>
+
+
+    <!-- Créditos -->
+    <string name="creditos_texto">CRÉDITOS</string>
+    <string name="txtCreditos1_1">Desarrollado por:</string>
+    <string name="txtCreditos1_2">Elena Gualix Vidal\nIván Pascual García\nRubén Franscisco Seijo Vilaboy</string>
+    <string name="txtCreditos2_1">\nTutor:</string>
+    <string name="txtCreditos2_2">Alejandro de Acuña Jimenez</string>
+    <string name="txtCreditos3_1">\nInspirado en:</string>
+    <string name="txtCreditos3_2">Who Wants to Be a Millionaire?</string>
+    <string name="txtCreditos4_1">\nMúsica:</string>
+    <string name="txtCreditos4_2">SigmaMusicArt\nIHateTuesdays</string>
+    <string name="txtCreditos5_1">\nEfectos de sonido:</string>
+    <string name="txtCreditos5_2">kauasilbershlachparodes\nfreesound_community</string>
+    <string name="txtCreditos6_1">\nCurso educativo:</string>
+    <string name="txtCreditos6_2">2025–2026</string>
+    <string name="volverBtn">Volver al menú</string>
+
+</resources>

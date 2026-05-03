@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimary">#753192</color>
+    <color name="colorPrimaryDark">#00244f</color>
+    <color name="colorOnPrimary">#ffffff</color>
+    <color name="colorAccent">#00bf63</color>
+    <color name="colorError">#ff5757</color>
+    <color name="colorSurface">#29008e</color>
+    <color name="colorBackground">#8f0081</color>
+    <color name="colorGradient">#2600ba</color>
+    <color name="transparent"> #00000000</color>
+    <color name="input_bg">#33FFFFFF</color>
+    <color name="gray_disabled_button">#B0B0B0</color>
+    <color name="ambar_transition">#FFC107</color>
+
+    <!--Room Status -->
+    <color name="green">#4CAF50</color>
+    <color name="orange">#FF9800</color>
+    <color name="red">#F44336</color>
+    <color name="gray">#888888</color>
+
+    <!--Wainting Room-->
+    <color name="host_star_gold">#FFD700</color>
+
+    <!--Config Room-->
+    <color name="chip_category_selector">#3F51B5</color>
+
+    <!--Comodines-->
+    <color name="comodin_50">#FFC107</color>
+    <color name="comodin_llamada">#00FFFF</color>
+    <color name="comodin_publico_1">#880E4F</color>
+    <color name="comodin_publico_2">#C2185B</color>
+    <color name="comodin_publico_3">#E91E63</color>
+    <color name="comodin_publico_4">#F06292</color>
+
+</resources>
