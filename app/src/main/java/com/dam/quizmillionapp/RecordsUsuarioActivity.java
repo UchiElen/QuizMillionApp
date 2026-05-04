@@ -53,8 +53,14 @@ public class RecordsUsuarioActivity extends BaseActivity {
             generarPdfCompleto();
         });
 
-        // Llamar al metodo que trae los datos reales de Firestore
-        obtenerDatosDeFirebase();
+
+        // Validamos conexión antes de cargar el historial desde Firebase
+        if (isConnected()) {
+            // Llamar al metodo que trae los datos reales de Firestore
+            obtenerDatosDeFirebase();
+        } else {
+            showNoInternetDialog();
+        }
     }
 
     private void obtenerDatosDeFirebase() {

@@ -58,6 +58,14 @@ public class PuntuacionesActivity extends BaseActivity {
         rvPuntuaciones.setAdapter(adapter);
 
         configurarBotones();
+
+        // Validamos conexión antes de cargar puntuaciones desde Firebase
+        if (isConnected()) {
+            cargarPuntuaciones();
+        } else {
+            showNoInternetDialog();
+        }
+
         cargarPuntuaciones();
     }
 
@@ -75,6 +83,12 @@ public class PuntuacionesActivity extends BaseActivity {
 
         btnVolver.setOnClickListener(v -> {
             SoundManager.getInstance(this).playClick();
+
+            if (!isConnected()) {
+                showNoInternetDialog();
+                return;
+            }
+
             Intent intent = new Intent(this, LobbyActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

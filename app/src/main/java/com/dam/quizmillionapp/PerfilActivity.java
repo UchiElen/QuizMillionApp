@@ -65,7 +65,13 @@ public class PerfilActivity extends BaseActivity {
 
         if (fAuth.getCurrentUser() != null) {
             userID = fAuth.getCurrentUser().getUid();
-            cargarDatosUsuario();
+
+            // Validamos conexión antes de cargar datos del perfil desde Firebase
+            if (isConnected()) {
+                cargarDatosUsuario();
+            } else {
+                showNoInternetDialog();
+            }
         }
 
         galleryLauncher = registerForActivityResult(
@@ -102,6 +108,13 @@ public class PerfilActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(PerfilActivity.this).playClick();
+
+                // Validamos conexión antes de actualizar datos en Firebase
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
                 String nuevoNombre = nombreTI.getText().toString().trim();
                 String nuevaContra = contraTI.getText().toString().trim();
 
@@ -224,6 +237,13 @@ public class PerfilActivity extends BaseActivity {
     }
 
     private void uploadImageAndFinish(android.net.Uri uri) {
+
+        // Validamos conexión antes de subir la imagen a Firebase Storage
+        if (!isConnected()) {
+            showNoInternetDialog();
+            return;
+        }
+
         StorageReference fileRef = storageReference.child("users/" + userID + "/profile.jpg");
 
         fileRef.putFile(uri).addOnSuccessListener(taskSnapshot -> {

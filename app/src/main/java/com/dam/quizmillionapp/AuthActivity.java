@@ -60,6 +60,15 @@ public class AuthActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(AuthActivity.this).playClick();
+
+                // Validamos conexión antes de intentar iniciar sesión con Firebase
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
+
+
                 String email = emailTI.getText().toString().trim();
                 String contrasena = contraTI.getText().toString().trim();
 
@@ -113,6 +122,15 @@ public class AuthActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(AuthActivity.this).playClick();
+
+                // Validamos conexión antes de ir a la recuperación de contraseña
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
+
+
                 Intent intent = new Intent(AuthActivity.this,ResetActivity.class);
                 startActivity(intent);
             }

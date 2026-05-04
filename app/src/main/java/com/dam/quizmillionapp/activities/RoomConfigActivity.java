@@ -62,7 +62,15 @@ public class RoomConfigActivity extends BaseActivity {
         setupMaxPlayersSlider();
         setupPrivacySwitch();
         setupActions();
-        loadAvailableCategories();
+
+        // Validamos conexión antes de cargar categorías desde Firebase
+        if (isConnected()) {
+            loadAvailableCategories();
+        } else {
+            showNoInternetDialog();
+        }
+
+
     }
 
     private void bindViews() {
@@ -134,6 +142,12 @@ public class RoomConfigActivity extends BaseActivity {
     }
 
     private void tryCreateRoom() {
+
+        // Validamos conexión antes de crear la sala en Firebase
+        if (!isConnected()) {
+            showNoInternetDialog();
+            return;
+        }
 
         String roomName = edtRoomName.getText().toString().trim();
         boolean isPublic = switchPublicRoom.isChecked();
@@ -298,6 +312,16 @@ public class RoomConfigActivity extends BaseActivity {
                     vibrator.vibrate(15);
                 }
             }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Si volvemos a la pantalla con conexión y no hay categorías cargadas, las recargamos
+        if (isConnected() && chipGroupCategories != null && chipGroupCategories.getChildCount() == 0) {
+            loadAvailableCategories();
         }
     }
 }

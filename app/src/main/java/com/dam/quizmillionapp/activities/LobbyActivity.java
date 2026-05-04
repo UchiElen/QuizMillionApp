@@ -45,7 +45,15 @@ public class LobbyActivity extends BaseActivity {
         bindViews();
         setupRoomsList();
         setupActions();
-        observeOpenRooms();
+
+        // Validamos conexión antes de escuchar salas públicas en Firestore
+        if (isConnected()) {
+            observeOpenRooms();
+        } else {
+            showNoInternetDialog();
+        }
+
+
     }
 
     private void bindViews() {
@@ -62,6 +70,13 @@ public class LobbyActivity extends BaseActivity {
             @Override
             public void onRoomClicked(RoomSummary room) {
                 SoundManager.getInstance(LobbyActivity.this).playClick();
+
+                // Validamos conexión antes de entrar en una sala pública
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
                 tryJoinRoomById(room.getRoomId());
             }
         });
@@ -73,11 +88,26 @@ public class LobbyActivity extends BaseActivity {
 
         btnCreateRoom.setOnClickListener(view -> {
             SoundManager.getInstance(LobbyActivity.this).playClick();
+
+            // Validamos conexión antes de configurar una nueva sala
+            if (!isConnected()) {
+                showNoInternetDialog();
+                return;
+            }
+
             openRoomConfig();
         });
 
         btnJoinByCode.setOnClickListener(view -> {
             SoundManager.getInstance(LobbyActivity.this).playClick();
+
+            // Validamos conexión antes de unirse a una sala
+            if (!isConnected()) {
+                showNoInternetDialog();
+                return;
+            }
+
+
             String roomCode = edtRoomCode.getText().toString().trim().toUpperCase(Locale.ROOT);
 
             if (roomCode.length() != 6) {
@@ -213,6 +243,12 @@ public class LobbyActivity extends BaseActivity {
         if (edtRoomCode != null) {
             edtRoomCode.setText("");
         }
+
+        // Si hay conexión y no hay listener activo, volvemos a escuchar salas públicas
+        if (isConnected() && roomsListener == null) {
+            observeOpenRooms();
+        }
+
     }
 
     @Override

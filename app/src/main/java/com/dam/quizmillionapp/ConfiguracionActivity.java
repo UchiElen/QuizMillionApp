@@ -94,4 +94,11 @@ public class ConfiguracionActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    protected boolean shouldCheckInternetOnResume() {
+        return false;
+    }
+
+
 }

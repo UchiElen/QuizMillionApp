@@ -101,4 +101,10 @@ public class CreditosActivity extends BaseActivity {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
     }
+
+    @Override
+    protected boolean shouldCheckInternetOnResume() {
+        return false;
+    }
+
 }

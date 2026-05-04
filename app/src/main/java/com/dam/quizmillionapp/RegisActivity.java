@@ -115,6 +115,13 @@ public class RegisActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(RegisActivity.this).playClick();
+
+                // Validamos conexión antes de crear el usuario en Firebase
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
                 String[] opciones = {"Hacer foto", "Elegir de galería", "Cancelar"};
 
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(RegisActivity.this);
@@ -215,6 +222,13 @@ public class RegisActivity extends BaseActivity {
     }
 
     private void uploadImageToFirebase(Uri imageUri){
+
+        if (!isConnected()) {
+            progressBar.setVisibility(View.GONE);
+            showNoInternetDialog();
+            return;
+        }
+
         StorageReference fileRef = storageReference.child("users/" + userID + "/profile.jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
