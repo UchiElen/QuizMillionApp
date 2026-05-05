@@ -1,5 +1,8 @@
 package com.dam.quizmillionapp;
 
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -7,11 +10,13 @@ import android.view.View;
 
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class BaseActivity extends AppCompatActivity {
     public static boolean isMuted = false;
+    private boolean noInternetDialogShowing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,11 @@ public class BaseActivity extends AppCompatActivity {
         if (musicService != null) {
             musicService.resumeMusicFromBackground();
         }
+
+        // Comprobamos la conexión al volver a una pantalla que depende de internet
+        if (shouldCheckInternetOnResume() && !isConnected()) {
+            showNoInternetDialog();
+        }
     }
 
     @Override
@@ -117,4 +127,65 @@ public class BaseActivity extends AppCompatActivity {
         }
         return super.dispatchTouchEvent(ev);
     }
+
+    public boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+
+        if (cm != null) {
+            Network network = cm.getActiveNetwork();
+            if (network == null) return false;
+
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+            return capabilities != null &&
+                    capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+        }
+
+        return false;
+    }
+
+    public void showNoInternetDialog() {
+        if (noInternetDialogShowing) {
+            return;
+        }
+
+        noInternetDialogShowing = true;
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Sin conexión")
+                .setMessage("Necesitas conexión a internet para usar la aplicación.")
+                .setPositiveButton("Reintentar", (d, which) -> {
+                    noInternetDialogShowing = false;
+
+                    if (isConnected()) {
+                        recreate();
+                    } else {
+                        showNoInternetDialog();
+                    }
+                })
+                .setNegativeButton("Volver", (d, which) -> {
+                    noInternetDialogShowing = false;
+                    d.dismiss();
+                    finish();
+                })
+                .setNeutralButton("Salir", (d, which) -> {
+                    noInternetDialogShowing = false;
+                    d.dismiss();
+                    finishAffinity();
+                })
+                .create();
+
+        dialog.setCancelable(true);
+
+        dialog.setOnCancelListener(d -> {
+            noInternetDialogShowing = false;
+            finish();
+        });
+
+        dialog.show();
+    }
+
+    protected boolean shouldCheckInternetOnResume() {
+        return true;
+    }
+
 }

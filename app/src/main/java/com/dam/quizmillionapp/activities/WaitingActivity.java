@@ -85,6 +85,12 @@ public class WaitingActivity extends BaseActivity {
         setupMembersList();
         setupActions();
 
+        // Validamos conexión antes de iniciar la sincronización de la sala en Firebase
+        if (!isConnected()) {
+            showNoInternetDialog();
+            return;
+        }
+
         // Al entrar en la sala corregimos posibles desajustes
         // por si quedó alguien inactivo o el contador no era real.
         roomRepository.removeInactivePlayers(roomId);
@@ -144,6 +150,12 @@ public class WaitingActivity extends BaseActivity {
                 txtRoomStatus.setText(getStatusText(status));
 
                 updateStartButtonState();
+
+                // Validamos conexión antes de abrir la partida
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
 
                 // Cuando la sala pasa a IN_GAME, todos los jugadores
                 // deben avanzar automáticamente a la pantalla de preguntas.
@@ -294,6 +306,13 @@ public class WaitingActivity extends BaseActivity {
     }
 
     private void tryStartGame() {
+
+        // Validamos conexión antes de iniciar la partida en Firebase
+        if (!isConnected()) {
+            showNoInternetDialog();
+            return;
+        }
+
         String myUid = UserSession.getCurrentUid();
 
         if (myUid == null || myUid.trim().isEmpty()) {
@@ -322,6 +341,14 @@ public class WaitingActivity extends BaseActivity {
     }
 
     private void leaveRoomAndExit() {
+
+        // Validamos conexión antes de abandonar la sala correctamente en Firebase
+        if (!isConnected()) {
+            showNoInternetDialog();
+            return;
+        }
+
+
         String uid = UserSession.getCurrentUid();
 
         if (uid == null || uid.trim().isEmpty()) {
@@ -352,7 +379,7 @@ public class WaitingActivity extends BaseActivity {
             public void run() {
                 String uid = UserSession.getCurrentUid();
 
-                if (uid != null && roomId != null) {
+                if (uid != null && roomId != null && isConnected()) {
                     roomRepository.updateUserActivity(roomId, uid);
                     roomRepository.removeInactivePlayers(roomId);
                 }

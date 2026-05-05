@@ -53,6 +53,13 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(MainActivity.this).playClick();
+
+                // Validamos conexión antes de acceder al modo multijugador
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
                 Intent intent = new Intent(MainActivity.this, LobbyActivity.class);
                 startActivity(intent);
             }
@@ -63,6 +70,14 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(MainActivity.this).playClick();
+
+                // Validamos conexión antes de cargar preguntas desde Firebase
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
+
                 Intent intent = new Intent(MainActivity.this, PreguntasActivity.class);
                 startActivity(intent);
             }
@@ -73,6 +88,13 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(MainActivity.this).playClick();
+
+                // Validamos conexión antes de consultar los records del usuario
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
                 Intent intent = new Intent(MainActivity.this, RecordsUsuarioActivity.class);
                 startActivity(intent);
             }
@@ -82,6 +104,14 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(MainActivity.this).playClick();
+
+                // Validamos conexión antes de acceder al perfil
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
+
                 Intent intent = new Intent(MainActivity.this,PerfilActivity.class);
                 startActivity(intent);
             }
@@ -107,7 +137,7 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        if (userID != null) {
+        if (userID != null && isConnected()) {
             cargarFotoPerfil();
         }
 
@@ -131,7 +161,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (userID != null) {
+        if (userID != null && isConnected()) {
             cargarFotoPerfil();
         }
     }

@@ -87,6 +87,11 @@ public class PreguntasActivity extends BaseActivity {
         initViews();       // Enlazamos XML con Java
         initFirestore();    // Inicializamos DB
 
+        // Validamos conexión antes de cargar preguntas desde Firebase
+        if (!isConnected()) {
+            showNoInternetDialog();
+            return;
+        }
 
         // El juego comienza con la cortina del Nivel 1
         mostrarTransicionYNivel();
@@ -141,6 +146,14 @@ public class PreguntasActivity extends BaseActivity {
     // --- GESTIÓN DE DATOS (FIRESTORE) ---
 
     private void cargarNivelCompleto() {
+
+        // Validamos conexión antes de consultar el nivel en Firestore
+        if (!isConnected()) {
+            showNoInternetDialog();
+            cancelarTodo();
+            return;
+        }
+
         // Traemos todas las preguntas del nivel actual de una vez para ahorrar lecturas a Firebase
         db.collection("preguntas")
                 .whereEqualTo("nivel", nivelActual)

@@ -43,6 +43,13 @@ public class ResetActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 SoundManager.getInstance(ResetActivity.this).playClick();
+
+                // Validamos conexión antes de enviar el email de recuperación
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
                 String email = emailTI.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {

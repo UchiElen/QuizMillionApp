@@ -29,6 +29,12 @@ public class WelcomeActivity extends BaseActivity {
             return insets;
         });
 
+        // Validamos conexión antes de comprobar la sesión de Firebase
+        if (!isConnected()) {
+            showNoInternetDialog();
+            return;
+        }
+
         fAuth = FirebaseAuth.getInstance();
 
         if (fAuth.getCurrentUser() != null) {
@@ -43,6 +49,13 @@ public class WelcomeActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Validamos conexión antes de ir al registro
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
                 SoundManager.getInstance(WelcomeActivity.this).playClick();
                 Intent intent = new Intent(WelcomeActivity.this,RegisActivity.class);
                 startActivity(intent);
@@ -53,6 +66,14 @@ public class WelcomeActivity extends BaseActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Validamos conexión antes de ir al inicio de sesión
+                if (!isConnected()) {
+                    showNoInternetDialog();
+                    return;
+                }
+
+
                 SoundManager.getInstance(WelcomeActivity.this).playClick();
                 Intent intent = new Intent(WelcomeActivity.this,AuthActivity.class);
                 startActivity(intent);

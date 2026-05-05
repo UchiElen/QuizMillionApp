@@ -60,8 +60,13 @@ public class ResultadoMultiActivity extends BaseActivity {
         // Si hay algún error, por defecto mostramos el nivel 0
         int nivel = getIntent().getIntExtra("NIVEL_ALCANZADO", 0);
 
-        // Lanzamos la consulta a firebase storage
-        consultarPremio(nivel);
+        // Validamos conexión antes de consultar el premio y guardar resultados en Firebase
+        if (isConnected()) {
+            // Lanzamos la consulta a firebase storage
+            consultarPremio(nivel);
+        } else {
+            showNoInternetDialog();
+        }
 
         // Listener para volver al inicio y cerrar esta activity
         findViewById(R.id.btn_menu_principal).setOnClickListener(v -> {
